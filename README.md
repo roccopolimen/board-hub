@@ -1,4 +1,5 @@
 # Board Hub (CS 546 Project)
+![Board Hub Logo](./images/logo.png)
 ---
 ## Introduction
 
