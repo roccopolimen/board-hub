@@ -1,0 +1,19 @@
+{
+  "name": "cs-546-final-project",
+  "version": "1.0.0",
+  "description": "CS 546 Final Project: Board Hub",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roccopolimen/board-hub.git"
+  },
+  "author": "Rocco Polimeni, Marco Polimeni, Brian Wormser, Michael Karsen, Jackson Perry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roccopolimen/board-hub/issues"
+  },
+  "homepage": "https://github.com/roccopolimen/board-hub#readme"
+}
