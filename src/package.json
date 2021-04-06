@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/roccopolimen/board-hub/issues"
   },
-  "homepage": "https://github.com/roccopolimen/board-hub#readme"
+  "homepage": "https://github.com/roccopolimen/board-hub#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.0",
+    "mongodb": "3.6.3"
+  }
 }
