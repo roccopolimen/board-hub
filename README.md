@@ -10,6 +10,12 @@ The modern organization desires efficiency in its working pipeline, and so AGILE
 |----------------|----------------|
 | Brian Wormser  | Michael Karsen |
 | Jackson Perry  |                |
+
+## Trello Board
+
+[Trello Board (view only)](https://trello.com/b/D0vqjiTc)
+
+
 ## Progress
 - [x] Final Project Proposal Submission
 - [ ] Prototype Design of Website
