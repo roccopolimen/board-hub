@@ -30,11 +30,14 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   next();
 };
 
+// public will be our route for static files
 app.use('/public', static);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rewriteUnsupportedBrowserMethods);
 
+// using express handlebars
 app.engine('handlebars', handlebarsInstance.engine);
 app.set('view engine', 'handlebars');
 
