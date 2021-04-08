@@ -2,11 +2,10 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>{{{title}}}</title>
+    <title>{{title}}</title>
     <link rel="stylesheet" href="/public/css/site.css">
 </head>
 <body>
-    <h1>{{{title}}}</h1>
     <!-- I'm tentatively putting login/signup as links, as I'm not sure if they're going to open modals or render a new page -->
     <!-- The classes are to show/hide the login/signup button if you aren't on the homepage -->
     <nav>
@@ -20,6 +19,7 @@
     <main>
         {{{body}}}
     </main>
-    <footer>Created by Michael Karsen, Jackson Perry, Marco Polimeni, Rocco Polimeni, and Brian Wormser</footer>
+    <!-- If we decide we for some reason don't want to show our names on every page we can change that class to display: none; -->
+    <footer class="{{footer_class}}">Created by Michael Karsen, Jackson Perry, Marco Polimeni, Rocco Polimeni, and Brian Wormser</footer>
 </body>
 </html>
