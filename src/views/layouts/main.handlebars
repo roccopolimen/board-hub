@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/public/css/site.css">
+</head>
+<body>
+    <!-- I'm tentatively putting login/signup as links, as I'm not sure if they're going to open modals or render a new page -->
+    <!-- The classes are to show/hide the login/signup button if you aren't on the homepage -->
+    <nav>
+        <ul>
+            <li><a href="/"><img src="/public/images/logo/board_hub.PNG"></a></li>
+            {{#if loggedIn}}
+            <li><a href="/user"><img src="/public/images/icons/pfp.PNG"></a></li>
+            {{else}}
+            <li><a href="/login">Log In</li>
+            <li><a href="/signup">Sign Up</a></li>
+            {{/if}}
+        </ul>
+    </nav>
+    <main>
+        {{{body}}}
+    </main>
+    <!-- If we decide we for some reason don't want to show our names on every page we can change that class to display: none; -->
+    {{#if footer}}
+    <footer>Created by Michael Karsen, Jackson Perry, Marco Polimeni, Rocco Polimeni, and Brian Wormser</footer>
+    {{/if}}
+</body>
+</html>
