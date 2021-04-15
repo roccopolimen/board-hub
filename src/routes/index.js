@@ -18,8 +18,8 @@ const constructorMethod = (app) => {
 
     // catch all bad URLs and provide a 404.
     app.use('*', (req, res) => {
-        res.status(404).json('Page not Found.');
-        // res.status(404).render('page-not-found');
+        // res.status(404).json('Page not Found.');
+        res.status(404).render('error-page', { title: "404 Page Not Found", error: true });
     });
 };
 
