@@ -15,6 +15,7 @@
                 Here at Board Hub, we combine work with fun!
             </p>
 
+            <!-- HTML layout for login button/modal -->
             <div class="center">
                 <input type="checkbox" id="show">
                 <label for="show" class="show-btn">Login</label>
@@ -40,7 +41,7 @@
                 </div>
             </div>
 
-
+            <!-- HTML layout for signup button/modal -->
             <div class="center">
                 <input type="checkbox" id="signup">
                 <label for="signup" class="signup-btn">Sign Up</label>
@@ -49,20 +50,20 @@
                     <div class="text">Sign Up</div>
                     <form action="/singup" method="POST">
                         <div class="data">
-                            <label>Email</label>
-                            <input type="text" required>
+                            <label for="signEmail">Email</label>
+                            <input id="signEmail" type="text" required>
                         </div>
                         <div class="data">
-                            <label>Verify Email</label>
-                            <input type="text" required>
+                            <label for="verEmail">Verify Email</label>
+                            <input id="verEmail" type="text" required>
                         </div>
                         <div class="data">
-                            <label>Password</label>
-                            <input type="password" required>
+                            <label for="signPassword">Password</label>
+                            <input id="signPassword" type="password" required>
                         </div>
                         <div class="data">
-                            <label>Re-enter Password</label>
-                            <input type="password" required>
+                            <label for="verPassword">Re-enter Password</label>
+                            <input id="verPassword" type="password" required>
                         </div>
                         <div class="btn">
                             <div class="inner"></div>
@@ -70,6 +71,11 @@
                         </div>
                     </form>
                 </div>
+            </div>
+
+            <!-- Sign up with Email button also opens up signup modal above -->
+            <div>
+                <label for="signup" class="signup-btn">Sign Up with Email!</label>
             </div>
             <img src="Example" alt="Example Pic">
         </main>
