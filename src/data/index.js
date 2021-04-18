@@ -1,4 +1,4 @@
-// const userData = require('./users');
+const userData = require('./users');
 const boardData = require('./boards');
 // const listData = require('./lists');
 // const cardData = require('./cards');
@@ -10,5 +10,6 @@ const boardData = require('./boards');
  */
 
 module.exports = {
+  users: userData,
   boards: boardData
 };
