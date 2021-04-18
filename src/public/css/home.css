@@ -8,13 +8,6 @@
     box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
 
-.login-btn, .container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
 #login:checked ~ .container{
     display: block;
 }
@@ -27,13 +20,6 @@
     color: #3498db;
     cursor: pointer;
     box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-}
-
-.signup-btn, .container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 #signup:checked ~ .container{
@@ -49,6 +35,10 @@ input[type="checkbox"] {
     width: 410px;
     padding: 30px;
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 .container .close-btn{
     position: absolute;
