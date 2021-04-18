@@ -11,12 +11,15 @@
     <nav>
         <ul>
             <li><a href="/"><img src="/public/images/logo/board_hub.PNG"></a></li>
-            {{#if loggedIn}}
-            <li><a href="/user"><img src="/public/images/icons/pfp.PNG"></a></li>
+            {{#if error}}
             {{else}}
-            <li><a href="/login">Log In</li>
-            <li><a href="/signup">Sign Up</a></li>
-            {{/if}}
+                {{#if loggedIn}}
+                    <li><a href="/user"><img src="/public/images/icons/pfp.PNG"></a></li>
+                {{else}}
+                    <li><a href="/login">Log In</li>
+                    <li><a href="/signup">Sign Up</a></li>
+                {{/if}}
+            {{/if}}            
         </ul>
     </nav>
     <main>
