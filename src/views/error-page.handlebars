@@ -4,5 +4,7 @@
 <div class="error-page">
   <h1 class="err-h1">{{title}}</h1>
   {{!-- message is optional --}}
-  <p class="err-msg">{{message}}</p>
+  {{#if message}}
+    <p class="err-msg">{{message}}</p>
+  {{/if}}
 </div>
