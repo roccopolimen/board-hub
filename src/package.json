@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/roccopolimen/board-hub/issues"
   },
-  "homepage": "https://github.com/roccopolimen/board-hub#readme"
+  "homepage": "https://github.com/roccopolimen/board-hub#readme",
+  "dependencies": {
+    "mongodb": "^3.6.6",
+    "xdate": "^0.8.2"
+  }
 }

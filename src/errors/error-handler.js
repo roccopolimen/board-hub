@@ -23,6 +23,10 @@ function checkNumber(num){
     return (typeof(num) === 'number'); 
 }
 
+function checkStoryPoint(sp){
+    return (checkNumber(sp) && sp > 0 && sp < 6);
+}
+
 //REGEX is for the current email format RFC2822
 function checkEmail(email){
     return (typeof(email) === 'string' && /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(email))
