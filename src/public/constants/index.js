@@ -26,5 +26,6 @@ user_colors = ['#aa47bc', '#7a1fa2', '#78909c', '#465a65',
 
 
 module.exports = {
-  colors: colors
+  colors: colors,
+  user_colors: user_colors
 };

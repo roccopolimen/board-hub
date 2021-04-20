@@ -5,6 +5,7 @@ const {user_colors} = require('../public/constants/index');
 const {ObjectId} = require('mongodb');
 const bcrypt = require('bcrypt');
 const saltRounds = 16;
+const error_handler = require('../errors/error-handler'); 
 
 
 module.exports = {
@@ -14,9 +15,9 @@ module.exports = {
    * @returns A user.
    */
   readByID: async (id) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
      const userCollection = await users();
      const user = await userCollection.findOne({_id: ObjectId(id)});
      if(user === null)
@@ -38,9 +39,17 @@ module.exports = {
    * @returns The user object.
    */
   create: async (email, firstName, lastName, password) => {
-    /**
-     * TODO - ERROR CHECKING
-     */    
+    if(!error_handler.checkEmail(email))
+      throw new Error("Email is not valid.");
+      
+    if(!error_handler.checkFirstName(firstName))
+      throw new Error("First name is not valid.");
+
+    if(!error_handler.checkLastName(lastName))
+      throw new Error("Last name is not valid.");
+
+    if(!error_handler.checkNonEmptyString(password))
+      throw new Error("Password is not valid.");
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const color = user_colors[Math.floor(Math.random() * user_colors.length)];
@@ -69,9 +78,11 @@ module.exports = {
    * @returns A user object with updated hashedPassword.
    */
   update_password: async(id, password) => {
-    /**
-     * TODO - ERROR CHECKING
-     */  
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+      
+    if(!error_handler.checkNonEmptyString(password))
+      throw new Error("Password is not valid.");
 
     const newPass = await bcrypt.hash(password, saltRounds);
     const userCollection = await users();
@@ -90,9 +101,8 @@ module.exports = {
    * @returns A success object.
    */
   delete: async (id) => {
-    /**
-     * TODO - ERROR CHECKING
-     */ 
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
 
     const userCollection = await users();
     const user = await module.exports.readByID(id);

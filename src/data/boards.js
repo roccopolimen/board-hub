@@ -3,25 +3,23 @@ const boards = mongoCollections.boards;
 const users = mongoCollections.users;
 const {colors} = require('../public/constants/index');
 const {ObjectId} = require('mongodb');
+const error_handler = require('../errors/error-handler'); 
 
 function newFields(newBoard, oldBoard) {
   fields = {};
   if(newBoard.boardName && newBoard.boardName !== oldBoard.boardName) {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkNonEmptyString(newBoard.boardName))
+      throw new Error("Board name must not be empty.");
     fields.boardName = newBoard.boardName;
   }
   if(newBoard.boardColor && newBoard.boardColor !== oldBoard.boardColor) {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkColor(newBoard.boardColor))
+      throw new Error("Board color must be valid hex code.");
     fields.boardColor = newBoard.boardColor;
   }
   if(newBoard.description && newBoard.description !== oldBoard.description) {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkNonEmptyString(newBoard.description))
+      throw new Error("Board description must not be empty.");
     fields.description = newBoard.description;
   }
 
@@ -36,9 +34,9 @@ module.exports = {
    * @returns A board.
    */
   readByID: async (id) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
     const boardCollection = await boards();
     const board = await boardCollection.findOne({_id: ObjectId(id)});
     if(board === null)
@@ -55,9 +53,9 @@ module.exports = {
    * @returns A list of board objects.
    */
   readAll: async (id) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
     const userCollection = await users();
     const user = await userCollection.findOne({_id: ObjectId(id)});
     if(user === null)
@@ -74,9 +72,12 @@ module.exports = {
    * @returns The board object.
    */
   create: async (userId, boardName) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(userId))
+      throw new Error("id is not valid.");
+
+    if(!error_handler.checkNonEmptyString(boardName))
+      throw new Error("Board name must not be empty.");
+
     const boardColor = colors[Math.floor(Math.random() * colors.length)];
     const description = "";
     const members = [userId];
@@ -107,9 +108,9 @@ module.exports = {
    * @returns A board object with updated fields.
    */
   update: async (id, boardData) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
     const boardCollection = await boards();
     let updatedBoard = newFields(boardData, await module.exports.readByID(id));
     if(Object.keys(updatedBoard).length === 0)
@@ -138,9 +139,11 @@ module.exports = {
    * @returns A board object with updated fields.
    */
   addNewMember: async (id, userEmail) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
+    if(!error_handler.checkEmail(userEmail))
+      throw new Error("Email is not valid.");
     // Add member limit ?????
 
     // Get the user for their id, and make sure they exist.
@@ -163,9 +166,9 @@ module.exports = {
    * @returns A success object.
    */
   delete: async (id) => {
-    /**
-     * TODO - ERROR CHECKING
-     */
+    if(!error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
     const boardCollection = await boards();
 
     // Remove the board ID from each member
