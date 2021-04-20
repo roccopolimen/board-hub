@@ -1,57 +1,77 @@
 const { ObjectId } = require('mongodb');
-const XDate = require("xdate");
-
 
 //These functions are meant to be used in if statements, so that you can make your own throw statement.
 
+//Returns true if passed a valid mongo ObjectId
+//Param: An ObjectId as a string
 function checkObjectId(OId){
     if(ObjectId.isValid(OId)){
-        if((String)(new ObjectId(OId)) == OId){
-            return true;        
-        }
-        return false;
+        return((String)(new ObjectId(OId)) == OId)
     }
     return false;
 }
-//checks if input is a string
+//Retruns true if passed any string
 function checkString(str){
     return (typeof(str) === 'string');
 }
 
-//checks if input is a number
+//Retruns true if passed a non empty string
+function checkNonEmptyString(str){
+    return (typeof(str) === 'string' && str.trim() !== '');
+}
+
+//Returns true if passed any number
 function checkNumber(num){
     return (typeof(num) === 'number'); 
 }
 
+//Returns true if passed a positive number
+function checkPositiveNumber(num){
+    return (typeof(num) === 'number' && num > 0); 
+}
+
+//Returns true if passed a negative number
+function checkNegativeNumber(num){
+    return (typeof(num) === 'number' && num < 0); 
+}
+
+//Returns true if passed a number between [1,99]
 function checkStoryPoint(sp){
-    return (checkNumber(sp) && sp > 0 && sp < 6);
+    return (checkNumber(sp) && sp > 0 && sp < 100);
 }
 
 //REGEX is for the current email format RFC2822
+//Returns true if passed a valid email
+//Param: string
 function checkEmail(email){
     return (typeof(email) === 'string' && /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(email))
 }
 
-//This will not work if spaces are at the end, however spaces should not be inbetween letters 
-//just make sure to trim the end of the string before using this function 
+//REGEX tests against chars that we do not want to have in the name
+//Returns true if passed a valid first name
+//Param: string
 function checkFirstName(firstName){
-    return(typeof(firstName) === 'string' && /^[a-zA-Z]+$/.test(firstName));
+    return(typeof(firstName) === 'string' && (firstName.length > 1 && firstName.length < 27) && /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/.test(firstName));
 }
 
-//Checks if input is a valid last name
+console.log(checkFirstName('Michàel'))
+
+//REGEX tests against chars that we do not want to have in the name
+//Returns true if passed a valid last name
+//Param: string
 function checkLastName(lastName){
-    return(typeof(lastName) === 'string' && /^[a-zA-Z'-]+$/.test(lastName));
+    return(typeof(lastName) === 'string' && (lastName.length > 1 && lastName.length < 27) && /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/.test(lastName));
 }
 
-//Checks if input is a valid hex color code
+//Returns true if passed a valid hex code 
+//Param: string
 function checkColor(colorCode){
     return (typeof(colorCode) === 'string' && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(colorCode));
 }
 
-//Checks if input is a valid array of objectid's
+//Returns true if passed a valid array of objectid's
 function checkArrayObjectId(boardArray){
     if(!Array.isArray(boardArray)){
-        console.log('here')
         return false;
     }
     for(let x of boardArray){
@@ -62,53 +82,17 @@ function checkArrayObjectId(boardArray){
     return true;
 }
 
-
 //Checks if input is a valid date in the form MM/DD/YYYY
+//Param: string
 function checkDate(dateStr){
-
-    let date = new XDate(dateStr);
-    if(!date.valid()){
-        return false
-    }   
-
-    let myObj = {
-        1: "31",
-        2: "28",
-        3: "31",
-        4: "30",
-        5: "31",
-        6: "30",
-        7: "31",
-        8: "31",
-        9: "30",
-        10: "31",
-        11: "30",
-        12: "31" 
-    };
-    let dateSplit = dateStr.trim().split('/');
-    
-    let chk = parseInt(dateSplit[0]);
-    
-    if(chk === 2){
-        if(parseInt(dateSplit[2]) % 4 === 0){
-            if(29 < parseInt(dateSplit[1])){
-                return false;;
-            }
-        }
-        else{
-            if(parseInt(myObj[chk]) < parseInt(dateSplit[1])) return false;
-        }
-    }
-    else{
-        if(parseInt(myObj[chk]) < parseInt(dateSplit[1])) {
-            return false;
-        }
-    }
-
-    return true;
+    const parts = dateStr.split('/').map((n) => parseInt(n));
+    parts[0] -= 1;
+    const date = new Date(parts[2], parts[0], parts[1]);
+    return date.getMonth() === parts[0] && date.getDate() === parts[1] && date.getFullYear() === parts[2];
 }
 
-//Checks if input is a valid due date object
+//Returns true if passed a valid due date object
+//Param: object
 function checkDueDate(obj){
     if(typeof(obj.date) !== 'string' || !checkDate(obj.date)){
         return false;
@@ -118,20 +102,3 @@ function checkDueDate(obj){
     }
     return true;
 }
-//console.log(checkDate('1/1/100'))
-
-
-// let myObj = {
-//     date: '2/29/2020', 
-//     done: true
-// }
-
-// let x = new ObjectId();
-// let y = new ObjectId();
-
-// console.log(checkDueDate(myObj))
-// // console.log(checkObjectId(4))
-// // console.log(checkArrayObjectId([x,y]));
-// // console.log(checkFirstName(undefined))
-// // console.log(checkLastName('van-gough'))
-// // console.log(checkEmail("john@gmail.com"))
