@@ -51,16 +51,14 @@ function checkEmail(email){
 //Returns true if passed a valid first name
 //Param: string
 function checkFirstName(firstName){
-    return(typeof(firstName) === 'string' && (firstName.length > 1 && firstName.length < 27) && /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/.test(firstName));
+    return(typeof(firstName) === 'string' && (firstName.length > 1 && firstName.length < 27) && /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,\d]{1,20}$/.test(firstName));
 }
-
-console.log(checkFirstName('Michàel'))
 
 //REGEX tests against chars that we do not want to have in the name
 //Returns true if passed a valid last name
 //Param: string
 function checkLastName(lastName){
-    return(typeof(lastName) === 'string' && (lastName.length > 1 && lastName.length < 27) && /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/.test(lastName));
+    return(typeof(lastName) === 'string' && (lastName.length > 1 && lastName.length < 27) && /^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,\d]{1,20}$/.test(lastName));
 }
 
 //Returns true if passed a valid hex code 
