@@ -33,8 +33,8 @@ module.exports = {
    * @param {String} id The board's id.
    * @returns A board.
    */
-  readByID: async (id) => {
-    if(!error_handler.checkObjectId(id))
+  readById: async (id) => {
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
     const boardCollection = await boards();
@@ -53,7 +53,7 @@ module.exports = {
    * @returns A list of board objects.
    */
   readAll: async (id) => {
-    if(!error_handler.checkObjectId(id))
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
     const userCollection = await users();
@@ -72,10 +72,10 @@ module.exports = {
    * @returns The board object.
    */
   create: async (userId, boardName) => {
-    if(!error_handler.checkObjectId(userId))
+    if(!userId || !error_handler.checkObjectId(userId))
       throw new Error("id is not valid.");
 
-    if(!error_handler.checkNonEmptyString(boardName))
+    if(!boardName || !error_handler.checkNonEmptyString(boardName))
       throw new Error("Board name must not be empty.");
 
     const boardColor = colors[Math.floor(Math.random() * colors.length)];
@@ -98,6 +98,13 @@ module.exports = {
     if(insertInfo.insertedCount === 0)
       throw new Error("Could not add board.");
 
+    // Add board id to user's boards  
+    const userCollection = await users();
+    const updatedInfo = await userCollection.updateOne({ _id: ObjectId(id) },
+      { $push: {boards: insertInfo.insertedId.toString()} });
+    if (updatedInfo.modifiedCount === 0)
+      throw new Error("Could not update user password successfully.");
+
     return await module.exports.readByID(insertInfo.insertedId.toString());
   },
 
@@ -108,13 +115,11 @@ module.exports = {
    * @returns A board object with updated fields.
    */
   update: async (id, boardData) => {
-    if(!error_handler.checkObjectId(id))
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
     const boardCollection = await boards();
     let updatedBoard = newFields(boardData, await module.exports.readByID(id));
-    if(Object.keys(updatedBoard).length === 0)
-      console.log("No fields to update.");
     
     if(updatedBoard.boardName) {
       await boardCollection.updateOne({ _id: ObjectId(id) },
@@ -139,10 +144,10 @@ module.exports = {
    * @returns A board object with updated fields.
    */
   addNewMember: async (id, userEmail) => {
-    if(!error_handler.checkObjectId(id))
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
-    if(!error_handler.checkEmail(userEmail))
+    if(!email || !error_handler.checkEmail(userEmail))
       throw new Error("Email is not valid.");
     // Add member limit ?????
 
@@ -166,7 +171,7 @@ module.exports = {
    * @returns A success object.
    */
   delete: async (id) => {
-    if(!error_handler.checkObjectId(id))
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
     const boardCollection = await boards();

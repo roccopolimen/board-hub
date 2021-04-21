@@ -14,8 +14,8 @@ module.exports = {
    * @param {String} id The user's id.
    * @returns A user.
    */
-  readByID: async (id) => {
-    if(!error_handler.checkObjectId(id))
+  readById: async (id) => {
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
      const userCollection = await users();
@@ -39,16 +39,16 @@ module.exports = {
    * @returns The user object.
    */
   create: async (email, firstName, lastName, password) => {
-    if(!error_handler.checkEmail(email))
+    if(!email || !error_handler.checkEmail(email))
       throw new Error("Email is not valid.");
       
-    if(!error_handler.checkFirstName(firstName))
+    if(!firstName || !error_handler.checkFirstName(firstName))
       throw new Error("First name is not valid.");
 
-    if(!error_handler.checkLastName(lastName))
+    if(!lastName || !error_handler.checkLastName(lastName))
       throw new Error("Last name is not valid.");
 
-    if(!error_handler.checkNonEmptyString(password))
+    if(!password || !error_handler.checkNonEmptyString(password))
       throw new Error("Password is not valid.");
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -78,10 +78,10 @@ module.exports = {
    * @returns A user object with updated hashedPassword.
    */
   update_password: async(id, password) => {
-    if(!error_handler.checkObjectId(id))
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
       
-    if(!error_handler.checkNonEmptyString(password))
+    if(!password || !error_handler.checkNonEmptyString(password))
       throw new Error("Password is not valid.");
 
     const newPass = await bcrypt.hash(password, saltRounds);
@@ -101,7 +101,7 @@ module.exports = {
    * @returns A success object.
    */
   delete: async (id) => {
-    if(!error_handler.checkObjectId(id))
+    if(!id || !error_handler.checkObjectId(id))
       throw new Error("id is not valid.");
 
     const userCollection = await users();
