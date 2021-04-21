@@ -100,3 +100,20 @@ function checkDueDate(obj){
     }
     return true;
 }
+
+module.exports = {
+    checkObjectId,
+    checkString,
+    checkNonEmptyString,
+    checkNumber,
+    checkPositiveNumber,
+    checkNegativeNumber,
+    checkStoryPoint,
+    checkEmail,
+    checkFirstName,
+    checkLastName,
+    checkColor,
+    checkArrayObjectId,
+    checkDate,
+    checkDueDate
+}
