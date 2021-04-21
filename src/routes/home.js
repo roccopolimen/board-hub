@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
   try {
     res.sendFile(path.resolve('../src/static/home.html'));
   } catch (e) {
-    res.status(404).render('error-page', { title: e, error: true });
+    res.status(404).render('error-page', { title: "404 Page Not Found", error: true });
   }
 });
 
