@@ -29,3 +29,5 @@ router.get('/', async (req, res) => {
         res.render('boards', { title: "Boards Error", error: error });
     }
 });
+
+module.exports = router;
