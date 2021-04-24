@@ -2,8 +2,10 @@
 
 // const userRoutes = require('./user');
 // const boardRoutes = require('./board');
+
 const boardsRoutes = require('./boards');
-// const homeRoutes = require('./home');
+const homeRoutes = require('./home');
+
 
 const path = require('path');
 
@@ -13,7 +15,7 @@ const constructorMethod = (app) => {
     // app.use('/user', userRoutes);
     // app.use('/board', boardRoutes);
     app.use('/boards', boardsRoutes);
-    // app.use('/', homeRoutes);
+    app.use('/', homeRoutes);
 
 
     // catch all bad URLs and provide a 404.
