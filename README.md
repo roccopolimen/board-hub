@@ -22,6 +22,10 @@ The modern organization desires efficiency in its working pipeline, and so AGILE
 
 [Prototype (view only)](https://www.figma.com/proto/e3GyKOiHKpFe3oqK9P1VzG/Board-Hub?node-id=1%3A2&scaling=scale-down&page-id=0%3A1)
 
+## Project Pitch Presentation
+
+[Recording](https://stevens.zoom.us/rec/share/JoFHdt9R5JkGPPcAUzOB5dhjtjYBGA2FmK_o_Ng_93cbjG-ZVRJPdzbbE1qNPaGK.Ta18oZh4IkVAsZ1H)
+
 ## Git Workflow
 
 Only changes made within src/ will require working in branches. Documents can be pushed directly to main when needed.
