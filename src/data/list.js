@@ -30,7 +30,7 @@ module.exports = {
     * Gets a list with a given id.
     * @param {String} listId The lists's id.
     * @param {String} boardId The board's id.
-    * @returns A list object.
+    * @returns A list object, if list does not exist, throws error.
     */
     getListById: async (listId, boardId) => {
         if(!listId || !error_handler.checkObjectId(listId)) 
@@ -58,7 +58,7 @@ module.exports = {
     * Creates a new list.
     * @param {string} listName The name of the new list.
     * @param {String} boardId The id of the board the list is added to.
-    * @returns A board object.
+    * @returns A board object, otherwise throws error if list wasn't added.
     */
     addList: async (listName, boardId) => {
         if(!boardId || !error_handler.checkObjectId(boardId)) 
@@ -162,7 +162,7 @@ module.exports = {
             let list = board.lists[y];
             if(list._id.toString() === listId) {
                 const updateInfo = await boardCollection.updateOne(
-                    { _id: board._id },
+                    { _id: ObjectId(boardId) },
                     { $pull: { lists: { id: ObjectId(listId) } } }
                 );
                 if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
