@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
     
     user = await userData.readByEmail(email);
   } catch (e) {
-    res.render('error-page', { title: "Invalid Log-In", error: true, message: e.message });
+    res.status(401).render('error-page', { title: "401 Invalid Log-In", error: true });
     return;
   }
 
@@ -67,22 +67,10 @@ router.post('/login', async (req, res) => {
   // Compare the inputted password
   try{
     matching = await bcrypt.compare(password, user.hashedPassword);
-  }catch(e){
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-    return;
-  }
-
-  // Error if the password is incorrect
-  try{
-    if(!matching)
-      res.status(401).render('error-page', { title: "Invalid Log-In", error: true, message: "Incorrect Password" });
-  }catch(e){
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-    return;
-  }
-
-  // Set the user and go to boards
-  try{
+    if(!matching){
+      res.status(401).render('error-page', { title: "401 Invalid Log-In", error: true });
+      return;
+    }
     req.session.user = user;
     res.redirect('/boards');
   }catch(e){
