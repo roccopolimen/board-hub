@@ -169,11 +169,18 @@ const exportedModules = {
             }
         }
         if(date && time){
-            if(!error_handler.checkDueDate(date) ){ // || !error_handler.checkTime(time)
+            if(!error_handler.checkDate(date) || !error_handler.checkTime(time)){
                 throw new Error('Must have a valid date and time.');
             }
-            else{
+            if(done){
+                if(!error_handler.checkBoolean(done)){
+                    throw new Error('Done must be a valid boolean.');
+                }
                 let dueDate = {date: `${date}*${time}`, done: done}
+                updatedCardData.dueDate = dueDate;
+            }
+            else{
+                let dueDate = {date: `${date}*${time}`, done: false}
                 updatedCardData.dueDate = dueDate;
             }
         }
