@@ -1,5 +1,4 @@
 const mongoCollections = require('../config/mongoCollections');
-const boardData = require('./boards');
 const boards = mongoCollections.boards;
 const {ObjectId} = require('mongodb');
 const error_handler = require('../errors/error-handler'); 
@@ -15,7 +14,8 @@ module.exports = {
         if(!id || !error_handler.checkObjectId(id)) 
             throw new Error("id is not valid.");
 
-        const board = await boardData.readById(id);
+        const boardCollection = await boards();
+        const board = await boardCollection.findOne({_id: ObjectId(id)});
         let returnList = [];
         for(let x=0; x<board.lists.length; x++) {
             let lists = board.lists[x];
@@ -39,7 +39,8 @@ module.exports = {
         if(!boardId || !error_handler.checkObjectId(boardId)) 
             throw new Error("boardId is not valid.");
         
-        const board = await boardData.readById(boardId);
+        const boardCollection = await boards();
+        const board = await boardCollection.findOne({_id: ObjectId(boardId)});
 
         let returnList;
         for(let y=0; y<board.lists.length; y++) {
@@ -82,7 +83,11 @@ module.exports = {
         );
 
         if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
-        return boardData.readById(boardId);
+
+        const boardCollection = await boards();
+        const board = await boardCollection.findOne({_id: ObjectId(boardId)});
+
+        return board;
     },
 
     /**
@@ -102,15 +107,16 @@ module.exports = {
         if(!cardId || !error_handler.checkObjectId(cardId)) 
             throw new Error("cardId is not valid.");
 
-        let list = this.getListById(listId, boardId);
-
-        let cardArray = list.cardIds;
-        cardArray.push(cardId);
-
         const boardCollection = await boards();
-        const updateInfo = await boardCollection.updateOne({ _id: ObjectId(boardId) },
-        { lists: { id: ObjectId(listId) }}, {$set: {cardIds: cardArray}});
-        if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
+        const updateInfoList = await boardCollection.updateOne({ _id: ObjectId(boardId) },
+        { lists: { id: ObjectId(listId) }}, {$addToSet: {cardIds: ObjectId(cardId)}});
+
+        if(!updateInfoList.matchedCount && !updateInfoList.modifiedCount) throw new Error('Failed to update List');
+
+        const updateInfoCard = await boardCollection.updateOne({ _id: ObjectId(boardId) },
+        { cards: { id: ObjectId(cardId) }}, {$set: {list: ObjectId(listId)}});
+
+        if(!updateInfoCard.matchedCount && !updateInfoCard.modifiedCount) throw new Error('Failed to update Card');
 
         return true;
     },
@@ -155,12 +161,20 @@ module.exports = {
         if(!listId || !error_handler.checkObjectId(listId)) 
             throw new Error("listId is not valid.");
 
-        const board = await boardData.readById(boardId);
         const boardCollection = await boards();
+        const board = await boardCollection.findOne({_id: ObjectId(boardId)});
 
         for(let y=0; y<board.lists.length; y++) {
             let list = board.lists[y];
             if(list._id.toString() === listId) {
+                let cardList = list.cardIds;
+                for(let x=0; x<cardList.length; x++) {
+                    const updateInfoCard = await boardCollection.updateOne(
+                        { _id: ObjectId(boardId) },
+                        { $pull: { cards: { id: cardList[x] } } }
+                    );
+                    if(!updateInfoCard.matchedCount && !updateInfoCard.modifiedCount) throw new Error('Update failed');
+                }
                 const updateInfo = await boardCollection.updateOne(
                     { _id: ObjectId(boardId) },
                     { $pull: { lists: { id: ObjectId(listId) } } }
