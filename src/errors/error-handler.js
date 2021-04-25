@@ -9,10 +9,16 @@ function checkObjectId(OId){
         return((String)(new ObjectId(OId)) == OId)
     }
     return false;
+    
 }
 //Retruns true if passed any string
 function checkString(str){
     return (typeof(str) === 'string');
+}
+
+//Retruns true if passed any boolean
+function checkBoolean(boolean){
+    return (typeof(boolean) === 'boolean');
 }
 
 //Retruns true if passed a non empty string
@@ -89,6 +95,12 @@ function checkDate(dateStr){
     return date.getMonth() === parts[0] && date.getDate() === parts[1] && date.getFullYear() === parts[2];
 }
 
+//Checks if input is a valid millitary time (HH:MM)
+//Param: string
+function checkTime(timeStr){
+    return (typeof(timeStr) === 'string' && /^([01]\d|2[0-3]):?([0-5]\d)$/.test(timeStr));
+}
+
 //Returns true if passed a valid due date object
 //Param: object
 function checkDueDate(obj){
@@ -99,4 +111,31 @@ function checkDueDate(obj){
         return false;
     }
     return true;
+}
+
+//Checks if input is a valid label
+//Param: object
+function checkLabel(label){
+    if(!label._id || !checkObjectId(label._id)){
+        return false;
+    }
+    if(!label.text || !checkNonEmptyString(label.text)){
+        return false;
+    }
+    if(!label.color || !checkColor(label.color)){
+        return false;
+    }
+    return true;
+}
+
+//Checks if input is a valid array of labels
+//Param: Array
+function checkArrayOfLabels(labelArr){
+    if(!Array.isArray(labelArr)) return false;
+    for(let label of labelArr){
+        if(!checkLabel(label)){
+            return false;
+        }
+    }
+    return true
 }
