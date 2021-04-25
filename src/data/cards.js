@@ -81,6 +81,7 @@ const exportedModules = {
         }
 
         let newBoardId = ObjectId(boardId);
+        let newListId = ObjectId(listId);
         const boardCollection = await boards();
 
         //storyPoints and dueDate can be added via update, but are not created with a new card
@@ -94,6 +95,13 @@ const exportedModules = {
             list: listId
         };
 
+        //Try these if doesnt add the cardId to the cardIds array in Lists
+        //boardCollection.updateOne({_id: newBoardId}, {$push: {lists: {_id: newListId, newCard,_id}}});
+        //boardCollection.updateOne({_id: newBoardId}, {$set: {lists: {_id: newListId, $push: {cardIds: newCard._id}}}});
+        const updateList = boardCollection.updateOne({_id: newBoardId}, {$push: {"lists.$[listId].cardIds": newCard._id}}, {arrayFilters: [{"listId": newListId}]});
+        if (!updateList.matchedCount && !updateList.modifiedCount){
+            throw new Error('Could not update the list.');
+        }
         const updateInfo = await boardCollection.updateOne({_id: newBoardId}, { $push: { cards: newCard}});
 
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
@@ -195,19 +203,29 @@ const exportedModules = {
      * Delete a card from a board.
      * @param {string} boardId The board's id.
      * @param {string} cardId The card's id.
+     * @param {string} listId The list's id.
      * @returns An object containing the cardId and if the card was deleted.
      */
-    async removeCard(boardId, cardId){
+    async removeCard(boardId, cardId, listId){
         if(!boardId || !error_handler.checkObjectId(boardId)){
             throw new Error('boardId is not valid');
         }
         if(!cardId || !error_handler.checkObjectId(cardId)){
             throw new Error('cardId is not valid');
         }
+        if(!listId || !error_handler.checkObjectId(listId)){
+            throw new Error('listId is not valid');
+        }
 
         const boardCollection = await boards();
         const newBoardId = ObjectId(boardId);
         const newCardId = ObjectId(cardId);
+        const newListId = ObjectId(listId);
+
+        const updateList = boardCollection.updateOne({_id: newBoardId}, {$pull: {"lists.$[listId].cardIds": newCardId}}, {arrayFilters: [{"listId": newListId}]});
+        if (!updateList.matchedCount && !updateList.modifiedCount){
+            throw new Error('Could not update the list.');
+        }
 
         const updateInfo = await boardCollection.updateOne({_id: newBoardId }, { $pull: { cards: { _id: newCardId}}});
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
