@@ -166,6 +166,63 @@ module.exports = {
   },
 
   /**
+   * Adds another user as a member to this board.
+   * @param {String} boardId The board's id.
+   * @param {String} listId The list's id.
+   * @param {String} position New index to place the list.
+   * @returns A board object with updated fields.
+   */
+   moveList: async (boardId, listId, position) => {
+    if(!boardId || !error_handler.checkObjectId(boardId))
+      throw new Error("id is not valid.");
+    if(!listId || !error_handler.checkObjectId(listId))
+      throw new Error("id is not valid.");
+    if(!position)
+      throw new Error('position is not valid.');
+
+    const board = await module.exports.readByID(boardId);
+    let lists = board['lists'];
+    position = parseInt(position);
+    if(position < 0 || position >= lists.length)
+      throw new Error("position is not valid.");
+    
+    let oldPos = lists.indexOf(listId);
+    if(oldPos === -1)
+      throw new Error("listId does not exist in this board.");
+    //
+    if(oldPos < position) { 
+      for(let i=0; i < lists.length; i++) {
+        if(i > position)
+          break;
+        if(i >= oldPos && i < position && i < lists.length-1) {
+          lists[i] = lists[i+1]        
+        }
+        else if(i === position){
+          lists[i] = listId;
+        }
+      }
+    }
+    else if(oldPos > position) { // 1 2 3 4 5 6 7
+      for(let i=lists.length-1; i >= 0; i--) {
+        if(i < position)
+          break;
+        if(i <= oldPos && i > position && i > 0) {
+          lists[i] = lists[i-1]        
+        }
+        else if(i === position){
+          lists[i] = listId;
+        }
+      }
+    }
+    
+    const boardCollection = await boards();
+    await boardCollection.updateOne({ _id: ObjectId(boardId) },
+          { $set: {lists: lists} });
+
+    return await module.exports.readByID(boardId);
+  },
+
+  /**
    * Delete the board id from each member's list of board's and drop the board from the boards collection.
    * @param {String} id The board's id.
    * @returns A success object.

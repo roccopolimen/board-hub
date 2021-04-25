@@ -173,14 +173,21 @@ module.exports = {
    * @returns A success object.
    */
    remove: async (userId, boardId) => {
-    if(!id || !error_handler.checkObjectId(id))
+    if(!userId || !error_handler.checkObjectId(userId))
+      throw new Error("id is not valid.");
+
+    if(!boardId || !error_handler.checkObjectId(boardId))
       throw new Error("id is not valid.");
 
     const userCollection = await users();
-    const user = await module.exports.readByID(id);
+    const updatedInfo = await userCollection.updateOne({ _id: ObjectId(userId) },
+      { $pull: {boards: boardId} });
+
+    if (updatedInfo.modifiedCount === 0)
+      throw new Error("Could not update user password successfully.");
+
 
     // Remove the user ID from each board and it's subdocuments (when applicable)
-    const user_boards = user['boards'];
     const boardCollection = await boards();
 
     const curr_board = await boardCollection.findOne({_id: ObjectId(boardId)});
