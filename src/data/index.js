@@ -3,7 +3,7 @@ const boardData = require('./boards');
 const listData = require('./lists');
 // const cardData = require('./cards');
 // const labelData = require('./labels');
-// const commentData = require('./comments');
+const commentData = require('./comments');
 
 /**
  * Un-comment the data above and add to exports below to work on that data.
@@ -12,5 +12,6 @@ const listData = require('./lists');
 module.exports = {
   users: userData,
   boards: boardData,
-  lists: listData
+  lists: listData,
+  comments: commentData
 };
