@@ -139,3 +139,24 @@ function checkArrayOfLabels(labelArr){
     }
     return true
 }
+
+module.exports = {
+    checkObjectId,
+    checkString,
+    checkBoolean,
+    checkNonEmptyString,
+    checkNumber,
+    checkPositiveNumber,
+    checkNegativeNumber,
+    checkStoryPoint,
+    checkEmail,
+    checkFirstName,
+    checkLastName,
+    checkColor,
+    checkArrayObjectId,
+    checkDate,
+    checkTime,
+    checkDueDate,
+    checkLabel,
+    checkArrayOfLabels
+}
