@@ -28,7 +28,24 @@ module.exports = {
      return user;
   },
 
-  /** Don't need a readAll for users? */
+  /**
+   * Get a user with a specific email.
+   * @param {String} email The user's email.
+   * @returns A user.
+   */
+   readByEmail: async (email) => {
+    if(!email || !error_handler.checkEmail(email))
+      throw new Error("email is not valid.");
+
+     const userCollection = await users();
+     const user = await userCollection.findOne({email: email});
+     if(user === null)
+       throw new Error("There is no user with that email.");
+ 
+     user['_id'] = user['_id'].toString();
+ 
+     return user;
+  },
 
   /**
    * Adds a new user. Picks a random color from pre-approved values, hashes the password, and starts the list of boards as empty.
@@ -63,12 +80,18 @@ module.exports = {
     };
     newUser.boards = [];
 
-    const userCollection = await users();
-    const insertInfo = await userCollection.insertOne(newUser);
-    if(insertInfo.insertedCount === 0)
-      throw new Error("Could not add user.");
+    try {
+      await module.exports.readByEmail(email);
+    } catch(e){
+      const userCollection = await users();
+      const insertInfo = await userCollection.insertOne(newUser);
+      if(insertInfo.insertedCount === 0)
+        throw new Error("Could not add user.");
 
-    return await module.exports.readByID(insertInfo.insertedId.toString());
+      return await module.exports.readByID(insertInfo.insertedId.toString());
+    }
+
+    throw new Error("Email is already attached to a user.");
   },
 
   /**
