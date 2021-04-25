@@ -165,5 +165,46 @@ module.exports = {
        throw new Error(`Could not delete user with id of ${id}`);
  
      return { userId: id, deleted: true };
+  },
+  /**
+   * Remove the user from the board completely.
+   * @param {String} userId The user's id.
+   * @param {String} boardId The board's id.
+   * @returns A success object.
+   */
+   remove: async (userId, boardId) => {
+    if(!id || !error_handler.checkObjectId(id))
+      throw new Error("id is not valid.");
+
+    const userCollection = await users();
+    const user = await module.exports.readByID(id);
+
+    // Remove the user ID from each board and it's subdocuments (when applicable)
+    const user_boards = user['boards'];
+    const boardCollection = await boards();
+
+    const curr_board = await boardCollection.findOne({_id: ObjectId(boardId)});
+    if(curr_board === null)
+      continue;
+
+    if(curr_board.members.length === 1) { // last member
+      await boardCollection.deleteOne({ _id: ObjectId(boardId) });
+      continue;
+    } 
+    
+    // Remove user's comments
+    await boardCollection.updateMany({_id: ObjectId(boardId)},
+      { $pull: { "cards.$[].comments": { 'user': id } } });
+
+    // Remove user's assignments
+    await boardCollection.updateMany({_id: ObjectId(boardId)},
+      { $pull: { "cards.$[].assigned": id } });
+
+    if(curr_board.members.length > 1) { // don't delete board
+      await boardCollection.updateOne({ _id: ObjectId(boardId) },
+        { $pull: { members: userId } });
+    }
+ 
+     return { userId: id, removed: true };
   }
 };
