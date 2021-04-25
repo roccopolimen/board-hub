@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "seed": "node tasks/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,9 +19,10 @@
   },
   "homepage": "https://github.com/roccopolimen/board-hub#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.0",
     "mongodb": "3.6.3",
-    "xdate": "^0.8.2"
+    "xss": "^1.0.8"
   }
 }
