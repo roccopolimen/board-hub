@@ -84,6 +84,7 @@ router.post('/login', async (req, res) => {
 router.post('/delete', async (req, res) => {
   try {
     await userData.delete(req.session._id);
+    req.session.destroy();
   } catch (e) {
     res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
   }
