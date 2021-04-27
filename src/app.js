@@ -60,13 +60,17 @@ app.use('*', (req, res, next) => {
   if(req.session.user) loggedin = true;
   //Logs some useful stuff to the console, can be commented out
   console.log(`[${date}]: ${reqmethod} ${reqroute} | Authorized: ${loggedin}`);
-  //if you're logged in, proceed to whatever page you were trying to access
-  if(loggedIn) {
-    next();
-  }
-  //if you aren't logged in, you're redirected to the home page, never even hitting the page you were trying to hit
+  //Checks if you're going to the home page, or submitting the login/signup form, and skips if so
+  if(req.originalUrl == "/" || req.originalUrl == "/login" || req.originalUrl == "/signup") next();
   else {
-    res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
+    //if you're logged in, proceed to whatever page you were trying to access
+    if(loggedin) {
+      next();
+    }
+    //if you aren't logged in, you're redirected to the home page, never even hitting the page you were trying to hit
+    else {
+      res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
+    }
   }
 });
 
