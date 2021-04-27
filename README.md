@@ -99,4 +99,4 @@ We want a minimum of **2** people to review a code feature. things to look for:
 
 After leaving comments, go into Slack and alert the initial contributor (via messaging **in the thread** where they initially announced they made a pull request).
 
-After the contributor and both reviewers have reached consensus, one must click the 'Merge pull request' button and move the trello card for that feature into 'Merged'.
+After the contributor and both reviewers have reached consensus, one must click the 'Merge pull request' button and move the trello card for that feature into 'Merged'. Test
