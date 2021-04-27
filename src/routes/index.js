@@ -1,19 +1,21 @@
 // TODO: uncomment when route is added.
 
-// const userRoutes = require('./user');
+const userRoutes = require('./users');
 // const boardRoutes = require('./board');
-// const boardsRoutes = require('./boards');
-// const homeRoutes = require('./home');
+
+const boardsRoutes = require('./boards');
+const homeRoutes = require('./home');
+
 
 const path = require('path');
 
 const constructorMethod = (app) => {
     // TODO: uncomment when route is added.
 
-    // app.use('/user', userRoutes);
+    app.use('/user', userRoutes);
     // app.use('/board', boardRoutes);
-    // app.use('/boards', boardsRoutes);
-    // app.use('/', homeRoutes);
+    app.use('/boards', boardsRoutes);
+    app.use('/', homeRoutes);
 
 
     // catch all bad URLs and provide a 404.
