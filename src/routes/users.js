@@ -31,7 +31,9 @@ router.post('/signup', async (req, res) => {
     if(!password || !error_handler.checkNonEmptyString(password))
       throw new Error("Password is not valid.");
 
-    req.session.user = await userData.create(email, firstName, lastName, password);
+    let user = await userData.create(email, firstName, lastName, password);
+    user.hashedPassword = null;
+    req.session.user = user;
   } catch (e) {
     res.render('error-page', { title: "Invalid Sign-Up", error: true, message: "Sign-Up could not be completed." });
     return;
@@ -71,6 +73,7 @@ router.post('/login', async (req, res) => {
       res.status(401).render('error-page', { title: "401 Invalid Log-In", error: true });
       return;
     }
+    user.hashedPassword = null;
     req.session.user = user;
     res.redirect('/boards');
   }catch(e){
