@@ -13,6 +13,18 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/signout', (req, res) => {
+  try {
+    //destroy cookie
+    req.session.destroy();
+    //go to homepage
+    res.redirect('/');
+    return;
+  } catch (e) {
+    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+  }
+});
+
 router.post('/signup', async (req, res) => {
   const email = xss(req.body.email);
   const firstName = xss(req.body.firstName);
@@ -31,7 +43,9 @@ router.post('/signup', async (req, res) => {
     if(!password || !error_handler.checkNonEmptyString(password))
       throw new Error("Password is not valid.");
 
-    req.session.user = await userData.create(email, firstName, lastName, password);
+    let user = await userData.create(email, firstName, lastName, password);
+    user.hashedPassword = null;
+    req.session.user = user;
   } catch (e) {
     res.render('error-page', { title: "Invalid Sign-Up", error: true, message: "Sign-Up could not be completed." });
     return;
@@ -71,6 +85,7 @@ router.post('/login', async (req, res) => {
       res.status(401).render('error-page', { title: "401 Invalid Log-In", error: true });
       return;
     }
+    user.hashedPassword = null;
     req.session.user = user;
     res.redirect('/boards');
   }catch(e){
@@ -81,6 +96,7 @@ router.post('/login', async (req, res) => {
 router.post('/delete', async (req, res) => {
   try {
     await userData.delete(req.session._id);
+    req.session.destroy();
   } catch (e) {
     res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
   }
