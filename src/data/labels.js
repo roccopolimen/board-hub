@@ -1,6 +1,7 @@
 const mongoCollections = require('../config/mongoCollections');
 const boards = mongoCollections.boards;
 const cards = require('./cards');
+const {label_colors} = require('../public/constants/index');
 const {ObjectId} = require('mongodb');
 const error_handler = require('../errors/error-handler'); 
 
@@ -198,7 +199,7 @@ const exportedModules = {
      * @param {string} color The label's color hex code.
      * @returns A label object.
      */
-    async addLabel(boardId, cardId, text, color){
+    async addLabel(boardId, cardId, text){
         if(!boardId || !error_handler.checkObjectId(boardId)){
             throw new Error('boardId is not valid.');
         }
@@ -208,11 +209,9 @@ const exportedModules = {
         if(!text || !error_handler.checkNonEmptyString(text)){
             throw new Error('Text must not be empty.');
         }
-        if(!color || !error_handler.checkColor(color)){
-            throw new Error('Color must be a valid hex code.');
-        }
 
         let newBoardId = ObjectId(boardId);
+        const labelColor = label_colors[Math.floor(Math.random() * label_colors.length)];
         const boardCollection = await boards();
 
         const card = await getCardById(boardId, cardId);
@@ -220,7 +219,7 @@ const exportedModules = {
         const label = {
             _id: new ObjectId(), 
             text: text,
-            color: color
+            color: labelColor
         };
 
         card.labels.push(label);
