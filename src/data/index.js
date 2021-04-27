@@ -1,6 +1,6 @@
 const userData = require('./users');
 const boardData = require('./boards');
-// const listData = require('./lists');
+const listData = require('./lists');
 // const cardData = require('./cards');
 // const labelData = require('./labels');
 const commentData = require('./comments');
@@ -12,5 +12,6 @@ const commentData = require('./comments');
 module.exports = {
   users: userData,
   boards: boardData,
+  lists: listData,
   comments: commentData
 };
