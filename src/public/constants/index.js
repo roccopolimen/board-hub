@@ -25,7 +25,12 @@ user_colors = ['#aa47bc', '#7a1fa2', '#78909c', '#465a65',
                '#bf360c'];
 
 
+label_colors = ['#61bd4f', '#f2d600', '#ff9f1a', '#eb5a46', 
+                '#c377e0', '#0079bf', '#00c2e0', '#51e898',
+                '#ff78cb', '#344563'];
+
 module.exports = {
   colors: colors,
-  user_colors: user_colors
+  user_colors: user_colors,
+  label_colors: label_colors
 };
