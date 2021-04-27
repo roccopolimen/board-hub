@@ -66,8 +66,7 @@ app.use('*', (req, res, next) => {
   }
   //if you aren't logged in, you're redirected to the home page, never even hitting the page you were trying to hit
   else {
-    res.redirect('/');
-    return;
+    res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
   }
 });
 

@@ -13,6 +13,18 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/signout', (req, res) => {
+  try {
+    //destroy cookie
+    req.session.destroy();
+    //go to homepage
+    res.redirect('/');
+    return;
+  } catch (e) {
+    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+  }
+});
+
 router.post('/signup', async (req, res) => {
   const email = xss(req.body.email);
   const firstName = xss(req.body.firstName);
