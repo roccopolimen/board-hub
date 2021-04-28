@@ -192,11 +192,11 @@ module.exports = {
 
     const curr_board = await boardCollection.findOne({_id: ObjectId(boardId)});
     if(curr_board === null)
-      continue;
+      throw new Error("No board with that id.");
 
     if(curr_board.members.length === 1) { // last member
       await boardCollection.deleteOne({ _id: ObjectId(boardId) });
-      continue;
+      return { userId: id, removed: true };
     } 
     
     // Remove user's comments
