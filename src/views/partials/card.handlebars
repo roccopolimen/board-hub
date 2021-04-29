@@ -1,0 +1,51 @@
+{{#each card}}
+<div class="card-modal" hidden>
+    <form id="updateCard">
+        <h1>{{name}}</h1>
+        <h2>Members</h2>
+        {{#each members}}
+        {{#if assigned}}
+        <h3 class="assigned">{{initials}}</h3>
+        {{else}}
+        <h3 class="unassigned">{{initials}}</h3>
+        {{/if}}
+        {{/each}}
+        <h2>Labels</h2>
+        {{#each labels}}
+        <h3 style="background-color: {{color}}">{{text}}</h3>
+        {{/each}}
+        <h2>Description</h2>
+        <textarea id="description" name="description">{{description}}</textarea>
+        <h2>Move Card</h2>
+        <label>
+            To List
+            <select id="toList">
+                {{#each list}}
+                <option value="{{name}}">{{name}}</option>
+                {{/each}}
+            </select>
+        </label>
+        <label>
+            Position
+            <select id="position">
+                {{#each position}}
+                <option value="{{position}}">{{position}}</option>
+                {{/each}}
+            </select>
+        </label>
+        <label>
+            Due Date
+            <input type="date" id="dueDate" value="{{dueDate.date}}">
+        </label>
+        <button type="submit">Save Card</button>
+        <button id="deleteCard">Delete Card</button>
+    </form>
+    
+    <div class="comment">
+        <h2>Comments</h2>
+        {{#each comments}}
+        <h3>{{user.initials}}</h3>
+        <p class="comment">{{comment}}</p>
+        {{/each}}
+    </div>
+</div>
