@@ -16,7 +16,16 @@
                     <div class="container">
                         <label for="signup" class="close-btn"></label>
                         <div class="text">Sign Up</div>
-                        <form action="/singup" method="POST">
+                        <p id="signup-error" hidden>Invalid Credentials</p>
+                        <form action="/signup" method="POST" id="signup-form">
+                            <div class="data">
+                                <label for="firstName">First Name</label>
+                                <input id="firstName" type="text" required>
+                            </div>
+                            <div class="data">
+                                <label for="lastName">Last Name</label>
+                                <input id="lastName" type="text" required>
+                            </div>
                             <div class="data">
                                 <label for="signEmail">Email</label>
                                 <input id="signEmail" type="text" required>
@@ -48,7 +57,8 @@
                     <div class="container">
                         <label for="login" class="close-btn"></label>
                         <div class="text">Login</div>
-                        <form action="/login" method="POST">
+                        <p id="login-error" hidden>Invalid Credentials</p>
+                        <form action="/login" method="POST" id="login-form">
                             <div class="data">
                                 <label for="email">Email</label>
                                 <input id="email" type="text" required>
@@ -83,5 +93,8 @@
             </div>
             <img src="../public/images/Example List.png" alt="Example Pic">
         </main>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+        <script src="/public/js/home-page.js"></script>
     </body>
 </html>
