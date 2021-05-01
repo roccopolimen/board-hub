@@ -1,6 +1,7 @@
 {{#each card}}
 <div class="card-modal" hidden>
-    <form id="updateCard">
+    <button class="close-button" id="closeModal">Close Modal</button>
+    <form id="updateCard" action="/board/card/{{boardId}}/{{_id}}" method="POST">
         <h1>{{name}}</h1>
         <h2>Members</h2>
         {{#each members}}
