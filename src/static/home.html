@@ -5,77 +5,81 @@
         <meta charset="utf-8">
         <title>Board Hub</title>
     </head>
-    <body>
-        <img src="../public/images/logo/board_hub.PNG" alt="Board Hub">
-        <main>
-            <p>
-                Board Hub is your new go-to tool for all your work needs! 
-                Whether individually or with a team, Board Hub will help you organize 
-                and plan work more efficiently to get straight to the fun. 
-                Here at Board Hub, we combine work with fun!
-            </p>
+    <body class="home-body">
+        <div class="home_head">
+            <img class="logo-home" src="../public/images/logo/board_hub.PNG" alt="Board Hub">
+            <div class="home-buttons">
+                <!-- HTML for signup button/modal -->
+                <div class="sign-head">
+                    <input type="checkbox" id="signup">
+                    <label for="signup" class="signup-btn">Sign Up</label>
+                    <div class="container">
+                        <label for="signup" class="close-btn"></label>
+                        <div class="text">Sign Up</div>
+                        <form action="/singup" method="POST">
+                            <div class="data">
+                                <label for="signEmail">Email</label>
+                                <input id="signEmail" type="text" required>
+                            </div>
+                            <div class="data">
+                                <label for="verEmail">Verify Email</label>
+                                <input id="verEmail" type="text" required>
+                            </div>
+                            <div class="data">
+                                <label for="signPassword">Password</label>
+                                <input id="signPassword" type="password" required>
+                            </div>
+                            <div class="data">
+                                <label for="verPassword">Re-enter Password</label>
+                                <input id="verPassword" type="password" required>
+                            </div>
+                            <div class="btn">
+                                <div class="inner"></div>
+                                <button type="submit">Sign Up!</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-            <!-- HTML for login button/modal -->
-            <div class="center">
-                <input type="checkbox" id="login">
-                <label for="login" class="login-btn">Login</label>
-                <div class="container">
-                    <label for="login" class="close-btn"></label>
-                    <div class="text">Login</div>
-                    <form action="/login" method="POST">
-                        <div class="data">
-                            <label for="email">Email</label>
-                            <input id="email" type="text" required>
-                        </div>
-                        <div class="data">
-                            <label for="password">Password</label>
-                            <input id="password" type="password" required>
-                        </div>
-                        <div class="forgot-pass"><a href="#">Forgot Password?</a></div>
-                        <div class="btn">
-                            <div class="inner"></div>
-                            <button type="submit">login</button>
-                        </div>
-                        <div class="signup-link">Not a member? <a href="/signup">Signup now</a></div>
-                    </form>
+                <!-- HTML for login button/modal -->
+                <div class="login-head">
+                    <input type="checkbox" id="login">
+                    <label for="login" class="login-btn">Login</label>
+                    <div class="container">
+                        <label for="login" class="close-btn"></label>
+                        <div class="text">Login</div>
+                        <form action="/login" method="POST">
+                            <div class="data">
+                                <label for="email">Email</label>
+                                <input id="email" type="text" required>
+                            </div>
+                            <div class="data">
+                                <label for="password">Password</label>
+                                <input id="password" type="password" required>
+                            </div>
+                            <div class="forgot-pass"><a href="#">Forgot Password?</a></div>
+                            <div class="btn">
+                                <div class="inner"></div>
+                                <button type="submit">Login</button>
+                            </div>
+                            <div class="signup-link">Not a member? <a href="/signup">Signup now</a></div>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-            <!-- HTML for signup button/modal -->
-            <div class="center">
-                <input type="checkbox" id="signup">
-                <label for="signup" class="signup-btn">Sign Up</label>
-                <div class="container">
-                    <label for="signup" class="close-btn"></label>
-                    <div class="text">Sign Up</div>
-                    <form action="/singup" method="POST">
-                        <div class="data">
-                            <label for="signEmail">Email</label>
-                            <input id="signEmail" type="text" required>
-                        </div>
-                        <div class="data">
-                            <label for="verEmail">Verify Email</label>
-                            <input id="verEmail" type="text" required>
-                        </div>
-                        <div class="data">
-                            <label for="signPassword">Password</label>
-                            <input id="signPassword" type="password" required>
-                        </div>
-                        <div class="data">
-                            <label for="verPassword">Re-enter Password</label>
-                            <input id="verPassword" type="password" required>
-                        </div>
-                        <div class="btn">
-                            <div class="inner"></div>
-                            <button type="submit">Sign Up!</button>
-                        </div>
-                    </form>
+        </div>
+        <main class="home-main"> 
+            <div class="main-left">
+                <p class="intro-txt">
+                    Board Hub is your new go-to tool for all your work needs! 
+                    Whether individually or with a team, Board Hub will help you organize 
+                    and plan work more efficiently to get straight to the fun. 
+                    Here at Board Hub, we combine work with fun!
+                </p>
+                <!-- Sign up with Email button also opens up signup modal above -->
+                <div class="signup-main">
+                    <label for="signup" class="signup-btn">Sign up with your email for free!</label>
                 </div>
-            </div>
-
-            <!-- Sign up with Email button also opens up signup modal above -->
-            <div>
-                <label for="signup" class="signup-btn">Sign Up with Email!</label>
             </div>
             <img src="../public/images/Example List.png" alt="Example Pic">
         </main>
