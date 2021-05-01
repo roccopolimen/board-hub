@@ -34,7 +34,7 @@ const exportedModules = {
      * @param {string} cardId The card's id.
      * @returns A card object
      */
-    async getCardById(boardId, cardId){
+    async readById(boardId, cardId){
         if(!boardId || !error_handler.checkObjectId(boardId)){
             throw new Error('boardId is not valid');
         }
@@ -80,8 +80,6 @@ const exportedModules = {
             throw new Error('cardName must not be empty');
         }
 
-        let newBoardId = ObjectId(boardId);
-        let newListId = ObjectId(listId);
         const boardCollection = await boards();
 
         //storyPoints and dueDate can be added via update, but are not created with a new card
@@ -92,25 +90,17 @@ const exportedModules = {
             labels: [],
             comments: [],
             assigned: [],
-            list: listId
+            list: ObjectId(listId)
         };
 
-        //Try these if doesnt add the cardId to the cardIds array in Lists
-        //boardCollection.updateOne({_id: newBoardId}, {$push: {lists: {_id: newListId, newCard,_id}}});
-        //boardCollection.updateOne({_id: newBoardId}, {$set: {lists: {_id: newListId, $push: {cardIds: newCard._id}}}});
-        const updateList = boardCollection.updateOne({_id: newBoardId}, {$push: {"lists.$[listId].cardIds": newCard._id}}, {arrayFilters: [{"listId": newListId}]});
-        if (!updateList.matchedCount && !updateList.modifiedCount){
+        const updateList = await boardCollection.updateOne({_id: ObjectId(boardId), "lists._id": ObjectId(listId)}, 
+                                                            { $addToSet: {"lists.$.cardIds": newCard._id}});
+        if (!updateList.matchedCount && !updateList.modifiedCount)
             throw new Error('Could not update the list.');
-        }
-        const updateInfo = await boardCollection.updateOne({_id: newBoardId}, { $push: { cards: newCard}});
 
-        if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
+        const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId)}, { $addToSet: { cards: newCard}});
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
             throw new Error('Could not add the card.');
-        }
-
-        const card = await getCardById(boardId, newCard._id)
-        return card;
-
     },
 
     /**
@@ -125,86 +115,115 @@ const exportedModules = {
      * @param {string} time The time of dueDate.
      * @param {boolean} done The done of dueDate.
      * @param {Array} assigned The array of assigned users to the card.
-     * @returns The updated card.
+     * @returns nothing if successful. Throws error otherwise.
      */
     async updateCard(boardId, cardId, listId, cardName, storyPoints, description, date, time, done, assigned){
         
-        let updatedCardData = {};
-        if(!boardId || !error_handler.checkObjectId(boardId)){
+        let somethingToUpdate = false;
+
+        if(!boardId || !error_handler.checkObjectId(boardId)) {
             throw new Error('boardId is not valid.');
         }
-        if(!cardId || !error_handler.checkObjectId(cardId)){
+        if(!cardId || !error_handler.checkObjectId(cardId)) {
             throw new Error('cardId is not valid.');
         }
-        if(listId){
-            if(!error_handler.checkObjectId(listId)){
+
+        let updatedCardData = await this.readById(boardId, cardId);
+        updatedCardData._id = ObjectId(updatedCardData._id);
+
+        if(listId) {
+            if(!error_handler.checkObjectId(listId)) {
                 throw new Error('listId is not valid.');
             }
-            else{
-                updatedCardData.list = listId;
+            else {
+                updatedCardData.list = ObjectId(listId);
+                somethingToUpdate = true;
             }   
         }
-        if(cardName){
-            if(!error_handler.checkNonEmptyString(cardName)){
+        if(cardName) {
+            if(!error_handler.checkNonEmptyString(cardName)) {
                 throw new Error('cardName must not be empty.');
             }
-            else{
+            else {
                 updatedCardData.cardName = cardName;
+                somethingToUpdate = true;
             }
         }
-        if(storyPoints){
-            if(!error_handler.checkStoryPoint(storyPoints)){
+        if(storyPoints !== undefined) {
+            if(storyPoints === null) {
+                console.log('sldakjflsdkahfdslkhf');
+                delete updatedCardData.storyPoints;
+                somethingToUpdate = true;
+            }
+            else if(!error_handler.checkStoryPoint(storyPoints)) {
                 throw new Error('storyPoints is not valid.');
             }
-            else{
+            else {
                 updatedCardData.storyPoints = storyPoints;
+                somethingToUpdate = true;
             }
         }
-        if(description){
-            if(!error_handler.checkNonEmptyString(description)){
-                throw new Error('description must not be empty.');
+        if(description !== undefined) {
+            if(!error_handler.checkString(description)) {
+                throw new Error('description must be a string.');
             }
-            else{
+            else {
                 updatedCardData.description = description;
+                somethingToUpdate = true;
             }
         }
-        if(date && time){
-            if(!error_handler.checkDate(date) || !error_handler.checkTime(time)){
-                throw new Error('Must have a valid date and time.');
+        let newDueDate = {};
+        if(date || time || done !== undefined) {
+            if(date) {
+                if(!error_handler.checkDate(date)) {
+                    throw new Error('Must have a valid date.');
+                } else {
+                    newDueDate.date = date;
+                    somethingToUpdate = true;
+                }
+            } else {
+                newDueDate.date = updatedCardData.dueDate.date.split('*')[0];
             }
-            if(done){
-                if(!error_handler.checkBoolean(done)){
+            if(time) {
+                if(!error_handler.checkTime(time)) {
+                    throw new Error('Must have a valid time.')
+                } else {
+                    newDueDate.date = `${newDueDate.date}*${time}`;
+                    somethingToUpdate = true;
+                }
+            } else {
+                newDueDate.date = `${newDueDate.date}*${updatedCardData.dueDate.date.split('*')[1]}`;
+            }
+            if(done !== undefined) {
+                if(!error_handler.checkBoolean(done)) {
                     throw new Error('Done must be a valid boolean.');
                 }
-                let dueDate = {date: `${date}*${time}`, done: done}
-                updatedCardData.dueDate = dueDate;
+                newDueDate.done = done;
+                somethingToUpdate = true;
             }
-            else{
-                let dueDate = {date: `${date}*${time}`, done: false}
-                updatedCardData.dueDate = dueDate;
-            }
+            updatedCardData.dueDate = newDueDate;
         }
-        if(assigned){
-            if(!error_handler.checkArrayObjectId(assigned)){
+        if(assigned) {
+            if(!error_handler.checkArrayObjectId(assigned)) {
                 throw new Error('Assigned must be an array of valid ObjectId\'s');
             }
-            else{
+            else {
                 updatedCardData.assigned = assigned;
+                somethingToUpdate = true;
             }
         }
 
-        let newBoardId = ObjectId(boardId);
-        const boardCollection = await boards();
+        if(!somethingToUpdate)
+            return;
 
-        //const updateInfo = await boardCollection.updateOne({_id: newBoardId}, { $set: {cards: updatedCardData}});
-        const updateInfo = await boardCollection.updateOne({_id: newBoardId}, { $set: {"cards.cardId": updatedCardData}});
+        const boardCollection = await boards();
+        const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId), "cards._id": ObjectId(cardId)}, 
+                                                            { $set: {"cards.$": updatedCardData}});
 
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
             throw new Error('Could not update the card.');
         }
-        
-        const card = await this.getCardById(boardId, cardId);
-        return card;
+
     },
     /**
      * Delete a card from a board.
@@ -229,17 +248,17 @@ const exportedModules = {
         const newCardId = ObjectId(cardId);
         const newListId = ObjectId(listId);
 
-        const updateList = boardCollection.updateOne({_id: newBoardId}, {$pull: {"lists.$[listId].cardIds": newCardId}}, {arrayFilters: [{"listId": newListId}]});
+        const updateList = await boardCollection.updateOne({ _id: ObjectId(boardId), "lists._id": ObjectId(listId) }, 
+                                                                        { $pull: {"lists.$.cardIds": ObjectId(cardId) }});
         if (!updateList.matchedCount && !updateList.modifiedCount){
             throw new Error('Could not update the list.');
         }
 
-        const updateInfo = await boardCollection.updateOne({_id: newBoardId }, { $pull: { cards: { _id: newCardId}}});
+        const updateInfo = await boardCollection.updateOne({ _id: ObjectId(boardId) }, 
+                                                            { $pull: {"cards": ObjectId(cardId) }});
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
             throw new Error('Could not delete the card.');
         }
-
-        return {cardId: cardId, deleted: true}; 
     },
 }
 
