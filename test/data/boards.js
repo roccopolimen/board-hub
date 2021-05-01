@@ -89,7 +89,7 @@ module.exports = {
 
         const boardColor = colors[Math.floor(Math.random() * colors.length)];
         const description = "";
-        const members = [userId];
+        const members = [ObjectId(userId)];
         const lists = [];
         const cards = [];
 
@@ -109,8 +109,8 @@ module.exports = {
 
         // Add board id to user's boards    
         const userCollection = await users();
-        const updatedInfo = await userCollection.updateOne({ _id: ObjectId(id) },
-            { $push: {boards: insertInfo.insertedId.toString()} });
+        const updatedInfo = await userCollection.updateOne({ _id: ObjectId(userId) },
+            { $addToSet: {boards: insertInfo.insertedId} });
         if (updatedInfo.modifiedCount === 0)
             throw new Error("Could not update user password successfully.");
 
