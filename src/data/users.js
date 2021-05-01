@@ -148,15 +148,15 @@ module.exports = {
             
             // Remove user's comments
             await boardCollection.updateMany({},
-                { $pull: { "cards.$[].comments": { 'user': id } } });
+                { $pull: { "cards.$[].comments": { 'user': ObjectId(id) } } });
 
             // Remove user's assignments
             await boardCollection.updateMany({},
-                { $pull: { "cards.$[].assigned": id } });
+                { $pull: { "cards.$[].assigned": ObjectId(id) } });
 
             if(curr_board.members.length > 1) { // don't delete board
                 await boardCollection.updateOne({ _id: ObjectId(board) },
-                 { $pull: { members: id } });
+                 { $pull: { members: ObjectId(id) } });
             }
          }
  
