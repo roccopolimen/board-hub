@@ -6,14 +6,12 @@
     <link rel="stylesheet" href="/public/css/site.css">
 </head>
 <body>
-    <!-- I'm tentatively putting login/signup as links, as I'm not sure if they're going to open modals or render a new page -->
-    <!-- The classes are to show/hide the login/signup button if you aren't on the homepage -->
     <nav>
-        <ul>
-            <li><a href="/"><img src="/public/images/logo/board_hub.PNG"></a></li>
+        <ul id="nav-list">
+            <li><a href="/"><img id="nav-logo" src="/public/images/logo/board_hub.PNG"></a></li>
             {{#if error}}
             {{else}}
-                <li><a href="/user"><img src="/public/images/icons/pfp.PNG"></a></li>
+                <li id="nav-pfp-li"><a href="/user" id="nav-pfp" style="background-color: {{user.color}};">{{user.initials}}</a></li>
             {{/if}}            
         </ul>
     </nav>
