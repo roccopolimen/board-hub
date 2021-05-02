@@ -1,0 +1,25 @@
+<div id="listSettingsModal" class="modal">
+    <!-- Exit button (needs css) -->
+    <label for="Close List settings" class="close-btn">X</label>
+    
+    <!-- Form for changing the list -->
+    <form action="/list" method="POST">
+        <div class="listNameDiv">
+            <label for="List Name">Name: </label>
+            <input id="listName" type="text" placeholder="list name" value="{{list.listName}}"/>
+        </div>
+        <div class="positionValueDiv">
+            <label for="Position">Position: </label>
+            <input id="positionValue" type="number" placeholder="position" value="{{list.position}}" min="1" max="{{positions.length}}"/>
+        </div>
+        <div class="submitButtonDiv">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    <!--Form for deleting the list -->
+    <form action="/list" method="POST">
+        <div class="deleteButtonDiv">
+            <button type="submit">Delete List</button>
+        </div>
+    </form>
+</div>
