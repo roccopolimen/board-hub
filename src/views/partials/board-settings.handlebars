@@ -1,0 +1,57 @@
+
+<!-- Css for dropdown menu on w3schools -->
+<div class="dropdown">
+    <button class="dropbtn">Settings</button>
+    <div class="dropdown-content">
+      <a href="#" class="btn btn-link">Board Settings</a>
+      <a href="#" class="btn btn-link">Invite</a>
+    </div>
+</div> 
+
+
+<div id="boardSettingsModal" class="modal">
+    <!-- Exit button (needs css) -->
+    <label for="Close Board Settings" class="close-btn">X</label>
+    
+    <!-- Form for changing the board settings -->
+    <form action="/board" method="POST">
+        <div class="boardNameDiv">
+            <label for="Board Name">Name: </label>
+            <input id="boardName" type="text" placeholder="board name" value="{{board.boardName}}"/>
+        </div>
+        <div class="colorDiv">
+            <label for="Board Color">Color: </label>
+            <input id="positionValue" type="text" placeholder="color" value="{{board.color}}"/>
+        </div>
+        <div class="descriptionDiv">
+            <label for="Board Description">Description: </label>
+            <input id="positionValue" type="text" placeholder="description" value="{{board.description}}"/>
+        </div>
+        <div class="submitButtonDiv">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    <!-- form for deleting a board -->
+    <form action="/board" method="POST">
+        <div class="deleteButtonDiv">
+            <button type="submit">Delete Board</button>
+        </div>
+    </form>
+</div>
+
+<div id="inviteModal" class="modal">
+    <!-- Exit button (needs css) -->
+    <label for="Close Invite" class="close-btn">X</label>
+    
+    <!-- Form for inviting people to the board -->
+    <form action="/board" method="POST">
+        <div class="emailDiv">
+            <label for="Invite via Email">Email: </label>
+            <input id="inviteEmail" type="text" placeholder="Email" value=""/>
+        </div>
+        <div class="submitButtonDiv">
+            <button type="submit">Invite</button>
+        </div>
+    </form>
+</div>
+
