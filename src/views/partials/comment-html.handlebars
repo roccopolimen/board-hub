@@ -1,0 +1,12 @@
+<h2>Comments</h2>
+{{#each comments}}
+<h3>{{user.initials}}</h3>
+<p class="comment">{{comment}}</p>
+{{/each}}
+<form id="comment-form" action="/boards/card/comments/{{boardId}}/{{cardId}}" method="PUT">
+     <label>
+        Comment
+        <input type="text" name="comment" class="comment-box"/>
+    </label>
+    <button type="submit">Send</button>
+</form>
