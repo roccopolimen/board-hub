@@ -1,0 +1,17 @@
+{{!-- Links to the board's page --}}
+<div id="boards">
+    {{#each boards}}
+        <div class="board-link" style="background-color: {{board.boardColor}};">
+            <a href="board/{{board._id}}">{{board.boardName}}</a>
+        </div>
+    {{/each}}
+</div>
+
+{{!-- Add a new board --}}
+<form action="/boards" method="POST">
+    <label>
+    Board Name
+    <input type="text" name="boardName" placeholder="Board Name..." class="search_box"/>
+    </label>
+    <button type="submit">Add Board</button>
+</form>
