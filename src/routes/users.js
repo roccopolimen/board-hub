@@ -6,100 +6,145 @@ const error_handler = require('../errors/error-handler');
 const bcrypt = require('bcryptjs');
 
 router.get('/', async (req, res) => {
-  try {
-    res.render('profile', { title: "User Profile", user: req.session.user });
-  } catch (e) {
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-  }
+    try {
+        res.render('profile', { title: "User Profile", user: req.session.user });
+    } catch (e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+    }
 });
 
 router.get('/signout', (req, res) => {
-  try {
-    //destroy cookie
-    req.session.destroy();
-    //go to homepage
-    res.redirect('/');
-    return;
-  } catch (e) {
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-  }
+    try {
+        //destroy cookie
+        req.session.destroy();
+        //go to homepage
+        res.redirect('/');
+        return;
+    } catch (e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+    }
 });
 
 router.post('/signup', async (req, res) => {
-  const email = xss(req.body.email);
-  const firstName = xss(req.body.firstName);
-  const lastName = xss(req.body.lastName);
-  const password = xss(req.body.password);
-  try {
-    if(!email || !error_handler.checkEmail(email))
-      throw new Error("Email is not valid.");
-      
-    if(!firstName || !error_handler.checkFirstName(firstName))
-      throw new Error("First name is not valid.");
 
-    if(!lastName || !error_handler.checkLastName(lastName))
-      throw new Error("Last name is not valid.");
+    if(req.session.user) {
+        res.status(403).render('error-page', { title: "403 Forbidden", message: 'user already logged in', error: true });
+        return;
+    }
 
-    if(!password || !error_handler.checkNonEmptyString(password))
-      throw new Error("Password is not valid.");
+    if(!req.body) {
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no request body provided', error: true });
+        return;
+    }
 
-    let user = await userData.create(email, firstName, lastName, password);
-    user.hashedPassword = null;
-    req.session.user = user;
-  } catch (e) {
-    res.render('error-page', { title: "Invalid Sign-Up", error: true, message: "Sign-Up could not be completed." });
-    return;
-  }
+    let email;
+    let firstName;
+    let lastName;
+    let password;
+    try {
+        if(!req.body.email || !req.body.firstName || !req.body.lastName || !req.body.password)
+            throw new Error("Not all fields provided");
 
-  try{
-    res.redirect('/boards');
-  }catch(e){
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-  }
+        email = xss(req.body.email.trim().toLowerCase());
+        firstName = xss(req.body.firstName.trim());
+        lastName = xss(req.body.lastName.trim());
+        password = xss(req.body.password.trim());
+
+        if(!error_handler.checkEmail(email))
+            throw new Error("Email is not valid.");
+        
+        if(!error_handler.checkFirstName(firstName))
+            throw new Error("First name is not valid.");
+
+        if(!error_handler.checkLastName(lastName))
+            throw new Error("Last name is not valid.");
+
+        if(!error_handler.checkNonEmptyString(password))
+            throw new Error("Password is not valid.");
+
+    } catch (e) {
+        res.status(400).render({ title: "400 Bad Request", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        let user = await userData.create(email, firstName, lastName, password);
+        user.hashedPassword = undefined;
+        user.name = `${user.firstName} ${user.lastName}`;
+        user.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+        req.session.user = user;
+    } catch(e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        res.redirect('/boards');
+    } catch(e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+    }
 });
 
 router.post('/login', async (req, res) => {
-  const email = xss(req.body.email);
-  const password = xss(req.body.password);
-  let user;
 
-  // Populate the user by email.
-  try {
-    if(!email || !error_handler.checkEmail(email))
-      throw new Error("Email is not valid.");
-    if(!password || !error_handler.checkNonEmptyString(password))
-      throw new Error("Password is not valid.");
-    
-    user = await userData.readByEmail(email);
-  } catch (e) {
-    res.status(401).render('error-page', { title: "401 Invalid Log-In", error: true });
-    return;
-  }
-
-  let matching = false;
-
-  // Compare the inputted password
-  try{
-    matching = await bcrypt.compare(password, user.hashedPassword);
-    if(!matching){
-      res.status(401).render('error-page', { title: "401 Invalid Log-In", error: true });
-      return;
+    if(req.session.user) {
+        res.status(403).render('error-page', { title: "403 Forbidden", message: 'user already logged in', error: true });
+        return;
     }
-    user.hashedPassword = null;
-    req.session.user = user;
-    res.redirect('/boards');
-  }catch(e){
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-  }
+
+    if(!req.body) {
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no request body provided', error: true });
+        return;
+    }
+
+    let email;
+    let password;
+    let user;
+
+    // Populate the user by email.
+    try {
+
+        if(!req.body.email || !req.body.password)
+            throw new Error("Not all fields provided.");
+
+        email = xss(req.body.email.trim().toLowerCase());
+        password = xss(req.body.password);
+
+        if(!email || !error_handler.checkEmail(email))
+            throw new Error("Email is not valid.");
+        if(!password || !error_handler.checkNonEmptyString(password))
+            throw new Error("Password is not valid.");
+            
+        user = await userData.readByEmail(email);
+    } catch (e) {
+        res.status(400).render('error-page', { title: "400 Bad Request", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        const matching = await bcrypt.compare(password, user.hashedPassword);
+        if(!matching) {
+            res.status(401).render('error-page', { title: '401 Unauthorized', message: 'Wrong Password', error: true });
+            return;
+        }
+        user.hashedPassword = undefined;
+        user.name = `${user.firstName} ${user.lastName}`;
+        user.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+        req.session.user = user;
+        res.redirect('/boards');
+    } catch(e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+    }
 });
 
 router.post('/delete', async (req, res) => {
-  try {
-    await userData.delete(req.session._id);
-    req.session.destroy();
-  } catch (e) {
-    res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-  }
+    try {
+        await userData.delete(req.session.user._id);
+        req.session.destroy();
+        res.redirect('/');
+    } catch (e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+    }
 });
 
 
