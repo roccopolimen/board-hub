@@ -182,6 +182,68 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// POST /board/{id}
+// adds a list to the board
+router.post('/:id', async (req, res) => {
+    const id = req.params.id;
+    if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
+        res.status(400).json({ error: "400 ID of Board not proper ID" });
+        return;
+    }
+
+    let boardInfo = {};
+    try {
+        boardInfo = await boardsData.readById(id);
+    } catch(e) {
+        res.status(404).json({ error: "404 Board not Found." });
+        return;
+    }
+
+    try {
+        let foundUser = false;
+        for(memberId of boardInfo.members) {
+            if(req.session.user._id === memberId.toString()) {
+                foundUser = true;
+                break;
+            }
+        }
+        if(!foundUser)
+            throw new Error("Not your board, therefore can not edit list.")
+    } catch(e) {
+        res.status(403).json({ error: e.toString() });
+        return;
+    }
+
+    const newData = req.body;
+    if(!newData) {
+        res.status(400).json('error-page', { error: 'no body provided.' });
+        return;
+    }
+
+    let listNameInfo = {};
+    if(xss(newData.listName)) {
+        if(checkNonEmptyString(xss(newData.listName))) {
+            listNameInfo.listName = xss(newData.listName);
+        } else {
+            res.status(400).json({ error: 'invalid listName' });
+            return;
+        }
+    }
+
+    if(Object.keys(listNameInfo).length !== 1) {
+        res.status(400).json({ error: 'no listName provided' });
+        return;
+    }
+
+    try {
+        const { listName } = listNameInfo;
+        await listsData.addList(listName, id);
+        res.redirect(`/board/${id}`);
+    } catch(e) {
+        res.status(500).json({ error: e.toString() });
+    }
+});
+
 // GET /board/card/{boardId}/{cardId}
 // modal focused on the selected card
 router.get('/card/:boardId/:cardId', async (req, res) => {
