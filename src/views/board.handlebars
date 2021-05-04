@@ -1,0 +1,56 @@
+<nav>
+    <ul>
+        <li>{{title}}</li>
+        <li>
+            <ul>
+                {{#each members}}
+                    <li><p>{{this.initials}}</p></li>
+                {{/each}}
+            </ul>
+        </li>
+        <li>
+            <button type="button">Download Calendar</button>
+        </li>
+        <li>
+            <button type="button">Board Settings</button>
+        </li>
+    </ul>
+</nav>
+<article>
+    <div>
+        {{#each board.data}}
+            <div class="list">
+                <div class="list-header">
+                    <p>{{this.listName}}</p>
+                    <button type="button">edit list</button>
+                </div><br>
+                <div class="list-body">
+                    {{#each this.cards}}
+                        <a class="card" href="/board/card/{{../../board._id}}/{{this._id}}">
+                            <div class="card-header">
+                                {{#each this.labels}}
+                                    <p style="background-color: {{this.color}};">{{this.text}}</p>
+                                {{/each}}
+                                <p>{{this.storyPoints}}</p>
+                            </div><br>
+                            <div class="card-body">
+                                <p>{{this.name}}</p>
+                            </div><br>
+                            <p>Due: {{this.dueDate.date}}</p>
+                        </a><br>
+                    {{/each}}
+                    <form id="new-card" method="POST" action="/board/{{../board._id}}/{{this._id}}">
+                        <label for="newCardNameInput">Card: </label>
+                        <input type="text" name="cardName" id="newCardNameInput">
+                        <button type="submit">add card</button>
+                    </form><br>
+                </div>
+            </div><br>
+        {{/each}}
+        <form id="new-list" method="POST" action="/board/{{board._id}}">
+            <label for="newListNameInput">List: </label>
+            <input type="text" name="listName" id="newListNameInput">
+            <button type="submit">add list</button>
+        </form><br>
+    </div>
+</article>

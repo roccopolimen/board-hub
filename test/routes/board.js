@@ -168,6 +168,12 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
+        const members = [];
+        for(let key in memberMap) {
+            let value = memberMap[key];
+            members.push({ name: value.name, initials: value.initials });
+        }
+
         const renderInfo = {
             _id: boardInfo._id.toString(),
             name: boardInfo.boardName,
@@ -176,7 +182,7 @@ router.get('/:id', async (req, res) => {
             data: listOfListsOfCards
         };
     
-        res.json({ title: boardInfo.boardName, board: renderInfo });
+        res.json({ title: boardInfo.boardName, board: renderInfo, members: members });
     } catch(e) {
         res.status(500).json({ error: e.toString() });
     }

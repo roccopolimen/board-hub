@@ -168,6 +168,12 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
+        const members = [];
+        for(let key in memberMap) {
+            let value = memberMap[key];
+            members.push({ name: value.name, initials: value.initials });
+        }
+
         const renderInfo = {
             _id: boardInfo._id.toString(),
             name: boardInfo.boardName,
@@ -176,7 +182,7 @@ router.get('/:id', async (req, res) => {
             data: listOfListsOfCards
         };
     
-        res.render('board', { title: boardInfo.boardName, board: renderInfo });
+        res.render('board', { title: boardInfo.boardName, board: renderInfo, members: members, user: req.session.user });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -261,7 +267,7 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -383,7 +389,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -559,7 +565,7 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -621,7 +627,7 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -722,7 +728,7 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -788,7 +794,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -966,7 +972,7 @@ router.post('/:boardId/:listId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -1170,7 +1176,7 @@ router.get('/list/:boardId/:listId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -1246,7 +1252,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -1329,7 +1335,7 @@ router.post('/delete/card/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
@@ -1384,7 +1390,7 @@ router.post('/delete/list/:boardId/:listId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(id);
+        boardInfo = await boardsData.readById(boardId);
     } catch(e) {
         res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
