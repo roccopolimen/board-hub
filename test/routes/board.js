@@ -369,6 +369,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
                 sP = parseInt(xss(newData.storyPoints));
         } catch(e) {
             res.status(400).json({ error: 'story points not a number' });
+            return;
         }
         if(sP !== oldCard.storyPoints) {
             if(checkStoryPoint(sP)) {

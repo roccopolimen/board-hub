@@ -139,7 +139,8 @@ router.post('/signout', (req, res) => {
 // attempts to delete user from database
 router.post('/delete', async (req, res) => {
     try {
-        await userData.delete(req.session.user_id);
+        await userData.delete(req.session.user._id);
+        res.json({ message: 'user deleted' });
     } catch (e) {
         res.status(500).json({ error: e.toString() });
     }
