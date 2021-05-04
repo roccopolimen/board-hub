@@ -23,6 +23,10 @@
     display: block;
 }
 
+#login-error {
+    color: red;
+}
+
 .signup-btn{
     background: orange;
     border-radius: 10px;

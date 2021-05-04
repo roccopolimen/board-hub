@@ -1,8 +1,8 @@
 {{!-- Links to the board's page --}}
 <div id="boards">
     {{#each boards}}
-        <div class="board-link" style="background-color: {{board.boardColor}};">
-            <a href="board/{{board._id}}">{{board.boardName}}</a>
+        <div class="board-link" style="background-color: {{this.boardColor}};">
+            <a href="board/{{this._id}}">{{this.boardName}}</a>
         </div>
     {{/each}}
 </div>
