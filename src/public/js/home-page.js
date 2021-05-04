@@ -9,7 +9,7 @@
         let email = $('#email').val();
         let password = $('#password').val();
         if(email && (email = email.trim()) !== '' &&
-         password && (password = password.trim()) !== '') { // input exists
+         password && password !== '') { // input exists
 
             let requestConfig = {
                 method: 'POST',
@@ -43,7 +43,7 @@
         if(firstName && (firstName = firstName.trim()) !== '' &&
             lastName && (lastName = lastName.trim()) !== '' &&
             email && (email = email.trim()) !== '' && email === re_email.trim() &&
-            password && (password = password.trim()) !== '' && password === re_password.trim()) { // input exists
+            password && password !== '' && password === re_password) { // input exists
 
             let requestConfig = {
                 method: 'POST',
