@@ -33,7 +33,12 @@
         let form = $("#updateCard");
         form.on("submit", (e) => {
             try {
-                //do error checking on inputs
+                let position = $('#position');
+                let toList = $('#toList');
+                let description = $('#description');
+                if(position == null || toList == null || description == null) throw new Error("Internal Variable Error");
+                if(position.val() == null || toList.val() == null) throw new Error("All inputs must have values.");
+                return true;
             } catch (error) {
                 e.preventDefault();
                 return false;
