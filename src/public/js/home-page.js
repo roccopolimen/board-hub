@@ -13,7 +13,7 @@
 
             let requestConfig = {
                 method: 'POST',
-                url: '/user/login',
+                url: '/users/login',
                 contentType: 'application/json',
                 data: JSON.stringify({email, password})
                 };
@@ -21,6 +21,9 @@
                 let error = $(responseMessage)[0];
                 if(error.error)
                     $('#login-error').show();
+                else {
+                    window.location.href = "/boards";
+                }
             });
          } else { // inputs don't exist
             $('#login-error').show();
@@ -30,8 +33,6 @@
     let signup_form = $('#signup-form');
     signup_form.submit(function(event) {
         event.preventDefault();
-
-        // TODO - Error Checking
 
         let firstName = $('#firstName').val();
         let lastName = $('#lastName').val();
@@ -46,7 +47,7 @@
 
             let requestConfig = {
                 method: 'POST',
-                url: '/user/signup',
+                url: '/users/signup',
                 contentType: 'application/json',
                 data: JSON.stringify({firstName, lastName, email, password})
                 };
@@ -54,6 +55,9 @@
                 let error = $(responseMessage)[0];
                 if(error.error)
                     $('#signup-error').show();
+                else {
+                    window.location.href = "/boards";
+                }
             });
          } else { // inputs don't exist
             $('#signup-error').show();

@@ -1,6 +1,7 @@
 const usersRoutes = require('./users');
 const boardRoutes = require('./board');
 const boardsRoutes = require('./boards');
+const homeRoutes = require('./home');
 const path = require('path');
 
 const constructorMethod = (app) => {

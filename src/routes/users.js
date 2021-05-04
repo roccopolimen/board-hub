@@ -41,6 +41,7 @@ router.post('/signup', async (req, res) => {
     let firstName;
     let lastName;
     let password;
+    let user;
     try {
         if(!req.body.email || !req.body.firstName || !req.body.lastName || !req.body.password)
             throw new Error("Not all fields provided");
@@ -61,14 +62,13 @@ router.post('/signup', async (req, res) => {
 
         if(!error_handler.checkNonEmptyString(password))
             throw new Error("Password is not valid.");
-
+        user = await userData.create(email, firstName, lastName, password);
     } catch (e) {
-        res.status(400).render({ title: "400 Bad Request", message: e.toString(), error: true });
+        res.json({error: true});
         return;
     }
 
     try {
-        let user = await userData.create(email, firstName, lastName, password);
         user.hashedPassword = undefined;
         user.name = `${user.firstName} ${user.lastName}`;
         user.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
@@ -79,7 +79,7 @@ router.post('/signup', async (req, res) => {
     }
 
     try {
-        res.redirect('/boards');
+        res.json({});
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
     }
@@ -117,21 +117,21 @@ router.post('/login', async (req, res) => {
             
         user = await userData.readByEmail(email);
     } catch (e) {
-        res.status(400).render('error-page', { title: "400 Bad Request", message: e.toString(), error: true });
+        res.json( {error: true } );
         return;
     }
 
     try {
         const matching = await bcrypt.compare(password, user.hashedPassword);
         if(!matching) {
-            res.status(401).render('error-page', { title: '401 Unauthorized', message: 'Wrong Password', error: true });
+            res.json( {error: true } );
             return;
         }
         user.hashedPassword = undefined;
         user.name = `${user.firstName} ${user.lastName}`;
         user.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
         req.session.user = user;
-        res.redirect('/boards');
+        res.json({});
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
     }

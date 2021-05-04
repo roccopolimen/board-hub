@@ -10,11 +10,11 @@ const error_handler = require('../errors/error-handler');
 router.get('/', async (req, res) => {
     try {
         let userId = req.session.user._id;
-        if(userid) {
+        if(userId) {
             //read all of a user's boards
             let boards = await boardsData.readAll(userId);
             //render the boards page with their boards
-            res.render('boards', { title: "Boards", boards: boards, loggedIn: true });
+            res.render('boards', { title: "Boards", boards: boards, loggedIn: true, user: req.session.user });
         }
         else throw new Error("Logged in user must have an ID");
     } 
