@@ -38,7 +38,7 @@ const create = async(userId, boardId, cardId, date, comment) => {
     //create comment object
     let newComment = {
         _id: ObjectId(),
-        user: userId,
+        user: ObjectId(userId),
         date: date,
         comment: comment
     }

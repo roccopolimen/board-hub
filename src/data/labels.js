@@ -61,7 +61,7 @@ const exportedModules = {
         }
 
         const cardList = board.cards;
-        const labelList;
+        let labelList;
 
         if(cardList.length === 0){
             throw new Error('That board has no cards.');
@@ -196,10 +196,9 @@ const exportedModules = {
      * @param {string} boardId The board's id.
      * @param {string} cardId The card's id.
      * @param {string} text The label's text.
-     * @param {string} color The label's color hex code.
      * @returns A label object.
      */
-    async addLabel(boardId, cardId, text){
+    async addLabel(boardId, cardId, text) {
         if(!boardId || !error_handler.checkObjectId(boardId)){
             throw new Error('boardId is not valid.');
         }
@@ -210,11 +209,8 @@ const exportedModules = {
             throw new Error('Text must not be empty.');
         }
 
-        let newBoardId = ObjectId(boardId);
         const labelColor = label_colors[Math.floor(Math.random() * label_colors.length)];
         const boardCollection = await boards();
-
-        const card = await getCardById(boardId, cardId);
 
         const label = {
             _id: new ObjectId(), 
@@ -222,15 +218,11 @@ const exportedModules = {
             color: labelColor
         };
 
-        card.labels.push(label);
+        const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId), "cards._id": ObjectId(cardId)}, 
+                                                    { $addToSet: {"cards.$.labels": label}});
 
-        const updateInfo = await boardCollection.updateOne({_id: newBoardId}, { $set: {cards: card}})
-        if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
+        if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
             throw new Error('Could not add the label.');
-        }
-
-        const label = await getLabelById(boardId, cardId, label._id);
-        return label;
     },
     
     /**
@@ -242,31 +234,37 @@ const exportedModules = {
      * @param {string} color The label's color hex code.
      * @returns A label object.
      */
-    async updateLabel(boardId, cardId, labelsArray){
+    async updateLabels(boardId, cardId, labelsArray){
 
-        if(!boardId || !error_handler.checkObjectId(boardId)){
+        if(!boardId || !error_handler.checkObjectId(boardId)) {
             throw new Error('boardId is not valid.');
         }
-        if(!cardId || !error_handler.checkObjectId(cardId)){
+        if(!cardId || !error_handler.checkObjectId(cardId)) {
             throw new Error('cardId is not valid.');
         }
-        if(!labelArray || !error_handler.checkArrayOfLabels(labelsArray)){
+        if(!labelsArray || !error_handler.checkArrayObjectId(labelsArray)) {
             throw new Error('labelsArray is not valid');
         }
 
-        let newBoardId = ObjectId(boardId);
         const boardCollection = await boards();
 
         const card = await getCardById(boardId, cardId);
-        card.labels = labelsArray;
+        let oldLabels = card.labels;
+        let newLabels = [];
+        for(let label of oldLabels) {
+            for(let labelId of labelsArray) {
+                if(labelId === label._id.toString()) {
+                    newLabels.push(label);
+                    break;
+                }
+            }
+        }
 
-        const updateInfo = await boardCollection.updateOne({_id: newBoardId }, {$set: {cards: card}});
+        const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId), "cards._id": ObjectId(cardId)}, 
+                                                            { $set: {"cards.$.labels": newLabels}});
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount){
             throw new Error('Could not update the label.');
         }
-        
-        const label = await getLabelById(boardId, cardId, labelId);
-        return label;
     },
 
     /**

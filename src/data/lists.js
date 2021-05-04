@@ -28,11 +28,11 @@ module.exports = {
 
     /**
     * Gets a list with a given id.
-    * @param {String} listId The lists's id.
     * @param {String} boardId The board's id.
+    * @param {String} listId The list's id.
     * @returns A list object, if list does not exist, throws error.
     */
-    getListById: async (listId, boardId) => {
+    readById: async (boardId, listId) => {
         if(!listId || !error_handler.checkObjectId(listId)) 
             throw new Error("listId is not valid.");
 
@@ -66,7 +66,7 @@ module.exports = {
             throw new Error("id is not valid.");
 
         if(!listName || !error_handler.checkNonEmptyString(listName))
-            throw new Error("listName is not valid.")
+            throw new Error("listName is not valid.");
 
         const boardCollection = await boards();
 
@@ -82,9 +82,8 @@ module.exports = {
             { $push: { lists: newList } }
         );
 
-        if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
+        if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Failed to add list to board.');
 
-        const boardCollection = await boards();
         const board = await boardCollection.findOne({_id: ObjectId(boardId)});
 
         return board;
@@ -97,7 +96,7 @@ module.exports = {
     * @param {string} boardId The id of the board the list is in.
     * @returns True if successfully added, otherwise throws Error.
     */
-    addCardIdtoList: async (listId, cardId, boardId) => {
+    moveCardIdBetweenLists: async (listId, cardId, boardId) => {
         if(!boardId || !error_handler.checkObjectId(boardId)) 
             throw new Error("boardId is not valid.");
 
@@ -108,21 +107,30 @@ module.exports = {
             throw new Error("cardId is not valid.");
 
         const boardCollection = await boards();
-        const updateInfoList = await boardCollection.updateOne(
-            { _id: ObjectId(boardId) },
-            { lists: { _id: ObjectId(listId) }}, 
-            { $addToSet: { cardIds: ObjectId(cardId) }}
-        );
+        const board = await boardCollection.findOne({_id: ObjectId(boardId)});
+        if(board === null) {
+            throw new Error('There is not board with that id.');
+        }
+        let foundCard;
+        for(let card of board.cards) {
+            if(card._id.toString() === cardId) {
+                foundCard = card;
+                break;
+            }
+        }
+        if(!foundCard)
+            throw new Error('Card not found');
+
+        let prevList = foundCard.list;
+        const removeCardFromListInfo = await boardCollection.updateOne({ _id: ObjectId(boardId), "lists._id": prevList }, 
+                                                                        { $pull: {"lists.$.cardIds": ObjectId(cardId) }});
+
+        if(!removeCardFromListInfo.matchedCount && !removeCardFromListInfo.modifiedCount) throw new Error('Failed to pop card from List');
+
+        const updateInfoList = await boardCollection.updateOne({_id: ObjectId(boardId), "lists._id": ObjectId(listId)}, 
+                                                            { $addToSet: {"lists.$.cardIds": ObjectId(cardId)}});
 
         if(!updateInfoList.matchedCount && !updateInfoList.modifiedCount) throw new Error('Failed to update List');
-
-        const updateInfoCard = await boardCollection.updateOne(
-            { _id: ObjectId(boardId) },
-            { cards: { _id: ObjectId(cardId) }}, 
-            { $set: { list: ObjectId(listId) }}
-        );
-
-        if(!updateInfoCard.matchedCount && !updateInfoCard.modifiedCount) throw new Error('Failed to update Card');
 
         return true;
     },
@@ -147,11 +155,8 @@ module.exports = {
         let newName = changeName.trim();
 
         const boardCollection = await boards();
-        const updateInfo = await boardCollection.updateOne(
-            { _id: ObjectId(boardId) },
-            { lists: { _id: ObjectId(listId) }},
-            { $set: { listName: newName }} 
-        );
+        const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId), "lists._id": ObjectId(listId)}, 
+                                                            { $set: {"lists.$.listName": newName}});
         if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
 
         return true;
@@ -159,24 +164,28 @@ module.exports = {
 
     /**
     * Adds card to end of list.
-    * @param {string} listId The id of the list the card will be added to.
-    * @param {string} cardId The id of the added card.
     * @param {string} boardId The id of the board the list is in.
-    * @param {number} cardPosition The new position of the card.
+    * @param {string} cardId The id of the added card.
+    * @param {string} listId The id of the list the card will be added to.
+    * @param {number} position The new position of the card.
     * @returns True if position successfully changed, false if the card is not in 
     * the list/has the same position, and throws an error otherwise.
     */
-    changeCard: async (listId, cardId, boardId, cardPosition) => {
+    moveCardInList: async (boardId, cardId, listId, position) => {
         if(!boardId || !error_handler.checkObjectId(boardId)) 
             throw new Error("boardId is not valid.");
 
+        if(!cardId || !error_handler.checkObjectId(cardId)) 
+            throw new Error("cardId is not valid.");
+
         if(!listId || !error_handler.checkObjectId(listId)) 
             throw new Error("listId is not valid.");
-        
-        if(!changeName || !error_handler.checkNonEmptyString(changeName)) 
-            throw new Error("changeName is not valid.");
+            
+        if(position === undefined)
+            return;
 
-        if(!cardPosition || !error_handler.checkPositiveNumber(cardPosition))
+        if(!error_handler.checkPositiveNumber(position))
+            throw new Error("cardPosition is not valid.");
         
         const boardCollection = await boards();
         const board = await boardCollection.findOne({_id: ObjectId(boardId)});
@@ -186,25 +195,30 @@ module.exports = {
             let list = board.lists[y];
             if(list._id.toString() === listId) {
                 changelist = list;
+                break;
             }
         }
 
         if(!changelist) throw new Error('List not found');
         
-        let cardlist = changelist.cardIds;
-        let position = cardlist.indexOf(ObjectId(cardId));
-        if(position > -1) {
-            cardlist.splice(position, 1);
-            cardlist.splice(cardPosition, 0, ObjectId(cardId));
-            const updateInfo = await boardCollection.updateOne(
-                { _id: ObjectId(boardId) },
-                { lists: { _id: ObjectId(listId) }},
-                { $set: { cardIds: cardlist }} 
-            );
+        let cardList = changelist.cardIds;
+        let cardIndex = -1;
+        for(let y=0; y < cardList.length; y++) {
+            if(cardList[y].toString() === cardId) {
+                cardIndex = y;
+                break;
+            }
+        }
+        if(cardIndex > -1) {
+            cardList.splice(cardIndex, 1);
+            cardList.splice(position-1, 0, ObjectId(cardId));
+
+            const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId), "lists._id": ObjectId(listId)}, 
+                                                            { $set: {"lists.$.cardIds": cardList}});
 
             if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
         } else {
-            return false;
+            throw new Error("Card not in list");
         }
 
         return true;
@@ -244,8 +258,6 @@ module.exports = {
                 if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Update failed');
             }
         }
-
-        return true;
     }
 
 

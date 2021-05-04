@@ -89,7 +89,7 @@ router.get('/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
 
@@ -97,7 +97,7 @@ router.get('/:id', async (req, res) => {
     try {
         boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -112,11 +112,11 @@ router.get('/:id', async (req, res) => {
         }
 
         if(!memberMap[req.session.user._id]) {
-            res.status(403).json({ error: 'Not your board.' });
+            res.status(403).render('error-page', { title: "403 User not member of this board", error: true });
             return;
         }
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
     
@@ -163,7 +163,7 @@ router.get('/:id', async (req, res) => {
             listPosition++;
         }
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 
@@ -176,9 +176,9 @@ router.get('/:id', async (req, res) => {
             data: listOfListsOfCards
         };
     
-        res.json({ title: boardInfo.boardName, board: renderInfo });
+        res.render('board', { title: boardInfo.boardName, board: renderInfo });
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 });
 
@@ -189,19 +189,19 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -216,11 +216,11 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
         }
 
         if(!memberMap[req.session.user._id]) {
-            res.status(403).json({ error: 'Not your board, therefore can not see card.' });
+            res.status(403).render('error-page', { title: "403 User not member of this board", error: true });
             return;
         }
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 
@@ -228,14 +228,14 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
     try {
         listInfo = await listsData.getAllListsInBoard(boardId);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
     let card = {};
     try {
         card = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
     
@@ -285,13 +285,13 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
                 cardInfo.members.push({ name: value.name, initials: value.initials, assigned: false });
         }
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
     try {
-        res.json({ title: 'This is the title', card: cardInfo, list: listInfo, positions: positions, boardId: boardId });
+        res.render('partials/card', { title: boardInfo.boardName, card: cardInfo, list: listInfo, positions: positions, boardId: boardId });
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -303,17 +303,17 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     const newData = req.body;
     if(!newData) {
-        res.status(400).json({ error: 'no body provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
         return;
     }
 
@@ -321,9 +321,9 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -331,7 +331,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
     try {
         oldCard = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -346,11 +346,11 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         }
 
         if(!memberMap[req.session.user._id]) {
-            res.status(403).json({ error: 'Not your board, therefore can not see card.' });
+            res.status(403).render('error-page', { title: "403 User not member of this board", error: true });
             return;
         }
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 
@@ -358,7 +358,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         if(checkNonEmptyString(xss(newData.cardName))) {
             updatedCardData.cardName = xss(newData.cardName);
         } else {
-            res.status(400).json({ error: 'bad cardName inputted' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid cardName', error: true });
             return;
         }
     }
@@ -368,7 +368,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             if(newData.storyPoints !== 0)
                 sP = parseInt(xss(newData.storyPoints));
         } catch(e) {
-            res.status(400).json({ error: 'story points not a number' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid storyPoints(NaN)', error: true });
             return;
         }
         if(sP !== oldCard.storyPoints) {
@@ -377,7 +377,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             } else if(sP === 0) {
                 updatedCardData.storyPoints = null; // remove storyPoints
             } else {
-                res.status(400).json({ error: 'bad storyPoints inputted.' });
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid storyPoints', error: true });
                 return;
             }
         }
@@ -386,7 +386,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         if(checkString(xss(newData.description))) {
             updatedCardData.description = xss(newData.description);
         } else {
-            res.status(400).json({ error: 'bad description inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid description', error: true });
             return;
         }
     }
@@ -395,7 +395,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         if(checkDate(xss(newData.date))) {
             updatedCardData.date = xss(newData.date);
         } else {
-            res.status(400).json({ error: 'bad date inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid date', error: true });
             return;
         }
     }
@@ -403,7 +403,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         if(checkTime(xss(newData.time))) {
             updatedCardData.time = xss(newData.time);
         } else {
-            res.status(400).json({ error: 'bad time inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid time', error: true });
             return;
         }
     }
@@ -411,7 +411,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         if(checkBoolean(newData.done)) {
             updatedCardData.done = (xss(newData.done) === 'true');
         } else {
-            res.status(400).json({ error: 'bad dueDate.done inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
             return;
         }
     }
@@ -421,14 +421,14 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             if(!equalMembers(newData.assigned, oldCard.assigned)) {
                 for(let assignedId of newData.assigned) {
                     if(!memberMap[assignedId]) {
-                        res.status(400).json({ error: 'trying to assign user not on board.' });
+                        res.status(403).render('error-page', { title: "403 Forbidden", message: 'attempt to assign user to card who is not a member of this board', error: true });
                         return;
                     }
                 }
                 updatedCardData.assigned = newData.assigned;
             }
         } else {
-            res.status(400).json({ error: 'bad assigned list inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid assigned list', error: true });
             return;
         }
     }
@@ -442,12 +442,12 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
                 }
             }
             if(!foundListInBoard) {
-                res.status(400).json({ error: 'list not a part of this board.' });
+                res.status(403).render('error-page', { title: "403 Forbidden", message: 'list is not on this board', error: true });
                 return;
             }
             updatedCardData.list = xss(newData.list);
         } else {
-            res.status(400).json({ error: 'bad listId inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid listId', error: true });
             return;
         }
     }
@@ -456,12 +456,12 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         if(checkPositiveNumber(position)) {
             updatedCardData.position = position;
         } else {
-            res.status(400).json({ error: 'bad position inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid position', error: true });
             return;
         }
     }
     if(Object.keys(updatedCardData).length === 0) {
-        res.status(400).json({ error: 'no values need updating.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'No values needed updating.', error: true });
         return;
     }
     try {
@@ -475,7 +475,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         await cardsData.updateCard(boardId, cardId, list, cardName, storyPoints, description, date, time, done, assigned);
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -487,19 +487,19 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -514,7 +514,7 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -522,15 +522,15 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
     try {
         cardInfo = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
 
     try {
         const labelsInfo = await labelsData.getAllLabels(boardId, cardId);
-        res.json({ title: 'Edit Labels', labels: labelsInfo, boardId: boardId, cardId: cardId });
+        res.render('partials/label', { title: boardInfo.boardName, labels: labelsInfo, boardId: boardId, cardId: cardId })
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 
@@ -542,26 +542,26 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
 
     const newData = req.body;
     if(!newData) {
-        res.status(400).json({ error: 'no body provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
         return;
     }
 
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -576,7 +576,7 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -584,7 +584,7 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
     try {
         cardInfo = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -592,23 +592,17 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
     try {
         labelsInfo = await labelsData.getAllLabels(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Labels not Found.", message: e.toString(), error: true });
         return;
     }
 
     let updatedLabelInfo = {};
-    /* Expected data coming in for label
-    {
-        labelIds: [ "2389074274", "86345098634", "98234794" ],
-        "newLabelName": "New Label"
-    }
-    */
     if(xss(newData.labelIds) === undefined) {
-        res.status(400).json({ error: 'edit label data not provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'missing labelIds', erorr: true });
         return;
     } else {
         if(!checkArrayObjectId(newData.labelIds)) {
-            res.status(400).json({ error: 'label data not properly formatted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid labelIds', erorr: true });
             return;
         } else {
             for(let labelId of newData.labelIds) {
@@ -620,14 +614,14 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
                     }
                 }
                 if(!foundMatch) {
-                    res.status(400).json({ error: 'label with given id does not exist on card.' });
+                    res.status(400).render('error-page', { title: "400 Bad Request", message: 'nonexistent label', erorr: true });
                     return;
                 }
             }
             updatedLabelInfo.labels = newData.labelIds;
         }
         if(xss(newData.newLabelName) !== undefined && !checkNonEmptyString(xss(newData.newLabelName))) {
-            res.status(400).json({ error: 'new label data not properly formatted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid new label', erorr: true });
             return;
         } else {
             updatedLabelInfo.newLabelName = newData.newLabelName;
@@ -635,7 +629,7 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
     }
 
     if(Object.keys(updatedLabelInfo).length === 0) {
-        res.status(400).json({ error: 'no labels need updating.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no labels need updating', erorr: true });
         return;
     }
 
@@ -645,7 +639,7 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
         await labelsData.addLabel(boardId, cardId, newLabelName);
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 });
 
@@ -656,19 +650,19 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -683,11 +677,11 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
         }
 
         if(!memberMap[req.session.user._id]) {
-            res.status(403).json({ error: 'Not your board.' });
+            res.status(403).render('error-page', { title: "403 User not member of this board", error: true });
             return;
         }
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 
@@ -695,7 +689,7 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
     try {
         cardInfo = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -706,9 +700,9 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
             commentInfo[index].time = getTime(commentInfo[index].date);
             commentInfo[index].date = getDate(commentInfo[index].date);
         }
-        res.json({ title: 'Comments', comments: commentInfo, boardId: boardId, cardId: cardId });
+        res.render('partials/comment', { title: boardInfo.boardName, comments: commentInfo, boardId: boardId, cardId: cardId });
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 });
@@ -722,19 +716,19 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -749,7 +743,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -757,7 +751,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
     try {
         cardInfo = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -767,22 +761,21 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
         if(checkNonEmptyString(xss(newData.comment))) {
             comment = xss(newData.comment);
         } else {
-            res.status(400).json({ error: 'bad comment inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid comment', erorr: true });
             return;
         }
     } else {
-        res.status(400).json({ error: 'no comment provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no comment', erorr: true });
         return;
     }
 
     try {
         const today = new Date();
         const date = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}*${today.getHours()}:${today.getMinutes()}`;
-        console.log(date);
         await commentsData.create(userId, boardId, cardId, date, comment);
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -794,15 +787,15 @@ router.post('/remove/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
-
+    
     let boardInfo = {};
     try {
         boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -817,7 +810,7 @@ router.post('/remove/:id', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -825,7 +818,7 @@ router.post('/remove/:id', async (req, res) => {
         await usersData.remove(userId, id);
         res.redirect('/boards');
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -836,7 +829,7 @@ router.post('/invite/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
 
@@ -844,7 +837,7 @@ router.post('/invite/:id', async (req, res) => {
     try {
         boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -859,13 +852,13 @@ router.post('/invite/:id', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
     const newData = req.body;
     if(!newData) {
-        res.status(400).json({ error: 'no body provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
         return;
     }
 
@@ -874,13 +867,13 @@ router.post('/invite/:id', async (req, res) => {
         if(checkEmail(xss(newData.email))) {
             newInvite.email = xss(newData.email);
         } else {
-            res.status(400).json({ error: 'not valid email invited.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid email', erorr: true });
             return;
         }
     }
 
     if(Object.keys(newInvite).length !== 1) {
-        res.status(400).json({ error: 'no one to invite.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'Not inviting anyone', erorr: true });
         return;
     }
 
@@ -889,7 +882,7 @@ router.post('/invite/:id', async (req, res) => {
         await boardsData.addNewMember(id, email);
         res.redirect(`/board/${id}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -901,19 +894,19 @@ router.post('/:boardId/:listId', async (req, res) => {
     const boardId = req.params.boardId;
     const listId = req.params.listId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!listId || !checkNonEmptyString(listId) || !checkObjectId(listId)) {
-        res.status(400).json({ error: 'id of list not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'ID of List not proper ID', erorr: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -928,7 +921,7 @@ router.post('/:boardId/:listId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -936,13 +929,13 @@ router.post('/:boardId/:listId', async (req, res) => {
     try {
         listInfo = await listsData.readById(boardId, listId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: '404 List not Found.', message: e.toString(), error: true });
         return;
     }
 
     const newData = req.body;
     if(!newData) {
-        res.status(400).json({ error: 'no body provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
         return;
     }
 
@@ -951,13 +944,13 @@ router.post('/:boardId/:listId', async (req, res) => {
         if(checkNonEmptyString(xss(newData.cardName))) {
             cardNameInfo.cardName = xss(newData.cardName);
         } else {
-            res.status(400).json({ error: 'improper card name provided.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid cardName', erorr: true });
             return;
         }
     }
 
     if(Object.keys(cardNameInfo).length !== 1) {
-        res.status(400).json({ error: 'no card name provided' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no cardName provided', erorr: true });
         return;
     }
 
@@ -966,7 +959,7 @@ router.post('/:boardId/:listId', async (req, res) => {
         await cardsData.addCard(boardId, listId, cardName);
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -977,7 +970,7 @@ router.get('/settings/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
 
@@ -985,7 +978,7 @@ router.get('/settings/:id', async (req, res) => {
     try {
         boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1000,7 +993,7 @@ router.get('/settings/:id', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -1012,9 +1005,9 @@ router.get('/settings/:id', async (req, res) => {
     };
 
     try {
-        res.json({ title: 'Board Settings', board: renderInfo });
+        res.render('board-settings', { title: 'Board Settings', board: renderInfo });
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -1025,7 +1018,7 @@ router.patch('/settings/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
 
@@ -1033,7 +1026,7 @@ router.patch('/settings/:id', async (req, res) => {
     try {
         boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1048,13 +1041,13 @@ router.patch('/settings/:id', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
     const newData = req.body;
     if(!newData) {
-        res.status(400).json({ error: 'no body provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
         return;
     }
 
@@ -1063,7 +1056,7 @@ router.patch('/settings/:id', async (req, res) => {
         if(checkNonEmptyString(xss(newData.boardName))) {
             updatedBoardInfo.boardName = xss(newData.boardName);
         } else {
-            res.status(400).json({ error: 'bad boardName inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid boardName', erorr: true });
             return;
         }
     }
@@ -1071,7 +1064,7 @@ router.patch('/settings/:id', async (req, res) => {
         if(checkColor(xss(newData.boardColor))) {
             updatedBoardInfo.boardColor = xss(newData.boardColor);
         } else {
-            res.status(400).json({ error: 'bad boardColor inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid boardColor', erorr: true });
             return;
         }
     }
@@ -1079,13 +1072,13 @@ router.patch('/settings/:id', async (req, res) => {
         if(checkString(xss(newData.description))) {
             updatedBoardInfo.description = xss(newData.description);
         } else {
-            res.status(400).json({ error: 'bad description inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid description', erorr: true });
             return;
         }
     }
 
     if(Object.keys(updatedBoardInfo).length === 0) {
-        res.status(400).json({ error: 'nothing to change for board.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'Nothing to change on the board', erorr: true });
         return;
     }
 
@@ -1093,7 +1086,7 @@ router.patch('/settings/:id', async (req, res) => {
         await boardsData.update(id, updatedBoardInfo);
         res.redirect(`/board/${id}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -1105,19 +1098,19 @@ router.get('/list/:boardId/:listId', async (req, res) => {
     const boardId = req.params.boardId;
     const listId = req.params.listId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!listId || !checkNonEmptyString(listId) || !checkObjectId(listId)) {
-        res.status(400).json({ error: 'id of list not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'ID of List not proper ID', erorr: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1132,7 +1125,7 @@ router.get('/list/:boardId/:listId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -1140,7 +1133,7 @@ router.get('/list/:boardId/:listId', async (req, res) => {
     try {
         listInfo = await listsData.readById(boardId, listId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: '404 List not Found.', message: e.toString(), error: true });
         return;
     }
 
@@ -1161,9 +1154,9 @@ router.get('/list/:boardId/:listId', async (req, res) => {
         }
         renderInfo.position = listPosition;
         positions = [...Array(boardInfo.lists.length+1).keys()].slice(1);
-        res.json({ list: renderInfo, boardId: boardId, positions: positions });
+        res.render('partials/list', { title: boardInfo.boardName, list: renderInfo, boardId: boardId, positions: positions });
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -1175,25 +1168,25 @@ router.post('/list/:boardId/:listId', async (req, res) => {
     const boardId = req.params.boardId;
     const listId = req.params.listId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!listId || !checkNonEmptyString(listId) || !checkObjectId(listId)) {
-        res.status(400).json({ error: 'id of list not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'ID of List not proper ID', erorr: true });
         return;
     }
 
     const newData = req.body;
     if(!newData) {
-        res.status(400).json({ error: 'no body provided.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1208,7 +1201,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -1216,7 +1209,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
     try {
         listInfo = await listsData.readById(boardId, listId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: '404 List not Found.', message: e.toString(), error: true });
         return;
     }
 
@@ -1225,7 +1218,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
         if(checkNonEmptyString(xss(newData.listName))) {
             updatedListData.listName = xss(newData.listName);
         } else {
-            res.status(400).json({ error: 'bad list name inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid listName', error: true });
             return;
         }
     }
@@ -1234,15 +1227,16 @@ router.post('/list/:boardId/:listId', async (req, res) => {
         if(checkPositiveNumber(position)) {
             updatedListData.position = position;
         } else {
-            res.status(400).json({ error: 'bad position inputted.' });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid position', error: true });
             return;
         }
     }
 
     if(Object.keys(updatedListData).length === 0) {
-        res.status(400).json({ error: 'no values need updating.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'No values needed updating.', error: true });
         return;
     }
+
     try {
         const { listName, position } = updatedListData;
         if(listName)
@@ -1251,7 +1245,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
             await boardsData.moveList(boardId, listId, position);
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -1263,19 +1257,19 @@ router.post('/delete/card/:boardId/:cardId', async (req, res) => {
     const boardId = req.params.boardId;
     const cardId = req.params.cardId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
-        res.status(400).json({ error: 'id of card not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Id of card not proper ID", error: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1290,7 +1284,7 @@ router.post('/delete/card/:boardId/:cardId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -1298,7 +1292,7 @@ router.post('/delete/card/:boardId/:cardId', async (req, res) => {
     try {
         card = await cardsData.readById(boardId, cardId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Card not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1306,7 +1300,7 @@ router.post('/delete/card/:boardId/:cardId', async (req, res) => {
         await cardsData.removeCard(boardId, cardId, card.list.toString());
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -1318,19 +1312,19 @@ router.post('/delete/list/:boardId/:listId', async (req, res) => {
     const boardId = req.params.boardId;
     const listId = req.params.listId;
     if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
     if(!listId || !checkNonEmptyString(listId) || !checkObjectId(listId)) {
-        res.status(400).json({ error: 'id of list not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'ID of List not proper ID', erorr: true });
         return;
     }
 
     let boardInfo = {};
     try {
-        boardInfo = await boardsData.readById(boardId);
+        boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1345,7 +1339,7 @@ router.post('/delete/list/:boardId/:listId', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -1353,7 +1347,7 @@ router.post('/delete/list/:boardId/:listId', async (req, res) => {
     try {
         listInfo = await listsData.readById(boardId, listId);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: '404 List not Found.', message: e.toString(), error: true });
         return;
     }
 
@@ -1361,7 +1355,7 @@ router.post('/delete/list/:boardId/:listId', async (req, res) => {
         await listsData.removeList(listId, boardId);
         res.redirect(`/board/${boardId}`);
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
 });
@@ -1372,7 +1366,7 @@ router.post('/calendar/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).json({ error: 'id of board not proper ObjectId.' });
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
         return;
     }
 
@@ -1380,7 +1374,7 @@ router.post('/calendar/:id', async (req, res) => {
     try {
         boardInfo = await boardsData.readById(id);
     } catch(e) {
-        res.status(404).json({ error: e.toString() });
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
         return;
     }
 
@@ -1395,7 +1389,7 @@ router.post('/calendar/:id', async (req, res) => {
         if(!foundUser)
             throw new Error("Not your board, therefore can not see card.")
     } catch(e) {
-        res.status(403).json({ error: e.toString() });
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
         return;
     }
 
@@ -1404,7 +1398,7 @@ router.post('/calendar/:id', async (req, res) => {
         // res.json({ calendar: calendarInfo });
         res.json({ message: 'NOT TESTED YET.' });
     } catch(e) {
-        res.status(500).json({ error: e.toString() });
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 });
 
