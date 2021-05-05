@@ -7,6 +7,8 @@
   background-color: #3c3c3c;
 }
 
+/* NAV BAR */
+
 #nav-logo {
   max-width: 12rem;
   max-height: 12rem;
@@ -23,7 +25,12 @@
 
 #nav-pfp-li {
   float: right;
-  padding-right: 5rem;
+  margin-right: 5rem;
+  /* padding-right: 5rem; */
+  width: 4rem;
+  height: 4rem;
+  text-align: center;
+  border-radius: 50%;
 }
 
 #nav-list {
@@ -40,7 +47,7 @@ nav {
   box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
-
+/* ERROR PAGE */
 .error-page {
   text-align: center;
 }
@@ -52,4 +59,58 @@ nav {
 
 .err-msg {
   color: black;
+}
+
+/* BOARD PAGE */
+#boards {
+  font-family: 'Barlow', sans-serif;
+  list-style: none;
+  margin-left: 7rem;
+  margin-right: 5rem;
+}
+
+.board-link {
+  position: relative;
+  display: inline-block;
+  width: 19rem;
+  height: 5rem;
+  border: 3px solid #000000;
+  overflow: auto;
+}
+
+.board-link a {
+  position: absolute;
+  text-decoration: none;
+  font-size: 20pt;
+  margin-top: 1rem;
+  margin-left: 6.5rem;
+  margin-right: 7rem;
+  background-color: white;
+  padding-right: .5rem;
+  padding-left: .5rem;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  border-radius: 20%;
+  color: black;
+}
+
+#new-board-form {
+  width: 50%;
+  margin: auto;
+}
+
+#new-board-form label {
+  color: #f99a04;
+  font-size: 20pt;
+}
+
+#new-board-form input {
+  background-color: white;
+  font-size: 20pt;
+}
+
+#new-board-form button {
+  font-size: 20pt;
+  background-color: #d38200;
+  color: white;
 }
