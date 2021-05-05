@@ -12,7 +12,9 @@
             <li><a href="/"><img id="nav-logo" src="/public/images/logo/board_hub.PNG"></a></li>
             {{#if error}}
             {{else}}
-                <li id="nav-pfp-li"><a href="/user" id="nav-pfp" style="background-color: {{user.color}};">{{user.initials}}</a></li>
+                <li id="nav-pfp-li" style="background-color: {{user.color}};">
+                    <a href="/user" id="nav-pfp" style="background-color: {{user.color}};">{{user.initials}}</a>
+                </li>
             {{/if}}            
         </ul>
     </nav>
