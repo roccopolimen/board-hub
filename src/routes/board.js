@@ -107,7 +107,8 @@ router.get('/:id', async (req, res) => {
             const memberData = await usersData.readById(memberId.toString());
             memberMap[memberId.toString()] = {
                 name: makeName(memberData.firstName, memberData.lastName),
-                initials: getInitials(memberData.firstName, memberData.lastName)
+                initials: getInitials(memberData.firstName, memberData.lastName),
+                color: memberData.color
             };
         }
 
@@ -171,7 +172,7 @@ router.get('/:id', async (req, res) => {
         const members = [];
         for(let key in memberMap) {
             let value = memberMap[key];
-            members.push({ name: value.name, initials: value.initials });
+            members.push({ name: value.name, initials: value.initials, color: value.color });
         }
 
         const renderInfo = {
