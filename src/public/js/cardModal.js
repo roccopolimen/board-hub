@@ -21,8 +21,9 @@
                 placeModalHere.empty(); //handle a modal being there before
                 placeModalHere.append(cardModal); //insert new modal
                 setUpErrorChecking();
-                setUpClosingModal();
                 setUpDeleteCard();
+                setUpComments(boardId, cardId);
+                setUpLabels();
                 placeModalHere.show();
             });
         });
@@ -45,16 +46,6 @@
             }
         });
     }
-    
-    //show/hide modal
-    const setUpClosingModal = () => {
-        let closeModal = $("#closeModal");
-        closeModal.on("click", (e) => {
-            e.preventDefault(); //I don't think I have to do this, but I will just in case
-            placeModalHere.hide();
-            placeModalHere.empty();
-        })
-    }
 
     //delete card
     const setUpDeleteCard = () => {
@@ -68,6 +59,42 @@
             //make the call to ajax to delete card
             $.ajax(requestData);
         })
+    }
+
+    const setUpComments = (boardId, cardId) => {
+        //handle the comment button being clicked
+        let openComments = $('#openComments');
+        let placeCommentsHere = $('#placeCommentsHere');
+
+        openComments.on("click", (e) => {
+            e.preventDefault();
+            let requestData = {
+                method: "GET", //I think?
+                url: `card/comments/${boardId}/${cardId}` //TODO: Check this route
+            };
+            $.ajax(requestData).then(function(responseMessage) {
+                let commentModal = $(responseMessage);
+                placeCommentsHere.empty(); //handle a modal being there before
+                placeCommentsHere.append(commentModal); //insert new modal
+                setUpCommentErrorChecking();
+                placeCommentsHere.show();
+            });
+        })
+    }
+
+    const setUpCommentErrorChecking = () => {
+        let form = $('#comment-form');
+        
+        form.on('submit', (e) => {
+            try {
+                let comment = $('#commentInput');
+                if(comment.trim() == '') throw new Error("Comment must not be empty");
+            } 
+            catch (error) {
+                e.preventDefault();
+                return false;    
+            }
+        });
     }
 
 })(window.jQuery);
