@@ -124,7 +124,7 @@ module.exports = {
      * @param {String} id The user's id.
      * @returns A success object.
      */
-    delete: async (id) => {
+     delete: async (id) => {
         if(!id || !error_handler.checkObjectId(id))
             throw new Error("id is not valid.");
 

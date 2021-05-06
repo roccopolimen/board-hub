@@ -151,6 +151,7 @@ const exportedModules = {
         }
         if(storyPoints !== undefined) {
             if(storyPoints === null) {
+                console.log('sldakjflsdkahfdslkhf');
                 delete updatedCardData.storyPoints;
                 somethingToUpdate = true;
             }
