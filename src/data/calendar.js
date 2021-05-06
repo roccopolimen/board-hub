@@ -11,7 +11,7 @@ module.exports = {
     * Puts all cards with due dates into a .ics file
     * @param {String} boardId The board's id.
     * @param {string} calendarName The name of the .ics file to be created.
-    * @returns True if all events were added, otherwise throws error.
+    * @returns The path to the calendar file.
     */
     makeCal: async (boardId, calendarName) => {
         if(!boardId || !error_handler.checkObjectId(id)) {
@@ -47,6 +47,6 @@ module.exports = {
             })
         }
 
-        return true;
+        return `${__dirname}/calendars/${fileName}.ics`;
     }
 }

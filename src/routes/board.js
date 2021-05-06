@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
 const data = require('../data');
 const usersData = data.users;
 const boardsData = data.boards;
@@ -1463,9 +1464,9 @@ router.post('/calendar/:id', async (req, res) => {
     }
 
     try {
-        // const calendarInfo = await boardsData.getCalendar(boardId);
-        // res.json({ calendar: calendarInfo });
-        res.json({ message: 'NOT TESTED YET.' });
+        const calPath = await calData.makeCal(boardId, `${req.session.user.email}`);
+        res.download(calPath); // send to user for download
+        fs.unlink(calPath); // remove file locally
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
