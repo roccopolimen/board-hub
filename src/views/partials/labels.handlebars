@@ -4,19 +4,16 @@
     <label for="edit_labels">Close</label>
 
     {{!-- List Labels --}}
-    <form>
+    <form action="/boards/card/labels/{{boardId}}/{{cardId}}" method="PATCH" id="editLabels">
         {{#each label}}
             <input type="checkbox" checked id="card_label_{{@index}}">
-            <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p></label>
+            <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p><p>{{this.text}}</p></label>
         {{/each}}
-        <button type="submit" value="submit">Set Changes</button>
-    </form>
 
-    {{!-- Add Label --}}
-    <form id="addLabel">
+        {{!-- Add Label --}}
         <label for="add_label_name">Label Name</label><br>
         <input type="text" id="add_label_name" name="add_label_name"><br>
 
-        <button type="submit" value="submit">Add</button>
+        <button type="submit">Submit Changes</button>
     </form>
 </div>
