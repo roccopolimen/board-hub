@@ -62,7 +62,8 @@ app.use('*', (req, res, next) => {
   //Logs some useful stuff to the console, can be commented out
   console.log(`[${date}]: ${reqmethod} ${reqroute} | Authorized: ${loggedin}`);
   //Checks if you're going to the home page, or submitting the login/signup form, and skips if so
-  if(req.originalUrl == "/" || req.originalUrl == "/users/login" || req.originalUrl == "/users/signup") next();
+  if(req.originalUrl == "/" || req.originalUrl == "/users/login" ||
+   req.originalUrl == "/users/signup" || req.originalUrl == "/about") next();
   else {
     //if you're logged in, proceed to whatever page you were trying to access
     if(loggedin || reqroute === "/favicon.ico") {
