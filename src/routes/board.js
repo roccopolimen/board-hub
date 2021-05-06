@@ -8,6 +8,7 @@ const cardsData = data.cards;
 const listsData = data.lists;
 const labelsData = data.labels;
 const commentsData = data.comments;
+const calData = data.calendar;
 const {
     checkObjectId,
     checkString,
@@ -83,6 +84,49 @@ const equalMembers = (l1, l2) => {
             return false;
     return true;
 };
+
+// POST /board/calendar/{id}
+// request to download a calendar of the board
+router.post('/calendar/:id', async (req, res) => {
+
+    const id = req.params.id;
+    if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
+        return;
+    }
+
+    let boardInfo = {};
+    try {
+        boardInfo = await boardsData.readById(id);
+    } catch(e) {
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        let foundUser = false;
+        for(memberId of boardInfo.members) {
+            if(req.session.user._id === memberId.toString()) {
+                foundUser = true;
+                break;
+            }
+        }
+        if(!foundUser)
+            throw new Error("Not your board, therefore can not see card.")
+    } catch(e) {
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        console.log(boardInfo._id);
+        const calPath = await calData.makeCal(boardInfo._id.toString(), boardInfo.boardName);
+        res.download(calPath); // send to user for download
+        fs.unlinkSync(calPath); // remove file locally
+    } catch(e) {
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
+    }
+});
 
 // GET /board/{id}
 // Main board page with all lists and cards shown
@@ -1428,48 +1472,6 @@ router.post('/delete/list/:boardId/:listId', async (req, res) => {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 
-});
-
-// POST /board/calendar/{id}
-// request to download a calendar of the board
-router.post('/calendar/:id', async (req, res) => {
-
-    const id = req.params.id;
-    if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
-        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
-        return;
-    }
-
-    let boardInfo = {};
-    try {
-        boardInfo = await boardsData.readById(id);
-    } catch(e) {
-        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
-        return;
-    }
-
-    try {
-        let foundUser = false;
-        for(memberId of boardInfo.members) {
-            if(req.session.user._id === memberId.toString()) {
-                foundUser = true;
-                break;
-            }
-        }
-        if(!foundUser)
-            throw new Error("Not your board, therefore can not see card.")
-    } catch(e) {
-        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
-        return;
-    }
-
-    try {
-        const calPath = await calData.makeCal(boardId, `${req.session.user.email}`);
-        res.download(calPath); // send to user for download
-        fs.unlink(calPath); // remove file locally
-    } catch(e) {
-        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
-    }
 });
 
 
