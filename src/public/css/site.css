@@ -369,3 +369,79 @@ nav {
   margin-left: .2rem;
   height: 2.2rem;
 }
+
+/* USER PAGE */
+
+#user-page {
+  text-align: center;
+}
+
+#user-page h2 {
+  font-family: 'Barlow', sans-serif;
+  color: white;
+  font-weight: bold;
+  font-size: 50pt;
+}
+
+#pfp-large {
+  position: relative;
+  height: 15rem;
+  width: 15rem;
+  margin: auto;
+  font-family: 'Barlow', sans-serif;
+  color: white;
+  font-weight: bold;
+  font-size: 75pt;
+  border-radius: 7.5rem;
+  text-align: center;
+}
+
+#pfp-large p {
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 3rem;
+}
+
+#change-pass-form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#change-pass-form label{
+  padding-bottom: 1rem;
+  color: white;
+}
+
+#change-pass-form button {
+  width: 15rem;
+  margin: auto;
+  color: #d38200;
+  background-color: black;
+}
+
+.user-btn {
+  margin-top: 1rem;
+  width: 12rem;
+  height: 5rem;
+  font-size: 20pt;
+  font-family: 'Barlow', sans-serif;
+  font-weight: bold;
+  margin-bottom: 4rem;
+}
+
+#sign-out {
+  background-color: #d38200;
+  color: black;
+  border-radius: 2rem;
+}
+
+#delete-account {
+  background-color: #FF2F2F;
+  color: white;
+  border-radius: 2rem;
+}
+
+#change-pass-error {
+  color: #FF2F2F;
+}
