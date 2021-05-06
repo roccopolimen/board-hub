@@ -5,51 +5,41 @@ const xss = require('xss');
 const error_handler = require('../errors/error-handler');
 const bcrypt = require('bcryptjs');
 
+// GET /users
+// loads profile page
 router.get('/', async (req, res) => {
     try {
-        res.render('profile', { title: "User Profile", user: req.session.user });
-    } catch (e) {
-        res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+        res.json({
+            message: 'profile page',
+            userId: req.session.user
+        });
+    } catch(e) {
+        res.status(500).json({ error: 'could not load profile page' });
     }
 });
 
-router.get('/signout', (req, res) => {
-    try {
-        //destroy cookie
-        req.session.destroy();
-        //go to homepage
-        res.redirect('/');
-        return;
-    } catch (e) {
-        res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
-    }
-});
-
+// POST /users/signup
+// signs up a user
 router.post('/signup', async (req, res) => {
 
     if(req.session.user) {
-        res.status(403).render('error-page', { title: "403 Forbidden", message: 'user already logged in', error: true });
+        res.status(403).json({ error: 'Already logged in.' });
         return;
     }
 
     if(!req.body) {
-        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no request body provided', error: true });
+        res.status(400).json({ error: 'nothing to signup.' });
         return;
     }
 
-    let email;
-    let firstName;
-    let lastName;
-    let password;
-    let user;
     try {
         if(!req.body.email || !req.body.firstName || !req.body.lastName || !req.body.password)
             throw new Error("Not all fields provided");
 
-        email = xss(req.body.email.trim().toLowerCase());
-        firstName = xss(req.body.firstName.trim());
-        lastName = xss(req.body.lastName.trim());
-        password = xss(req.body.password.trim());
+        const email = xss(req.body.email.trim().toLowerCase());
+        const firstName = xss(req.body.firstName.trim());
+        const lastName = xss(req.body.lastName.trim());
+        const password = xss(req.body.password.trim());
 
         if(!error_handler.checkEmail(email))
             throw new Error("Email is not valid.");
@@ -62,38 +52,35 @@ router.post('/signup', async (req, res) => {
 
         if(!error_handler.checkNonEmptyString(password))
             throw new Error("Password is not valid.");
-        user = await userData.create(email, firstName, lastName, password);
-    } catch (e) {
-        res.json({error: true});
-        return;
-    }
 
-    try {
+        let user = await userData.create(email, firstName, lastName, password);
         user.hashedPassword = undefined;
         user.name = `${user.firstName} ${user.lastName}`;
         user.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
         req.session.user = user;
-    } catch(e) {
-        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+    } catch (e) {
+        res.status(500).json({ error: e.toString() });
         return;
     }
 
     try {
-        res.json({});
+        res.redirect('/boards');
     } catch(e) {
-        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+        res.status(500).json({ error: 'could not redirect to boards' });
     }
 });
 
+// POST /users/login
+// attempt to log in user
 router.post('/login', async (req, res) => {
 
     if(req.session.user) {
-        res.status(403).render('error-page', { title: "403 Forbidden", message: 'user already logged in', error: true });
+        res.status(403).json({ error: 'Already logged in.' });
         return;
     }
 
     if(!req.body) {
-        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no request body provided', error: true });
+        res.status(400).json({ error: 'nothing to login.' });
         return;
     }
 
@@ -117,35 +104,46 @@ router.post('/login', async (req, res) => {
             
         user = await userData.readByEmail(email);
     } catch (e) {
-        res.json( {error: true } );
+        res.status(401).json({ error: e.toString() });
         return;
     }
 
     try {
         const matching = await bcrypt.compare(password, user.hashedPassword);
         if(!matching) {
-            res.json( {error: true } );
+            res.status(401).json({ error: 'Password is wrong.' });
             return;
         }
         user.hashedPassword = undefined;
         user.name = `${user.firstName} ${user.lastName}`;
         user.initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
         req.session.user = user;
-        res.json({});
+        res.redirect('/boards');
     } catch(e) {
-        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+        res.status(500).json({ error: e.toString() });
     }
 });
 
-router.post('/delete', async (req, res) => {
+// POST /users/signout
+// signs out the user
+router.post('/signout', (req, res) => {
     try {
-        await userData.delete(req.session.user._id);
         req.session.destroy();
         res.redirect('/');
     } catch (e) {
-        res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+        res.status(500).json({ error: e.toString() });
     }
 });
 
+// POST /users/delete
+// attempts to delete user from database
+router.post('/delete', async (req, res) => {
+    try {
+        await userData.delete(req.session.user._id);
+        res.json({ message: 'user deleted' });
+    } catch (e) {
+        res.status(500).json({ error: e.toString() });
+    }
+});
 
 module.exports = router;

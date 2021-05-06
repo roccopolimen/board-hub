@@ -1,0 +1,71 @@
+<section class="board-info" style="background-color: {{board.color}};">
+    <ul id="board-info-list">
+        <li id="board-info-title">{{title}}</li>
+        <li>
+            <ul id="board-info-members">
+                {{#each members}}
+                    <li class="board-info-item">
+                        <p class="member-pfp" style="background-color: {{this.color}};">{{this.initials}}</p>
+                    </li>
+                {{/each}}
+            </ul>
+        </li>
+    </ul>
+    <ul id="board-info-buttons">
+        <li>
+            <button type="button">Download Calendar</button>
+        </li>
+        <li>
+            <button type="button">Board Settings</button>
+        </li>
+    </ul>
+</section>
+<article style="background-color: {{board.color}};">
+    <div id="board-container" style="background-color: {{board.color}};">
+        {{#each board.data}}
+            <div class="list">
+                <div class="list-header">
+                    <p class="board-list-name">{{this.listName}}</p>
+                    <button class="edit-list-btn" type="button">edit list</button>
+                </div>
+                <div class="list-body">
+                    {{#each this.cards}}
+                        <button class="card">
+                            <div class="card-header">
+                                <div class="labels-list">
+                                    {{#each this.labels}}
+                                        <p class="card-label-highlight" style="background-color: {{this.color}};"></p>
+                                    {{/each}}
+                                </div>
+                                <p class="card-story-points">{{this.storyPoints}}</p>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-name">{{this.name}}</p>
+                                <div class="card-due-date">
+                                    {{#if this.dueDate.done}}
+                                        <p class="card-done-indicator" ></p>
+                                    {{else}}
+                                        <p class="card-not-done-indicator" ></p>
+                                    {{/if}}
+                                    <p class="card-date-text">Due: {{this.dueDate.date}}</p>
+                                </div>
+                            </div>
+                        </button>
+                    {{/each}}
+                    <form class="new-card" method="POST" action="/board/{{../board._id}}/{{this._id}}">
+                        <label>
+                            <p hidden>Card</p>
+                            <input type="text" name="cardName" class="new-card-name-input" />
+                        </label>
+                        <button class="add-card-btn" type="submit">add card</button>
+                    </form>
+                </div>
+            </div>
+        {{/each}}
+        <form id="new-list" method="POST" action="/board/{{board._id}}">
+            <label for="newListNameInput" hidden>List: </label>
+            <input type="text" name="listName" id="newListNameInput">
+            <button class="add-list-btn" type="submit">add list</button>
+        </form>
+    </div>
+</article>

@@ -2,28 +2,38 @@
 <div id="boardSettings">
     <!-- Form for changing the board settings -->
     <form action="/board/settings/{{board._id}}" method="POST">
+        <input type="hidden" name="_method" value="PATCH"/>
         <div class="boardNameDiv">
             <label for="boardName">Name: </label>
-            <input id="boardName" type="text" placeholder="Board Name" value="{{board.boardName}}"/>
+            <input id="boardName" name="boardName" type="text" placeholder="Board Name" value="{{board.boardName}}"/>
         </div>
         <div class="colorDiv">
-            <label for="positionValue">Color: </label>
-            <input id="positionValue" type="text" placeholder="Color" value="{{board.color}}"/>
+            <label for="boardColor">Color: </label>
+            <input id="boardColor" name="color"type="text" placeholder="Color" value="{{board.color}}"/>
         </div>
         <div class="descriptionDiv">
-            <label for="positionValue">Description: </label>
-            <input id="positionValue" type="text" placeholder="Description" value="{{board.description}}"/>
+            <label for="description">Description: </label>
+            <textarea id="description" name="description" placeholder="Description" value="{{board.description}}"/>
         </div>
         <div class="submitButtonDiv">
             <button type="submit">Submit</button>
         </div>
     </form>
     <!-- form for deleting a board -->
-    <form action="/board" method="POST">
-        <div class="deleteButtonDiv">
-            <button type="submit">Delete Board</button>
-        </div>
-    </form>
+    {{#if onlyMember}}
+        <form action="/board/remove/{{board._id}}" method="POST">
+            <div class="deleteButtonDiv">
+                <button type="submit">Delete Board</button>
+            </div>
+        </form>
+    {{else}}
+        <form action="/board/remove/{{board._id}}" method="POST">
+            <div class="leaveButtonDiv">
+                <button type="submit">Leave Board</button>
+            </div>
+        </form>
+    {{/if}}
+
 </div>
 
 <div id="invite">
@@ -32,7 +42,7 @@
     <form action="/board/invite/{{board._id}}" method="POST">
         <div class="emailDiv">
             <label for="inviteEmail">Email: </label>
-            <input id="inviteEmail" type="text" placeholder="Email" value=""/>
+            <input id="inviteEmail" name="members" type="text" placeholder="Email" value=""/>
         </div>
         <div class="submitButtonDiv">
             <button type="submit">Invite</button>
