@@ -4,6 +4,24 @@
   {{user.initials}}
 </div>
 
+<form id="change-pass-form" action="/users/password" method="POST">
+  <input type="hidden" name="_method" value="put" />
+    <p id="change-pass-error" hidden>ERROR</p>
+    <label>
+    Old Password
+    <input type="text" name="oldPass" id="oldPass" placeholder="Old password..." required/>
+    </label>
+    <label>
+    New Password
+    <input type="text" name="newPass" id="newPass" placeholder="New password..." required/>
+    </label>
+    <label>
+    Verify New Password
+    <input type="text" name="verNewPass" id="verNewPass" placeholder="New password..." required/>
+    </label>
+    <button type="submit">Change Password</button>
+</form>
+
 <div class="user-btn">
   <button type="button" id="sign-out">Sign Out</button>
   <button type="button" id="delete-account">Delete Account</button>

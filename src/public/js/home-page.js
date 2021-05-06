@@ -4,7 +4,6 @@
     login_form.submit(function(event) {
         event.preventDefault();
 
-        // TODO - Error Checking
 
         let email = $('#email').val();
         let password = $('#password').val();
