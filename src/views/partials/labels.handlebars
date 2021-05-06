@@ -1,0 +1,18 @@
+<h3>Labels</h3>
+{{!-- List Labels --}}
+<form>
+    {{#each label}}
+        <input type="checkbox" checked id="card_label_{{@index}}">
+        <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p></label>
+    {{/each}}
+    <button type="submit" value="submit">Set Changes</button>
+</form>
+
+{{!-- Add Label --}}
+<form id="addLabel">
+    <label for="add_label_name">Label Name</label><br>
+    <input type="text" id="add_label_name" name="add_label_name"><br>
+
+    <button type="submit" value="submit">Add</button>
+</form>
+
