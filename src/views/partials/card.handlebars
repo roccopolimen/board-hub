@@ -11,10 +11,7 @@
         <input type="checkbox" class="unassigned" value="{{initials}}">
         {{/if}}
         {{/each}}
-        <h2>Labels</h2>
-        {{#each labels}}
-        <h3 style="background-color: {{color}}">{{text}}</h3>
-        {{/each}}
+        <button type="button" id="openLabels">Edit Labels</button>
         <h2>Description</h2>
         <textarea id="description" name="description">{{description}}</textarea>
         <h2>Move Card</h2>
@@ -43,11 +40,5 @@
         <button id="deleteCard">Delete Card</button>
     </form>
     
-    <div class="comment">
-        <h2>Comments</h2>
-        {{#each comments}}
-        <h3>{{user.initials}}</h3>
-        <p class="comment">{{comment}}</p>
-        {{/each}}
-    </div>
+    <button type="button" id="openComments">Comments</button>
 </div>
