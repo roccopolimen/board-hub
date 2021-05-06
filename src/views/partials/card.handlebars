@@ -6,9 +6,9 @@
         <h2>Members</h2>
         {{#each members}}
         {{#if assigned}}
-        <h3 class="assigned">{{initials}}</h3>
+        <input type="checkbox" class="assigned" value="{{initials}}">
         {{else}}
-        <h3 class="unassigned">{{initials}}</h3>
+        <input type="checkbox" class="unassigned" value="{{initials}}">
         {{/if}}
         {{/each}}
         <h2>Labels</h2>
@@ -37,6 +37,7 @@
         <label>
             Due Date
             <input type="date" id="dueDate" value="{{dueDate.date}}">
+            <input type="time" id="dueTime" value="{{dueDate.time}}">
         </label>
         <button type="submit">Save Card</button>
         <button id="deleteCard">Delete Card</button>
