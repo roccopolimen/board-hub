@@ -85,9 +85,9 @@ const equalMembers = (l1, l2) => {
     return true;
 };
 
-// POST /board/calendar/{id}
+// GET /board/calendar/{id}
 // request to download a calendar of the board
-router.post('/calendar/:id', async (req, res) => {
+router.get('/calendar/:id', async (req, res) => {
 
     const id = req.params.id;
     if(!id || !checkNonEmptyString(id) || !checkObjectId(id)) {
@@ -119,7 +119,6 @@ router.post('/calendar/:id', async (req, res) => {
     }
 
     try {
-        console.log(boardInfo._id);
         const calPath = await calData.makeCal(boardInfo._id.toString(), boardInfo.boardName);
         res.download(calPath); // send to user for download
         fs.unlinkSync(calPath); // remove file locally
