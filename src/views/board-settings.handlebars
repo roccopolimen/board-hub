@@ -1,0 +1,39 @@
+<a href="/board/{{board._id}}">Back</a>
+<div id="boardSettings">
+    <!-- Form for changing the board settings -->
+    <form id="changeBoardForm" action="/board/settings/{{board._id}}" method="POST">
+        <input type="hidden" name="_method" value="PATCH"/>
+        <div class="boardNameDiv">
+            <label for="boardName">Name: </label>
+            <input id="boardName" name="boardName" type="text" placeholder="Board Name" value="{{board.boardName}}"/>
+        </div>
+        <div class="colorDiv">
+            <label for="boardColor">Color: </label>
+            <input id="boardColor" name="boardColor" type="color" placeholder="Color" value="{{board.boardColor}}"/>
+        </div>
+        <div class="descriptionDiv">
+            <label for="description">Description: </label>
+            <textarea id="description" name="description" placeholder="Description...">{{board.description}}</textarea>
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+    <!-- form for deleting a board -->
+    <form id="leaveBoardForm" action="/board/remove/{{board._id}}" method="POST">
+        {{#if onlyMember}}
+            <button type="submit">Delete Board</button>
+        {{else}}
+            <button type="submit">Leave Board</button>
+        {{/if}}
+    </form>
+</div>
+<div id="invite">
+    <!-- Form for inviting people to the board -->
+    <form id="inviteForm" action="/board/invite/{{board._id}}" method="POST">
+        <div class="emailDiv">
+            <label for="inviteEmail">Email: </label>
+            <input id="inviteEmail" name="email" type="email" placeholder="User Email"/>
+        </div>
+        <button type="submit">Invite</button>
+    </form>
+</div>
+
