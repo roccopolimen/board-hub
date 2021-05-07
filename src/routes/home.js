@@ -6,6 +6,7 @@ router.get('/', async (req, res) => {
   try {
     if(req.session.user) {
       res.redirect('/boards');
+      return;
     }
     res.sendFile(path.resolve('../src/static/home.html'));
   } catch (e) {

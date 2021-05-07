@@ -120,8 +120,7 @@ router.get('/calendar/:id', async (req, res) => {
 
     try {
         const calPath = await calData.makeCal(boardInfo._id.toString(), boardInfo.boardName);
-        res.download(calPath); // send to user for download
-        fs.unlinkSync(calPath); // remove file locally
+        res.download(calPath, err => {fs.unlinkSync(calPath)}); // send to user for download, and delete after
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -170,6 +169,7 @@ router.get('/:id', async (req, res) => {
         let listPosition = 1;
         for(let list of boardInfo.lists) {
             const listOfCards = {
+                _id: list._id.toString(),
                 listName: list.listName,
                 position: listPosition,
                 cards: []
@@ -227,7 +227,7 @@ router.get('/:id', async (req, res) => {
             data: listOfListsOfCards
         };
     
-        res.render('board', { title: boardInfo.boardName, board: renderInfo, members: members, user: req.session.user });
+        res.render('board', { title: boardInfo.boardName, board: renderInfo, members: members, user: req.session.user, partial: 'board-page-script' });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -272,7 +272,7 @@ router.post('/:id', async (req, res) => {
     }
 
     let listNameInfo = {};
-    if(xss(newData.listName)) {
+    if(xss(newData.listName) !== undefined) {
         if(checkNonEmptyString(xss(newData.listName))) {
             listNameInfo.listName = xss(newData.listName);
         } else {
@@ -285,11 +285,11 @@ router.post('/:id', async (req, res) => {
         res.status(400).render('error-page', { title: "400 Bad Request", message: 'no listName provided', erorr: true });
         return;
     }
-
+    
     try {
         const { listName } = listNameInfo;
-        await listsData.addList(listName, id);
-        res.redirect(`/board/${id}`);
+        const listId = await listsData.addList(listName, id);
+        res.json({ listName: listName, boardId: id, listId: listId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -389,20 +389,20 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
         }
         let assigned = [];
         for(let assignedId of card.assigned)
-           assigned.push(memberMap[assignedId.toString()]);
+           assigned.push(assignedId.toString());
         for(let key in memberMap) {
             let value = memberMap[key];
-            if(key in assigned)
-                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: true });
+            if(assigned.includes(key))
+                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: true, _id: key });
             else
-                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: false });
+                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: false, _id: key });
         }
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
     try {
-        res.render('partials/card', { title: boardInfo.boardName, card: cardInfo, list: listInfo, positions: positions, boardId: boardId });
+        res.render('partials/card', { layout: null, card: cardInfo, list: listInfo, positions: positions, boardId: boardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1069,8 +1069,8 @@ router.post('/:boardId/:listId', async (req, res) => {
 
     try {
         const { cardName } = cardNameInfo;
-        await cardsData.addCard(boardId, listId, cardName);
-        res.redirect(`/board/${boardId}`);
+        const cardId = await cardsData.addCard(boardId, listId, cardName);
+        res.json({ cardId: cardId, cardName: cardName });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }

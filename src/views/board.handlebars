@@ -13,24 +13,24 @@
     </ul>
     <ul id="board-info-buttons">
         <li>
-            <button type="button">Download Calendar</button>
+            <button id="download-calendar-btn" type="button" data-id="{{board._id}}">Download Calendar</button>
         </li>
         <li>
-            <button type="button">Board Settings</button>
+            <button id="board-settings-btn" type="button" data-id="{{board._id}}">Board Settings</button>
         </li>
     </ul>
 </section>
 <article style="background-color: {{board.color}};">
-    <div id="board-container" style="background-color: {{board.color}};">
+    <div id="board-container" style="background-color: {{board.color}};" data-id="{{board._id}}">
         {{#each board.data}}
             <div class="list">
                 <div class="list-header">
                     <p class="board-list-name">{{this.listName}}</p>
-                    <button class="edit-list-btn" type="button">edit list</button>
+                    <button class="edit-list-btn" type="button" data-id="{{this._id}}">edit list</button>
                 </div>
                 <div class="list-body">
                     {{#each this.cards}}
-                        <button class="card">
+                        <button class="card" data-id="{{this._id}}">
                             <div class="card-header">
                                 <div class="labels-list">
                                     {{#each this.labels}}
@@ -41,14 +41,16 @@
                             </div>
                             <div class="card-body">
                                 <p class="card-name">{{this.name}}</p>
-                                <div class="card-due-date">
-                                    {{#if this.dueDate.done}}
-                                        <p class="card-done-indicator" ></p>
-                                    {{else}}
-                                        <p class="card-not-done-indicator" ></p>
-                                    {{/if}}
-                                    <p class="card-date-text">Due: {{this.dueDate.date}}</p>
-                                </div>
+                                {{#if this.dueDate}}
+                                    <div class="card-due-date">
+                                        {{#if this.dueDate.done}}
+                                            <p class="card-done-indicator" ></p>
+                                        {{else}}
+                                            <p class="card-not-done-indicator" ></p>
+                                        {{/if}}
+                                        <p class="card-date-text">Due: {{this.dueDate.date}}</p>
+                                    </div>
+                                {{/if}}
                             </div>
                         </button>
                     {{/each}}
@@ -69,3 +71,5 @@
         </form>
     </div>
 </article>
+<div id="cardModal" hidden></div>
+<div id="listModal" hidden></div>

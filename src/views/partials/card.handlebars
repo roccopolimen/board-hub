@@ -1,46 +1,64 @@
-{{#each card}}
-<div class="card-modal" hidden>
-    <button class="close-button" id="closeModal">Close Modal</button>
-    <form id="updateCard" action="/board/card/{{boardId}}/{{_id}}" method="POST">
-        <h1>{{name}}</h1>
-        <h2>Members</h2>
-        {{#each members}}
-        {{#if assigned}}
-        <input type="checkbox" class="assigned" value="{{initials}}">
+<button class="close-button" id="closeModal">Close Modal</button>
+<form id="updateCard" action="/board/card/{{boardId}}/{{card._id}}" method="POST">
+    <h1>{{card.name}}</h1>
+    <h2>Members</h2>
+    {{#each card.members}}
+        {{#if this.assigned}}
+            <label>
+                <input type="checkbox" class="assigned" value="{{this._id}}" checked>
+                <p>{{this.initials}}</p>
+            </label>
         {{else}}
-        <input type="checkbox" class="unassigned" value="{{initials}}">
+            <label>
+                <input type="checkbox" class="unassigned" value="{{this._id}}">
+                <p>{{this.initials}}</p>
+            </label>
         {{/if}}
-        {{/each}}
-        <button type="button" id="openLabels">Edit Labels</button>
-        <div id="placeLabelsHere" hidden></div>
-        <h2>Description</h2>
-        <textarea id="description" name="description">{{description}}</textarea>
-        <h2>Move Card</h2>
-        <label>
-            To List
-            <select id="toList">
-                {{#each list}}
-                <option value="{{_id}}">{{listName}}</option>
-                {{/each}}
-            </select>
-        </label>
-        <label>
-            Position
-            <select id="position">
-                {{#each position}}
-                <option value="{{position}}">{{position}}</option>
-                {{/each}}
-            </select>
-        </label>
-        <label>
-            Due Date
-            <input type="date" id="dueDate" value="{{dueDate.date}}">
-            <input type="time" id="dueTime" value="{{dueDate.time}}">
-        </label>
-        <button type="submit">Save Card</button>
-        <button id="deleteCard">Delete Card</button>
-    </form>
-    
-    <button type="button" id="openComments">Comments</button>
-    <div id="placeCommentsHere" hidden></div>
-</div>
+    {{/each}}
+    <h2>Description</h2>
+    <textarea id="description" name="description">{{card.description}}</textarea>
+    <h2>Move Card</h2>
+    <label>
+        To List
+        <select id="toList">
+            {{#each list}}
+                {{#if_eq this._id ../card.list}}
+                    <option value="{{this._id}}" selected>{{this.listName}}</option>
+                {{else}}
+                    <option value="{{this._id}}">{{this.listName}}</option>
+                {{/if_eq}}
+            {{/each}}
+        </select>
+    </label>
+    <label>
+        Position
+        <select id="position">
+            {{#each positions}}
+                {{#if_eq this ../card.position}}
+                    <option value="{{this}}" selected>{{this}}</option>
+                {{else}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/if_eq}} 
+            {{/each}}
+        </select>
+    </label>
+    <label for="dueDate">Due Date</label>
+    <input type="date" id="dueDate">
+    <script>
+        document.getElementById('dueDate').value = new Date("{{card.dueDate.date}}").toISOString().substring(0, 10);
+    </script>
+    <label for="dueTime">Due Time</label>
+    <input type="time" id="dueTime" value="{{card.dueDate.time}}">
+    {{#if card.dueDate.done}}
+        <input type="checkbox" id="dueDone" checked>
+    {{else}}
+        <input type="checkbox" id="dueDone">
+    {{/if}}
+    <label for="dueDone">Done</label>
+    <button type="submit">Save Card</button>
+    <button id="deleteCard">Delete Card</button>
+</form>
+<button type="button" id="openLabels">Edit Labels</button>
+<div id="placeLabelsHere" hidden></div>
+<button type="button" id="openComments">Comments</button>
+<div id="placeCommentsHere" hidden></div>

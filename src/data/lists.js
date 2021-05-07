@@ -86,7 +86,7 @@ module.exports = {
 
         const board = await boardCollection.findOne({_id: ObjectId(boardId)});
 
-        return board;
+        return listId.toString();
     },
 
     /**
