@@ -33,8 +33,20 @@
                 let position = $('#position');
                 let toList = $('#toList');
                 let description = $('#description');
-                if(position == null || toList == null || description == null) throw new Error("Internal Variable Error");
+                let dueTime = $('#dueTime');
+                let dueDate = $('#dueDate');
+                //make sure these inputs actually exist on the page
+                if(position == null || toList == null || description == null || dueDate == null || dueTime == null) throw new Error("Internal Variable Error");
                 if(position.val() == null || toList.val() == null) throw new Error("All inputs must have values.");
+                if((dueDate.val() == null && dueTime.val() !== null) || (dueDate.val() !== null && dueTime.val() !== null)) throw new Error("Must enter both due date and time");
+                if(dueTime.val() !== null && dueDate.val() !== null) {
+                    let formattedDate = $('#formattedDate');
+                    //Date = yyyy-mm-dd
+                    //Formatted = mm/dd/yyyy
+                    let oldDate = dueDate.val().split('-');
+                    formattedDate.val(`${oldDate[1]}/${oldDate[2]}/${oldDate[0]}`);
+                }
+                
                 return true;
             } catch (error) {
                 e.preventDefault();

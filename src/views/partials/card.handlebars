@@ -44,6 +44,7 @@
     </label>
     <label for="dueDate">Due Date</label>
     <input type="date" id="dueDate">
+    <input type="text" id="formattedDate" hidden>
     <script>
         document.getElementById('dueDate').value = new Date("{{card.dueDate.date}}").toISOString().substring(0, 10);
     </script>
