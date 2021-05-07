@@ -45,6 +45,18 @@ body {
   display: inline;
 }
 
+#nav-ques {
+  float: right;
+}
+
+#nav-ques a {
+  font-size: 35pt;
+  font-weight: bold;
+  color: #d38200;
+  text-decoration: none;
+  margin-right: 5rem;
+}
+
 nav {
   width: 100%;
   border-bottom: 2px solid #000000;
@@ -117,6 +129,7 @@ nav {
   font-size: 20pt;
   background-color: #d38200;
   color: white;
+  margin-bottom: 5rem;
 }
 
 /* board/{id} styles */
