@@ -1117,8 +1117,10 @@ router.get('/settings/:id', async (req, res) => {
         description: boardInfo.description
     };
 
+    const onlyMember = (boardInfo.members.length === 1);
+
     try {
-        res.render('board-settings', { title: 'Board Settings', board: renderInfo });
+        res.render('board-settings', { title: 'Board Settings', board: renderInfo, onlyMember: onlyMember});
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
