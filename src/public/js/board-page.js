@@ -7,18 +7,115 @@
         $(ele).on('click', event => {
             event.preventDefault();
 
-            cardId = $(ele).data('id');
+            let cardId = $(ele).data('id');
             $.ajax({
                 method: 'GET',
                 url: `/board/card/${boardId}/${cardId}`
             }).then(res => {
                 let newElement = $(res);
-                $('#cardModal').empty().append(newElement).show();
+                $('#cardModal').empty().append(newElement);
+                setUpErrorChecking();
+                setUpDeleteCard();
+                setUpComments(cardId);
+                setUpLabels(cardId);
+                $('#cardModal').show();
             }, err => {
                 $('html').html($(err.responseText));
             });
         });
     });
+
+    //ERROR CHECKING FOR CARD MODAL
+    const setUpErrorChecking = () => {
+        let form = $("#updateCard");
+        form.on("submit", (e) => {
+            try {
+                let position = $('#position');
+                let toList = $('#toList');
+                let description = $('#description');
+                if(position == null || toList == null || description == null) throw new Error("Internal Variable Error");
+                if(position.val() == null || toList.val() == null) throw new Error("All inputs must have values.");
+                return true;
+            } catch (error) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+
+    //DELETE CARD FROM MODAL
+    const setUpDeleteCard = () => {
+        let deleteButton = $("deleteCard");
+        deleteButton.on("click", (e) => {
+            e.preventDefault();
+            let requestData = {
+                method: "POST",
+                url: `TODO/${boardId}/${cardId}` //TODO: Insert route to delete card
+            };
+            //make the call to ajax to delete card
+            $.ajax(requestData);
+        })
+    }
+
+    //OPEN COMMENTS MODAL
+    const setUpComments = (cardId) => {
+        //handle the comment button being clicked
+        let openComments = $('#openComments');
+        let placeCommentsHere = $('#placeCommentsHere');
+
+        openComments.on("click", (e) => {
+            e.preventDefault();
+            let requestData = {
+                method: "GET", //I think?
+                url: `card/comments/${boardId}/${cardId}` //TODO: Check this route
+            };
+            $.ajax(requestData).then(function(responseMessage) {
+                let commentModal = $(responseMessage);
+                placeCommentsHere.empty(); //handle a modal being there before
+                placeCommentsHere.append(commentModal); //insert new modal
+                setUpCommentErrorChecking();
+                placeCommentsHere.show();
+            });
+        })
+    }
+
+    //ERROR CHECKING FOR COMMENTS MODAL
+    const setUpCommentErrorChecking = () => {
+        let form = $('#comment-form');
+        
+        form.on('submit', (e) => {
+            try {
+                let comment = $('#commentInput');
+                if(comment.trim() == '') throw new Error("Comment must not be empty");
+            } 
+            catch (error) {
+                e.preventDefault();
+                return false;    
+            }
+        });
+    }
+
+    //OPEN LABELS MODAL
+    const setUpLabels = (cardId) => {
+        //handle the comment button being clicked
+        let openComments = $('#openComments');
+        let placeLabelsHere = $('#placeLabelsHere');
+
+        openComments.on("click", (e) => {
+            e.preventDefault();
+            let requestData = {
+                method: "GET", //I think?
+                url: `card/labels/${boardId}/${cardId}` //TODO: Check this route
+            };
+            $.ajax(requestData).then(function(responseMessage) {
+                let labelModal = $(responseMessage);
+                placeLabelsHere.empty(); //handle a modal being there before
+                placeLabelsHere.append(labelModal); //insert new modal
+                //setUpLabelErrorChecking();
+                placeLabelsHere.show();
+            });
+        })
+    }
 
     // GO TO BOARD SETTINGS
     let boardSettingsBtn = $('#board-settings-btn');

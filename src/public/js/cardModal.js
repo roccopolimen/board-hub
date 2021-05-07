@@ -23,7 +23,7 @@
                 setUpErrorChecking();
                 setUpDeleteCard();
                 setUpComments(boardId, cardId);
-                setUpLabels();
+                setUpLabels(boardId, cardId);
                 placeModalHere.show();
             });
         });
@@ -95,6 +95,27 @@
                 return false;    
             }
         });
+    }
+
+    const setUpLabels = (boardId, cardId) => {
+        //handle the comment button being clicked
+        let openComments = $('#openComments');
+        let placeLabelsHere = $('#placeLabelsHere');
+
+        openComments.on("click", (e) => {
+            e.preventDefault();
+            let requestData = {
+                method: "GET", //I think?
+                url: `card/labels/${boardId}/${cardId}` //TODO: Check this route
+            };
+            $.ajax(requestData).then(function(responseMessage) {
+                let labelModal = $(responseMessage);
+                placeLabelsHere.empty(); //handle a modal being there before
+                placeLabelsHere.append(labelModal); //insert new modal
+                //setUpLabelErrorChecking();
+                placeLabelsHere.show();
+            });
+        })
     }
 
 })(window.jQuery);
