@@ -65,13 +65,15 @@ app.use('*', (req, res, next) => {
   if(req.originalUrl == "/" || req.originalUrl == "/users/login" ||
    req.originalUrl == "/users/signup" || req.originalUrl == "/about") next();
   else {
-    //if you're logged in, proceed to whatever page you were trying to access
-    if(loggedin || reqroute === "/favicon.ico") {
-      next();
-    }
-    //if you aren't logged in, you're redirected to the home page, never even hitting the page you were trying to hit
-    else {
+    if(!loggedin && reqroute !== "/favicon.ico" && 
+    (reqroute.search("/boards") === 0 || reqroute.search("/board") === 0) ||
+    reqroute.search("/users") === 0) {
       res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
+    }
+
+    //if you're logged in, proceed to whatever page you were trying to access
+    else {
+      next();
     }
   }
 });
