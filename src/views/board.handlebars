@@ -57,7 +57,7 @@
                     <form class="new-card" method="POST" action="/board/{{../board._id}}/{{this._id}}">
                         <label>
                             <p hidden>Card</p>
-                            <input type="text" name="cardName" class="new-card-name-input" />
+                            <input type="text" name="cardName" class="new-card-name-input" required/>
                         </label>
                         <button class="add-card-btn" type="submit">add card</button>
                     </form>
@@ -66,7 +66,7 @@
         {{/each}}
         <form id="new-list" method="POST" action="/board/{{board._id}}">
             <label for="newListNameInput" hidden>List: </label>
-            <input type="text" name="listName" id="newListNameInput">
+            <input type="text" name="listName" id="newListNameInput" required/>
             <button class="add-list-btn" type="submit">add list</button>
         </form>
     </div>

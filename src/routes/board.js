@@ -641,7 +641,7 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
 
     try {
         const labelsInfo = await labelsData.getAllLabels(boardId, cardId);
-        res.render('partials/label', { title: boardInfo.boardName, labels: labelsInfo, boardId: boardId, cardId: cardId })
+        res.render('partials/labels', { layout: null, labels: labelsInfo, boardId: boardId, cardId: cardId })
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
@@ -756,7 +756,7 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
     }
 });
 
-// GET /boards/card/comments/{boardId}/{cardId}
+// GET /board/card/comments/{boardId}/{cardId}
 // brings up modal to edit and read comments
 router.get('/card/comments/:boardId/:cardId', async (req, res) => {
 
@@ -813,7 +813,7 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
             commentInfo[index].time = getTime(commentInfo[index].date);
             commentInfo[index].date = getDate(commentInfo[index].date);
         }
-        res.render('partials/comment', { title: boardInfo.boardName, comments: commentInfo, boardId: boardId, cardId: cardId });
+        res.render('partials/comment', { layout: null, comments: commentInfo, boardId: boardId, cardId: cardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
@@ -869,8 +869,13 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
     }
 
     const newData = req.body;
+    if(!newData) {
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
+        return;
+    }
+
     let comment;
-    if(xss(newData.comment)) {
+    if(xss(newData.comment) !== undefined) {
         if(checkNonEmptyString(xss(newData.comment))) {
             comment = xss(newData.comment);
         } else {
@@ -886,7 +891,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
         const today = new Date();
         const date = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}*${today.getHours()}:${today.getMinutes()}`;
         await commentsData.create(userId, boardId, cardId, date, comment);
-        res.redirect(`/board/${boardId}`);
+        res.json({ initials: req.session.user.initials, comment: comment });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1269,7 +1274,7 @@ router.get('/list/:boardId/:listId', async (req, res) => {
         }
         renderInfo.position = listPosition;
         positions = [...Array(boardInfo.lists.length+1).keys()].slice(1);
-        res.render('partials/list', { title: boardInfo.boardName, list: renderInfo, boardId: boardId, positions: positions });
+        res.render('partials/list-settings', { layout: null, list: renderInfo, boardId: boardId, positions: positions });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }

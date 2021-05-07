@@ -5,7 +5,7 @@
 
     {{!-- List Labels --}}
     <form action="/boards/card/labels/{{boardId}}/{{cardId}}" method="PATCH" id="editLabels">
-        {{#each label}}
+        {{#each labels}}
             <input type="checkbox" checked id="card_label_{{@index}}">
             <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p><p>{{this.text}}</p></label>
         {{/each}}
