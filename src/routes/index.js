@@ -11,6 +11,14 @@ const constructorMethod = (app) => {
     app.use('/boards', boardsRoutes);
     app.use('/', homeRoutes);
 
+    app.get('/about', async (req, res) => {
+        try {
+            res.sendFile(path.resolve('../src/static/about.html'));
+          } catch (e) {
+            res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
+          }
+    });
+
     // catch all bad URLs and provide a 404.
     app.use('*', (req, res) => {
         res.status(404).render('error-page', { title: "404 Page Not Found", error: true });
