@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 
 router.get('/', async (req, res) => {
     try {
-        res.render('profile', { title: "User Profile", user: req.session.user });
+        res.render('profile', { title: "User Profile", user: req.session.user, partial: "user-page-scripts" });
     } catch (e) {
         res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
     }
@@ -134,6 +134,45 @@ router.post('/login', async (req, res) => {
         res.json({});
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+    }
+});
+
+router.put('/password', async (req, res) => {
+    if(!req.body) {
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no request body provided', error: true });
+        return;
+    }
+
+    let password;
+
+    try {
+        if(!req.body.oldPass || !req.body.newPass)
+            throw new Error("Passwords not provided.");
+    }catch(e) {
+        res.json({error: true});
+        return;
+    }
+
+    try {
+        user = await userData.readById(req.session.user._id);
+        const matching = await bcrypt.compare(xss(req.body.oldPass), user.hashedPassword);
+        if(!matching) {
+            res.json( {error: true } );
+            return;
+        }
+    } catch(e) {
+        res.status(500).render('error-page', { title: "500 Internal Server Error", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        password = xss(req.body.newPass);
+        if(!password || !error_handler.checkNonEmptyString(password))
+            throw new Error("Password is not valid.");
+        await userData.update_password(req.session.user._id, password);
+        res.json({});
+    }catch(e) {
+        res.json({error: true});
     }
 });
 
