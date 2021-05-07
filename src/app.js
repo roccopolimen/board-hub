@@ -60,27 +60,25 @@ app.use(
 );
 
 app.use('*', (req, res, next) => {
-  //This will run every single time any route is called
-  let date = new Date().toUTCString();
-  let reqmethod = req.method;
-  let reqroute = req.originalUrl;
-  let loggedin = false;
-  if(req.session.user) loggedin = true;
-  //Logs some useful stuff to the console, can be commented out
-  console.log(`[${date}]: ${reqmethod} ${reqroute} | Authorized: ${loggedin}`);
-  //Checks if you're going to the home page, or submitting the login/signup form, and skips if so
-  if(req.originalUrl == "/" || req.originalUrl == "/users/login" ||
-   req.originalUrl == "/users/signup" || req.originalUrl == "/about") next();
-  else {
-    if(!loggedin && reqroute !== "/favicon.ico" && 
-    (reqroute.search("/boards") === 0 || reqroute.search("/board") === 0) ||
-    reqroute.search("/users") === 0) {
-      res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
-    }
-
-    //if you're logged in, proceed to whatever page you were trying to access
+    //This will run every single time any route is called
+    let date = new Date().toUTCString();
+    let reqmethod = req.method;
+    let reqroute = req.originalUrl;
+    let loggedin = false;
+    if(req.session.user) loggedin = true;
+    //Logs some useful stuff to the console, can be commented out
+    console.log(`[${date}]: ${reqmethod} ${reqroute} | Authorized: ${loggedin}`);
+    //Checks if you're going to the home page, or submitting the login/signup form, and skips if so
+    if(req.originalUrl == "/" || req.originalUrl == "/users/login" || req.originalUrl == "/users/signup" || req.originalUrl == "/about") next();
     else {
-      next();
+        if(!loggedin && reqroute !== "/favicon.ico" && (reqroute.search("/boards") === 0 || reqroute.search("/board") === 0) || reqroute.search("/users") === 0) {
+            res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
+        }
+
+        //if you're logged in (or getting the favicon, or going to a page that doesn't exist), proceed to whatever page (or 404) you were trying to access
+        else {
+            next();
+        }
     }
 });
 
