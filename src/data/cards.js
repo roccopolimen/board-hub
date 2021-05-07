@@ -101,6 +101,8 @@ const exportedModules = {
         const updateInfo = await boardCollection.updateOne({_id: ObjectId(boardId)}, { $addToSet: { cards: newCard}});
         if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
             throw new Error('Could not add the card.');
+
+        return newCard._id.toString();
     },
 
     /**
