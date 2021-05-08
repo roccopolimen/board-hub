@@ -1,9 +1,15 @@
 (function($) {
+
+    const displayErrorPage = err => {
+        $('body').html($(err.responseText.match(/\<body[^>]*\>([^]*)\<\/body/m)[1]));
+    };
     
     // Change Password
     let pass_form = $('#change-pass-form');
     pass_form.submit(function(event) {
         event.preventDefault();
+
+        $('#change-pass-error').hide();
 
         let oldPass = $('#oldPass').val();
         let newPass = $('#newPass').val();
@@ -24,6 +30,9 @@
                 else {
                     window.location.href = "/users";
                 }
+            },
+            err => {
+                displayErrorPage(err);
             });
          } else { // inputs don't exist
             $('#change-pass-error').show();
@@ -44,6 +53,9 @@
             };
         $.ajax(requestConfig).then(function(responseMessage) {
             window.location.href = "/";
+        },
+        err => {
+            displayErrorPage(err);
         });
 
     });
@@ -59,8 +71,11 @@
             contentType: 'application/json',
             data: JSON.stringify({})
             };
-        $.ajax(requestConfig).then(function(responseMessage) {
+        $.ajax(requestConfig).then(responseMessage => {
             window.location.href = "/";
+        },
+        err => {
+            displayErrorPage(err);
         });
 
     });
