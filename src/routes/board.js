@@ -649,7 +649,7 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
 
 });
 
-// PATCH /boards/card/labels/{boardId}/{cardId}
+// PATCH /board/card/labels/{boardId}/{cardId}
 // edit labels
 router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
 
@@ -711,11 +711,13 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
 
     let updatedLabelInfo = {};
     if(xss(newData.labelIds) === undefined) {
-        res.status(400).render('error-page', { title: "400 Bad Request", message: 'missing labelIds', erorr: true });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'missing labelIds', error: true });
         return;
     } else {
+        if(newData.labelIds === '')
+            newData.labelIds = [];
         if(!checkArrayObjectId(newData.labelIds)) {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid labelIds', erorr: true });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid labelIds', error: true });
             return;
         } else {
             for(let labelId of newData.labelIds) {
@@ -733,11 +735,13 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
             }
             updatedLabelInfo.labels = newData.labelIds;
         }
-        if(xss(newData.newLabelName) !== undefined && !checkNonEmptyString(xss(newData.newLabelName))) {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid new label', erorr: true });
-            return;
-        } else {
-            updatedLabelInfo.newLabelName = newData.newLabelName;
+        if(xss(newData.newLabelName) !== undefined && newData.newLabelName.trim().length !== 0) {
+            if(!checkNonEmptyString(xss(newData.newLabelName))) {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid new label', erorr: true });
+                return;
+            } else {
+                updatedLabelInfo.newLabelName = newData.newLabelName;
+            }
         }
     }
 
@@ -749,8 +753,10 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
     try {
         const { labels, newLabelName } = updatedLabelInfo;
         await labelsData.updateLabels(boardId, cardId, labels);
-        await labelsData.addLabel(boardId, cardId, newLabelName);
-        res.redirect(`/board/${boardId}`);
+        if(newLabelName)
+            await labelsData.addLabel(boardId, cardId, newLabelName);
+        const labelsInfo = await labelsData.getAllLabels(boardId, cardId);
+        res.json({ labelsInfo: labelsInfo, cardId: cardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -820,7 +826,7 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
     }
 });
 
-// PUT /boards/card/comments/{boardId}/{cardId}
+// PUT /board/card/comments/{boardId}/{cardId}
 // adds a comment to the card
 router.put('/card/comments/:boardId/:cardId', async (req, res) => {
 

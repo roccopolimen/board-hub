@@ -68,10 +68,8 @@ const exportedModules = {
         }
         for(let card of cardList){
             if(card._id.toString() === cardId){
-                if(card.labels.length === 0){
-                    throw new Error('That card has no labels.');
-                }
                 labelList = card.labels;
+                break;
             }
         }
         for(let label of labelList){
