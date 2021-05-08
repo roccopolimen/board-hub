@@ -40,6 +40,8 @@ module.exports = {
         let events = [];
         for(let x=0; x<board.cards.length; x++) {
             let card = board.cards[x];
+            if(card.dueDate === undefined)
+                continue;
             let date = genDate(card);
             events.push({
                 title: card.cardName,
