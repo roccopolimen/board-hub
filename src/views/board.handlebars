@@ -32,7 +32,7 @@
                     {{#each this.cards}}
                         <button class="card" data-id="{{this._id}}">
                             <div class="card-header">
-                                <div class="labels-list">
+                                <div class="labels-list" data-id="{{this._id}}">
                                     {{#each this.labels}}
                                         <p class="card-label-highlight" style="background-color: {{this.color}};"></p>
                                     {{/each}}
