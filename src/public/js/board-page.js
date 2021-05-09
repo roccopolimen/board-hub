@@ -1,9 +1,14 @@
 (function($) {
 
+    // stays the same while on this page
     let boardId = $('#board-container').data('id');
 
+    const displayErrorPage = err => {
+        $('body').html($(err.responseText.match(/\<body[^>]*\>([^]*)\<\/body/m)[1]));
+    };
+
     // CLICK CARD MODAL FUNCTIONALITY
-    $('.card').each((ind, ele) => {
+    const setUpCardModal = ele => {
         $(ele).on('click', event => {
             event.preventDefault();
 
@@ -13,6 +18,7 @@
                 url: `/board/card/${boardId}/${cardId}`
             }).then(res => {
                 let newElement = $(res);
+                $('#listModal').hide();
                 $('#cardModal').empty().append(newElement);
                 setUpErrorChecking();
                 setUpDeleteCard();
@@ -20,12 +26,18 @@
                 setUpLabels(cardId);
                 $('#cardModal').show();
             }, err => {
-                $('html').html($(err.responseText));
+                displayErrorPage(err);
             });
         });
+    };
+
+    // give modal functionality to all card buttons.
+    $('.card').each((ind, ele) => {
+        setUpCardModal(ele);
     });
 
-    //ERROR CHECKING FOR CARD MODAL
+    // ERROR CHECKING FOR CARD MODAL
+    // TODO: not completed yet, that will be my next job
     const setUpErrorChecking = () => {
         let form = $("#updateCard");
         form.on("submit", (e) => {
@@ -55,21 +67,28 @@
         });
     }
 
-    //DELETE CARD FROM MODAL
+    // DELETE CARD FROM MODAL
     const setUpDeleteCard = () => {
-        let deleteButton = $("deleteCard");
+        let deleteButton = $("#deleteCard");
         deleteButton.on("click", (e) => {
             e.preventDefault();
+
+            let cardId = deleteButton.data('id');
             let requestData = {
                 method: "POST",
-                url: `TODO/${boardId}/${cardId}` //TODO: Insert route to delete card
+                url: `/board/delete/card/${boardId}/${cardId}`
             };
             //make the call to ajax to delete card
-            $.ajax(requestData);
+            $.ajax(requestData)
+            .then(res => {
+                window.location.href = `/board/${boardId}`;
+            }, err => {
+                displayErrorPage(err);
+            });
         })
-    }
+    };
 
-    //OPEN COMMENTS MODAL
+    // OPEN COMMENTS MODAL
     const setUpComments = (cardId) => {
         //handle the comment button being clicked
         let openComments = $('#openComments');
@@ -77,9 +96,11 @@
 
         openComments.on("click", (e) => {
             e.preventDefault();
+            $('#placeLabelsHere').hide();
+
             let requestData = {
-                method: "GET", //I think?
-                url: `card/comments/${boardId}/${cardId}` //TODO: Check this route
+                method: "GET",
+                url: `/board/card/comments/${boardId}/${cardId}`
             };
             $.ajax(requestData).then(function(responseMessage) {
                 let commentModal = $(responseMessage);
@@ -87,53 +108,139 @@
                 placeCommentsHere.append(commentModal); //insert new modal
                 setUpCommentErrorChecking();
                 placeCommentsHere.show();
-            });
-        })
-    }
+            }, err => displayErrorPage(err));
+        });
+    };
 
-    //ERROR CHECKING FOR COMMENTS MODAL
+    // ERROR CHECKING FOR COMMENTS MODAL
     const setUpCommentErrorChecking = () => {
         let form = $('#comment-form');
-        
-        form.on('submit', (e) => {
+        form.submit(event => {
+            event.preventDefault();
             try {
-                let comment = $('#commentInput');
-                if(comment.trim() == '') throw new Error("Comment must not be empty");
-            } 
-            catch (error) {
-                e.preventDefault();
-                return false;    
+                let formData = form.serializeArray();
+                let comment = formData[formData.findIndex(
+                ele => ele.name === 'comment')].value;
+                if(comment.trim().length === 0)
+                    throw new Error("Comment must not be empty");
+                $.ajax({
+                    method: 'PUT',
+                    url: form.attr('action'),
+                    data: { comment: comment }
+                }).then(res => {
+                    const resJson = $(res)[0];
+                    const newCommentHTML = $('<div>')
+                    .attr('class', 'comment-container')
+                    .append($('<h3>')
+                        .text(resJson.initials))
+                    .append($('<p>')
+                        .attr('class', 'comment')
+                        .text(resJson.comment));
+                        newCommentHTML.insertBefore($('#comment-form'));
+                }, err => displayErrorPage(err));
+            } catch (error) {
+                event.preventDefault();
+                alert('must input a comment to add a comment');
             }
+            $("input:text").val("");
         });
-    }
+    };
 
-    //OPEN LABELS MODAL
+    // OPEN LABELS MODAL
     const setUpLabels = (cardId) => {
-        //handle the comment button being clicked
-        let openComments = $('#openComments');
+        let openLabels = $('#openLabels');
         let placeLabelsHere = $('#placeLabelsHere');
 
-        openComments.on("click", (e) => {
-            e.preventDefault();
+        openLabels.on('click', event => {
+            event.preventDefault();
+            $('#placeCommentsHere').hide();
             let requestData = {
-                method: "GET", //I think?
-                url: `card/labels/${boardId}/${cardId}` //TODO: Check this route
+                method: "GET",
+                url: `/board/card/labels/${boardId}/${cardId}`
             };
             $.ajax(requestData).then(function(responseMessage) {
                 let labelModal = $(responseMessage);
                 placeLabelsHere.empty(); //handle a modal being there before
                 placeLabelsHere.append(labelModal); //insert new modal
-                //setUpLabelErrorChecking();
+                setUpLabelErrorChecking();
                 placeLabelsHere.show();
-            });
-        })
-    }
+            }, err => displayErrorPage(err));
+        });
+    };
+
+    // ERROR CHECKING FOR LABELS MODAL
+    const setUpLabelErrorChecking = () => {
+        let labelsForm = $('#editLabels');
+        let originalLabelLength = labelsForm.serializeArray().filter(ele => ele.name === 'labels[]').length;
+
+        labelsForm.submit(event => {
+            event.preventDefault();
+
+            // grab the data from the form.
+            let formData = labelsForm.serializeArray();
+            let newLabel = formData[formData.findIndex(
+                ele => ele.name === 'add_label_name')].value;  
+            let labels = [];
+            let labelArray = formData.filter(ele => ele.name === 'labels[]');
+            labelArray.forEach(ele => labels.push(ele.value));
+
+            // check if any updating happened
+            if(labels.length === originalLabelLength && newLabel.trim().length === 0)
+                alert('no labels to change!');
+            else {
+                if(labels.length === 0)
+                    labels = '';
+                $.ajax({
+                    method: "PATCH",
+                    url: labelsForm.attr('action'),
+                    data: { labelIds: labels, newLabelName: newLabel }
+                }).then(res => {
+                    const resJson = $(res)[0];
+                    $('#list-of-labels').empty();
+                    const updatedLabels = resJson.labelsInfo;
+
+                    // update the labels displayed in the modal
+                    for(let i = 0; i < updatedLabels.length; i++)
+                        $('#list-of-labels')
+                        .append($('<div>')
+                            .attr('class', 'label-input-container')
+                            .append($('<input>')
+                                .attr('type', 'checkbox')
+                                .attr('id', `card_label_${i}`)
+                                .attr('name', 'labels[]')
+                                .attr('value', updatedLabels[i]._id)
+                                .prop('checked', true))
+                            .append($('<label>')
+                                .attr('for', `card_label_${i}`)
+                                .append($('<p>')
+                                    .attr('class', 'card-label-highlight')
+                                    .attr('style', `background-color: ${updatedLabels[i].color};`))
+                                .append($('<p>')
+                                    .text(updatedLabels[i].text))));
+
+                    let cardId = labelsForm.attr('action').substring(labelsForm.attr('action').lastIndexOf('/') + 1);
+                    
+                    // update the labels displayed on the card
+                    let cardLabelsDiv = $(`div[class=labels-list][data-id=${cardId}]`);
+                    cardLabelsDiv.empty();
+                    for(let i = 0; i < updatedLabels.length; i++)
+                        cardLabelsDiv
+                        .append($('<p>')
+                            .attr('class', 'card-label-highlight')
+                            .attr('style', `background-color: ${updatedLabels[i].color};`));
+
+                    // update the originalLabelLength to maintain knowledge of when changes are made
+                    originalLabelLength = updatedLabels.length;
+                    
+                }, err => displayErrorPage(err));
+            }
+            $("input:text").val("");
+        });
+    };
 
     // GO TO BOARD SETTINGS
     let boardSettingsBtn = $('#board-settings-btn');
     boardSettingsBtn.on('click', event => {
-        event.preventDefault();
-
         window.location.href = `/board/settings/${boardSettingsBtn.data('id')}`;
     });
 
@@ -144,76 +251,8 @@
         window.location.href = `/board/calendar/${downloadCalendarBtn.data('id')}`;
     });
 
-    // ADD NEW LIST
-    let addListForm = $('#new-list');
-    addListForm.submit(event => {
-        event.preventDefault();
-
-        try {
-            let formData = addListForm.serializeArray();
-            let listName = formData[formData.findIndex(
-                ele => ele.name === 'listName')].value;
-
-            if(listName !== undefined) {
-                listName = listName.trim();
-                if(listName.length !== 0) {
-                    $.ajax({
-                        method: 'POST',
-                        url: window.location.href,
-                        data: {listName: listName}
-                    }).then(res => {
-                        const resJson = $(res)[0];
-                        // it worked, add the list to the html
-                        const newListHTML = $('<div>')
-                        .attr('class', 'list')
-                        .append($('<div>')
-                            .attr('class', 'list-header')
-                            .append($('<p>')
-                                .attr('class', 'board-list-name')
-                                .text(resJson.listName))
-                            .append($('<button>')
-                                .attr('class', 'edit-list-btn')
-                                .attr('type', 'button')
-                                .text('edit list')))
-                        .append($('<div>')
-                            .attr('class', 'list-body')
-                            .append($('<form>')
-                                .attr('class', 'new-card')
-                                .attr('method', 'POST')
-                                .attr('action', `/board/${resJson.boardId}/${resJson.listId}`)
-                                .append($('<label>')
-                                    .append($('<p>')
-                                        .text('Card')
-                                        .hide())
-                                    .append($('<input>')
-                                        .attr('type', 'text')
-                                        .attr('name', 'cardName')
-                                        .attr('class', 'new-card-name-input')))
-                                .append($('<button>')
-                                    .attr('class', 'add-card-btn')
-                                    .attr('type', 'submit')
-                                    .text('add card'))));
-                        newListHTML.insertBefore($('#new-list'));
-                    }, err => {
-                        $('html').html($(err.responseText));
-                    });
-                    $("input:text"). val("")
-                } else {
-                    // Bad Request client-side error
-                    alert('must input a name to add a list');
-                }
-            } else {
-                // Bad Request client-side error
-                alert('must input a name to add a list');
-            }
-        } catch(e) {
-            // Bad Request client-side error
-            alert('must input a name to add a list');
-        }
-    });
-
     // ADD NEW CARD
-    $('.new-card').each((ind, ele) => {
+    const setUpAddNewCard = (ele) => {
         $(ele).on('submit', event => {
             event.preventDefault();
 
@@ -221,7 +260,6 @@
                 let formData = $(ele).serializeArray();
                 let cardName = formData[formData.findIndex(
                     elem => elem.name === 'cardName')].value;
-                console.log(`URL: [${$(ele).attr('action')}]`);
                 if(cardName !== undefined) {
                     cardName = cardName.trim();
                     if(cardName.length !== 0) {
@@ -245,27 +283,14 @@
                                 .attr('class', 'card-body')
                                 .append($('<p>')
                                     .attr('class', 'card-name')
-                                    .text(resJson.cardName)))
-                            .on('click', event => {
-                                event.preventDefault();
-
-                                cardId = resJson.cardId;
-                                $.ajax({
-                                    method: 'GET',
-                                    url: `/board/card/${boardId}/${cardId}`
-                                }).then(res => {
-                                    let newElement = $(res);
-                                    $('#cardModal').empty().append(newElement).show();
-                                }, err => {
-                                    $('html').html($(err.responseText));
-                                });
-                            });
+                                    .text(resJson.cardName)));
+                            setUpCardModal(newCardHTML[0]);
                             newCardHTML.insertBefore($(ele));
                         }, err => {
-                            $('html').html($(err.responseText));
+                            displayErrorPage(err);
 
                         }); 
-                        $("input:text"). val("")
+                        $("input:text").val("");
                     } else {
                         alert('must input a name to add a card');
                     }
@@ -276,24 +301,107 @@
                 alert('must input a name to add a card');
             }
         });
+    };
+
+    // give functionality to all add card buttons.
+    $('.new-card').each((ind, ele) => {
+        setUpAddNewCard(ele);
     });
 
     // EDIT LIST MODAL FUNCTIONALITY
-    $('.edit-list-btn').each((ind, ele) => {
+    const setUpListModal = (ele) => {
         $(ele).on('click', event => {
             event.preventDefault();
 
-            listId = $(ele).data('id');
+            let listId = $(ele).data('id');
             $.ajax({
                 method: 'GET',
                 url: `/board/list/${boardId}/${listId}`
             }).then(res => {
                 let newElement = $(res);
+                $('#cardModal').hide();
                 $('#listModal').empty().append(newElement).show();
             }, err => {
-                $('html').html($(err.responseText));
+                displayErrorPage(err);
             });
         });
+    }
+
+    // give modal functionality to all edit list buttons.
+    $('.edit-list-btn').each((ind, ele) => {
+        setUpListModal(ele);
+    });
+
+    // ADD NEW LIST
+    let addListForm = $('#new-list');
+    addListForm.submit(event => {
+        event.preventDefault();
+
+        try {
+            let formData = addListForm.serializeArray();
+            let listName = formData[formData.findIndex(
+                ele => ele.name === 'listName')].value;
+
+            if(listName !== undefined) {
+                listName = listName.trim();
+                if(listName.length !== 0) {
+                    $.ajax({
+                        method: 'POST',
+                        url: window.location.href,
+                        data: {listName: listName}
+                    }).then(res => {
+                        const resJson = $(res)[0];
+                        const newListHTML = $('<div>')
+                        .attr('class', 'list')
+                        .append($('<div>')
+                            .attr('class', 'list-header')
+                            .append($('<p>')
+                                .attr('class', 'board-list-name')
+                                .text(resJson.listName))
+                            .append($('<button>')
+                                .attr('class', 'edit-list-btn')
+                                .attr('type', 'button')
+                                .text('edit list')
+                                .attr('data-id', resJson.listId)))
+                        .append($('<div>')
+                            .attr('class', 'list-body')
+                            .append($('<form>')
+                                .attr('class', 'new-card')
+                                .attr('method', 'POST')
+                                .attr('action', `/board/${resJson.boardId}/${resJson.listId}`)
+                                .append($('<label>')
+                                    .append($('<p>')
+                                        .text('Card')
+                                        .hide())
+                                    .append($('<input>')
+                                        .attr('type', 'text')
+                                        .attr('name', 'cardName')
+                                        .attr('class', 'new-card-name-input')
+                                        .prop('required',true)))
+                                .append($('<button>')
+                                    .attr('class', 'add-card-btn')
+                                    .attr('type', 'submit')
+                                    .text('add card'))));
+
+                        setUpAddNewCard(newListHTML.find('form')[0]);
+                        setUpListModal($(newListHTML.find('div')[0]).find('button')[0]);
+                        newListHTML.insertBefore($('#new-list'));
+                    }, err => {
+                        displayErrorPage(err);
+                    });
+                    $("input:text").val("");
+                } else {
+                    // Bad Request client-side error
+                    alert('must input a name to add a list');
+                }
+            } else {
+                // Bad Request client-side error
+                alert('must input a name to add a list');
+            }
+        } catch(e) {
+            // Bad Request client-side error
+            alert('must input a name to add a list');
+        }
     });
 
 })(window.jQuery);

@@ -1,8 +1,14 @@
 (function($) {
+
+    const displayErrorPage = err => {
+        $('body').html($(err.responseText.match(/\<body[^>]*\>([^]*)\<\/body/m)[1]));
+    };
     
     let login_form = $('#login-form');
     login_form.submit(function(event) {
         event.preventDefault();
+
+        $('#login-error').hide();
 
 
         let email = $('#email').val();
@@ -16,13 +22,16 @@
                 contentType: 'application/json',
                 data: JSON.stringify({email, password})
                 };
-            $.ajax(requestConfig).then(function(responseMessage) {
+            $.ajax(requestConfig).then(responseMessage => {
                 let error = $(responseMessage)[0];
                 if(error.error)
                     $('#login-error').show();
                 else {
                     window.location.href = "/boards";
                 }
+            },
+            err => {
+                displayErrorPage(err);
             });
          } else { // inputs don't exist
             $('#login-error').show();
@@ -32,6 +41,8 @@
     let signup_form = $('#signup-form');
     signup_form.submit(function(event) {
         event.preventDefault();
+
+        $('#signup-error').hide();
 
         let firstName = $('#firstName').val();
         let lastName = $('#lastName').val();
@@ -50,13 +61,16 @@
                 contentType: 'application/json',
                 data: JSON.stringify({firstName, lastName, email, password})
                 };
-            $.ajax(requestConfig).then(function(responseMessage) {
+            $.ajax(requestConfig).then(responseMessage => {
                 let error = $(responseMessage)[0];
                 if(error.error)
                     $('#signup-error').show();
                 else {
                     window.location.href = "/boards";
                 }
+            },
+            err => {
+                displayErrorPage(err);
             });
          } else { // inputs don't exist
             $('#signup-error').show();

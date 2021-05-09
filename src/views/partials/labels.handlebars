@@ -3,13 +3,16 @@
     <input type="checkbox" id="edit_labels">
     <label for="edit_labels">Close</label>
 
-    {{!-- List Labels --}}
-    <form action="/boards/card/labels/{{boardId}}/{{cardId}}" method="PATCH" id="editLabels">
-        {{#each label}}
-            <input type="checkbox" checked id="card_label_{{@index}}">
-            <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p><p>{{this.text}}</p></label>
-        {{/each}}
-
+    <form action="/board/card/labels/{{boardId}}/{{cardId}}" method="POST" id="editLabels">
+        {{!-- List Labels --}}
+        <div id="list-of-labels">
+            {{#each labels}}
+                <div class="label-input-container">
+                    <input type="checkbox" id="card_label_{{@index}}" name="labels[]" value="{{this._id}}" checked>
+                    <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p><p>{{this.text}}</p></label>
+                </div>
+            {{/each}}
+        </div>
         {{!-- Add Label --}} 
         <label for="add_label_name">Label Name</label><br>
         <input type="text" id="add_label_name" name="add_label_name"><br>
