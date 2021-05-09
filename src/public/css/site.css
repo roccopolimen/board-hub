@@ -590,7 +590,7 @@ nav {
     font-family: 'Roboto', sans-serif;
     width: 100%;
     height: 10rem;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .edit-labels-title {
@@ -621,4 +621,110 @@ nav {
   margin-left: 18%;
   margin-right: auto;
   cursor: pointer;
+}
+
+/* CARD CSS */
+
+.card-modal {
+  overflow: auto;
+  background-color: black;
+  position: fixed;
+  top: 5rem;
+  width: 80%;
+  margin-left: 7.5rem;
+  padding: 0.5rem;
+  color: #d38200;
+  font-family: 'Roboto', sans-serif;
+  height: 30rem;
+}
+
+.close-button {
+    font-family: 'Roboto', sans-serif;
+    position: absolute;
+    background-color: black;
+    border: none;
+    color: white;
+    padding: 0.6px 1.3px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16pt;
+    margin: 0.5rem 0.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+}
+
+.members-description {
+  display: flex;
+}
+
+.card-modal h1{
+  font-family: 'Roboto', sans-serif;
+}
+
+.display-members {
+  overflow: auto;
+  width: 25%;
+  padding: 0.5rem;
+}
+
+.card-description {
+  width: 70%;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.card-description textarea {
+  width: 100%;
+  height: 9rem;
+}
+
+.move-due-date {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.move-card {
+  padding: 0.5rem;
+  width: 25%;
+}
+
+.card-due-date {
+  padding: 0.5rem;
+  width: 70%;
+  margin-left: 3rem;
+}
+
+.card-due-date label {
+  padding-right: 0.6rem;
+  padding-left: 0.2rem;
+}
+.card-buttons{
+  position: absolute;
+  margin-top: 0.5rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
+}
+
+.labels-commments {
+  position: absolute;
+  margin-top: 0.5rem;
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+
+.card-modal-button {
+  font-family: 'Roboto', sans-serif;
+  background-color: #d38200;
+  border: none;
+  color: white;
+  padding: .625rem 1.6rem;
+  text-align: center;
+  display: inline-block;
+  font-size: 12pt;
+  cursor: pointer;
+  padding: 0.5rem;
 }
