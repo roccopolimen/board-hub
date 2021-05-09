@@ -791,7 +791,8 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
             const memberData = await usersData.readById(memberId.toString());
             memberMap[memberId.toString()] = {
                 name: makeName(memberData.firstName, memberData.lastName),
-                initials: getInitials(memberData.firstName, memberData.lastName)
+                initials: getInitials(memberData.firstName, memberData.lastName),
+                color: memberData.color
             };
         }
 
@@ -897,7 +898,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
         const today = new Date();
         const date = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}*${today.getHours()}:${today.getMinutes()}`;
         await commentsData.create(userId, boardId, cardId, date, comment);
-        res.json({ initials: req.session.user.initials, comment: comment });
+        res.json({ initials: req.session.user.initials, comment: comment, color: req.session.user.color });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
