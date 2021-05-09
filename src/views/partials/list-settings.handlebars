@@ -4,7 +4,7 @@
     <form id="editListForm" action="/board/list/{{boardId}}/{{list._id}}" method="POST">
         <div class="listNameDiv">
             <label for="listName">Name: </label>
-            <input id="listName" name="listName" type="text" placeholder="list name" value="{{list.listName}}"/>
+            <input id="listName" name="listName" type="text" placeholder="list name" value="{{list.listName}}" required/>
         </div>
         <div class="positionValueDiv">
             <label for="positionValue">Position: </label>
