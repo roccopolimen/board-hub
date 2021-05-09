@@ -3,6 +3,47 @@
     const displayErrorPage = err => {
         $('body').html($(err.responseText.match(/\<body[^>]*\>([^]*)\<\/body/m)[1]));
     };
+
+    let signup = $('#signup');
+    signup.on("click", (e) => {
+        e.preventDefault();
+        let logContainer = $('#login-container');
+        let signContainer = $('#signup-container');
+        logContainer.hide();
+        signContainer.show();
+    });
+
+    let login = $('#login');
+    login.on("click", (e) => {
+        e.preventDefault();
+        let logContainer = $('#login-container');
+        let signContainer = $('#signup-container');
+        signContainer.hide();
+        logContainer.show();
+    });
+
+    let closeLogin = $('#close-login');
+    closeLogin.on("click", (e) => {
+        e.preventDefault();
+        let logContainer = $('#login-container');
+        logContainer.hide();
+    });
+
+    let loginSignup = $('#login-signup');
+    loginSignup.on("click", (e) => {
+        e.preventDefault();
+        let logContainer = $('#login-container');
+        let signContainer = $('#signup-container');
+        logContainer.hide();
+        signContainer.show();
+    });
+
+    let closeSignup = $('#close-signup');
+    closeSignup.on("click", (e) => {
+        e.preventDefault();
+        let signContainer = $('#signup-container');
+        signContainer.hide();
+    });
     
     let login_form = $('#login-form');
     login_form.submit(function(event) {
