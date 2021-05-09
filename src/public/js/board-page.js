@@ -21,6 +21,10 @@
                 $('#listModal').hide();
                 $('#cardModal').empty().append(newElement);
                 setUpErrorChecking();
+                $('#closeModal').on("click", (e) => {
+                    e.preventDefault();
+                    $('#cardModal').hide();
+                });
                 setUpDeleteCard();
                 setUpComments(cardId);
                 setUpLabels(cardId);
