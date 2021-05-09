@@ -459,6 +459,8 @@ nav {
   color: #FF2F2F;
 }
 
+/* Comment Modal */
+
 #placeCommentsHere {
   position: fixed;
   top: 7rem;
@@ -535,6 +537,7 @@ nav {
   width: 65pt;
   font-size: 15pt;
 }
+
 /* EDIT LABELS */
 
 .edit-label-container {
@@ -621,4 +624,57 @@ nav {
   margin-left: 18%;
   margin-right: auto;
   cursor: pointer;
+}
+
+/* Edit List Modal */
+
+#listModal {
+  position: fixed;
+  top: 15rem;
+  width: 20%;
+  height: 30%;
+  left: 0;
+  right: 0;
+  margin: 0% auto;
+  background: rgba(255, 255, 255, 0.85);
+  overflow: auto;
+  border-radius: .5rem;
+}
+
+#close-list-settings-btn {
+  position: relative;
+  margin-right: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #FF2F2F;
+  font-size: 20pt;
+  float: right;
+}
+
+#editListForm button {
+  float: left;
+  width: 30%;
+  bottom: 20;
+  margin-top: 10rem;
+  margin-left: 1rem;
+}
+#deleteListForm button {
+  background-color: #FF2E2E;
+  float: right;
+  width: 30%;
+  margin-top: 10rem;
+  margin-right: 1rem;
+}
+
+.listNameDiv {
+  margin-top: .5rem;
+  margin-left: 1rem;
+  font-size: 20pt;
+  margin-bottom: 1rem;
+}
+
+.positionValueDiv {
+  margin-left: 1rem;
+  font-size: 20pt;
 }

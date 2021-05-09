@@ -3,6 +3,7 @@
     // stays the same while on this page
     let boardId = $('#board-container').data('id');
 
+    // ADDS THE ERROR HTML FOR RENDERING
     const displayErrorPage = err => {
         $('body').html($(err.responseText.match(/\<body[^>]*\>([^]*)\<\/body/m)[1]));
     };
@@ -11,7 +12,7 @@
     const setUpCardModal = ele => {
         $(ele).on('click', event => {
             event.preventDefault();
-
+            
             let cardId = $(ele).data('id');
             $.ajax({
                 method: 'GET',
@@ -113,6 +114,7 @@
         });
     };
 
+    // CLOSE THE COMMENT MODAL
     const setUpCloseComment = () => {
         let btn = $('#close-comment-btn');
         btn.on('click', event => {
@@ -232,8 +234,7 @@
                                 .append($('<p>')
                                     .attr('class', 'card-label-highlight')
                                     .attr('style', `background-color: ${updatedLabels[i].color};`))
-                                .append($('<p>')
-                                    .text(updatedLabels[i].text))));
+                                .text(updatedLabels[i].text)));
 
                     let cardId = labelsForm.attr('action').substring(labelsForm.attr('action').lastIndexOf('/') + 1);
                     
@@ -338,6 +339,8 @@
                 let newElement = $(res);
                 $('#cardModal').hide();
                 $('#listModal').empty().append(newElement).show();
+                setUpListForm();
+                setUpCloseEditList();
             }, err => {
                 displayErrorPage(err);
             });
@@ -420,5 +423,59 @@
             alert('must input a name to add a list');
         }
     });
+
+    // EDIT LIST FORM SUBMISSION
+    const setUpListForm = () => {
+        let editListForm = $('#editListForm');
+        let prevListName = $('#listName');
+        let prevListPosition = $('#positionValue');
+
+        editListForm.submit(event => {
+            event.preventDefault();
+
+            // get inputs
+            let formData = editListForm.serializeArray();
+            let listName = formData[formData.findIndex(x => x.name === 'listName')].value;
+            let position = formData[formData.findIndex(x => x.name === 'position')].value;
+
+            // error check inputs
+            if((listName = listName.trim()).length === 0) {
+                alert('list must have a name');
+                return;
+            }
+            if(isNaN(+position) === NaN || (position = parseInt(position)) === NaN) {
+                alert('position must be an integer');
+                return;
+            }
+            if(prevListPosition.attr('min') > position || prevListPosition.attr('max') < position) {
+                alert('that is not a valid position to move this list.');
+                return;
+            }
+
+            // make sure a new update is coming in
+            if(prevListName === listName && prevListPosition === position) {
+                alert('nothing to change.');
+                return;
+            }
+
+            // inputs are good, make the request
+            $.ajax({
+                method: 'POST',
+                url: editListForm.attr('action'),
+                data: { listName: listName, position: position }
+            }).then(res => {
+                window.location.href = `/board/${$(res)[0].boardId}`;
+            }, err => displayErrorPage(err));
+        });
+    };
+
+    // CLOSE EDIT LIST MODAL
+    const setUpCloseEditList = () => {
+        let closeBtn = $('#close-list-settings-btn');
+        closeBtn.on('click', event => {
+            $('#listModal').hide();
+        })
+    };
+    
 
 })(window.jQuery);

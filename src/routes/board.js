@@ -1387,7 +1387,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
             await listsData.changeListName(listId, listName, boardId);
         if(position)
             await boardsData.moveList(boardId, listId, position);
-        res.redirect(`/board/${boardId}`);
+        res.json({ boardId: boardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }

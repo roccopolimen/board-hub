@@ -1,23 +1,27 @@
 <div id="listSettingsModal" class="modal">
-    <!-- Exit button (needs css) -->
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        
-        <!-- Form for changing the list -->
-        <form id="editListForm" action="/board/list/{{boardId}}/{{list._id}}" method="POST">
-            <div class="listNameDiv">
-                <label for="listName">Name: </label>
-                <input id="listName" name="listName" type="text" placeholder="list name" value="{{list.listName}}"/>
-            </div>
-            <div class="positionValueDiv">
-                <label for="positionValue">Position: </label>
-                <input id="positionValue" name="position" type="number" placeholder="position" value="{{list.position}}" min="1" max="{{positions.length}}"/>
-            </div>
-            <button type="submit">Save</button>
-        </form>
-        <!--Form for deleting the list -->
-        <form id="deleteListForm" action="/board/delete/list/{{boardId}}/{{list._id}}" method="POST">
-            <button id="deleteButton" type="submit">Delete List</button>
-        </form>
-    </div>
+    <button id="close-list-settings-btn">X</button>
+    <!-- Form for changing the list -->
+    <form id="editListForm" action="/board/list/{{boardId}}/{{list._id}}" method="POST">
+        <div class="listNameDiv">
+            <label for="listName">Name: </label>
+            <input id="listName" name="listName" type="text" placeholder="list name" value="{{list.listName}}"/>
+        </div>
+        <div class="positionValueDiv">
+            <label for="positionValue">Position: </label>
+            <select id="positionValue" name="position">
+                {{#each positions}}
+                    {{#if_eq this ../list.position}}
+                        <option value="{{this}}" selected>{{this}}</option>
+                    {{else}}
+                        <option value="{{this}}">{{this}}</option>
+                    {{/if_eq}} 
+                {{/each}}
+            </select>
+        </div>
+        <button type="submit">Save</button>
+    </form>
+    <!--Form for deleting the list -->
+    <form id="deleteListForm" action="/board/delete/list/{{boardId}}/{{list._id}}" method="POST">
+        <button id="deleteButton" type="submit">Delete List</button>
+    </form>
 </div>
