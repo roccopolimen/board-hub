@@ -162,6 +162,12 @@
                 let labelModal = $(responseMessage);
                 placeLabelsHere.empty(); //handle a modal being there before
                 placeLabelsHere.append(labelModal); //insert new modal
+                let closeLabelModal = $('#close-edit-labels');
+                closeLabelModal.on("click", (e) => {
+                    e.preventDefault();
+                    placeLabelsHere.empty();
+                    placeLabelsHere.hide();
+                });
                 setUpLabelErrorChecking();
                 placeLabelsHere.show();
             }, err => displayErrorPage(err));

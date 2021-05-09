@@ -458,3 +458,91 @@ nav {
 #change-pass-error {
   color: #FF2F2F;
 }
+
+/* EDIT LABELS */
+
+.edit-label-container {
+    color: black;
+    background-color: #d38200;
+    width: 20rem;
+    padding: 3rem;
+    box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.label-input-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: .5rem;
+  margin-bottom: .5rem;
+}
+.label-input-container .card-label-highlight {
+    width: 1.5rem;
+    height: .8rem;
+    margin-left: .2rem;
+    border: solid;
+    border-radius: 1rem;
+}
+
+.label-text {
+  font-family: 'Roboto', sans-serif;
+}
+
+.close-edit-labels {
+  font-family: 'Roboto', sans-serif;
+  position: absolute;
+  background-color: black;
+  border: none;
+  color: white;
+  padding: 0.6px 1.3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16pt;
+  margin: 0.5rem 0.5rem;
+  height: 1.5rem;
+  width: 1.5rem;
+  cursor: pointer;
+  top: 0;
+  right: 0;
+}
+
+.list-of-labels {
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    height: 10rem;
+    overflow: scroll;
+}
+
+.edit-labels-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 21pt;
+}
+
+.add_label_name {
+    font-family: 'Roboto', sans-serif;
+}
+
+.add_labels {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.submit_label_changes {
+  font-family: 'Roboto', sans-serif;
+  position: absolute;
+  background-color: black;
+  border: none;
+  color: white;
+  padding: .625rem 1.6rem;
+  text-align: center;
+  text-decoration: underline;
+  display: inline-block;
+  font-size: 12pt;
+  margin-left: 18%;
+  margin-right: auto;
+  cursor: pointer;
+}
