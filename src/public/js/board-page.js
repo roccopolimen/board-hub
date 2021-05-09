@@ -107,10 +107,19 @@
                 placeCommentsHere.empty(); //handle a modal being there before
                 placeCommentsHere.append(commentModal); //insert new modal
                 setUpCommentErrorChecking();
+                setUpCloseComment();
                 placeCommentsHere.show();
             }, err => displayErrorPage(err));
         });
     };
+
+    const setUpCloseComment = () => {
+        let btn = $('#close-comment-btn');
+        btn.on('click', event => {
+            event.preventDefault();
+            $('#placeCommentsHere').hide();
+        })
+    }
 
     // ERROR CHECKING FOR COMMENTS MODAL
     const setUpCommentErrorChecking = () => {
@@ -132,9 +141,11 @@
                     const newCommentHTML = $('<div>')
                     .attr('class', 'comment-container')
                     .append($('<h3>')
+                        .attr('class', 'comment-initials')
+                        .attr('style', `background-color: ${resJson.color}`)
                         .text(resJson.initials))
                     .append($('<p>')
-                        .attr('class', 'comment')
+                        .attr('class', 'comment-content')
                         .text(resJson.comment));
                         newCommentHTML.insertBefore($('#comment-form'));
                 }, err => displayErrorPage(err));
@@ -162,6 +173,12 @@
                 let labelModal = $(responseMessage);
                 placeLabelsHere.empty(); //handle a modal being there before
                 placeLabelsHere.append(labelModal); //insert new modal
+                let closeLabelModal = $('#close-edit-labels');
+                closeLabelModal.on("click", (e) => {
+                    e.preventDefault();
+                    placeLabelsHere.empty();
+                    placeLabelsHere.hide();
+                });
                 setUpLabelErrorChecking();
                 placeLabelsHere.show();
             }, err => displayErrorPage(err));
