@@ -1001,10 +1001,27 @@ router.post('/invite/:id', async (req, res) => {
         return;
     }
 
+    const { email } = newInvite;
+    let invitedUser = {};
     try {
-        const { email } = newInvite;
+        invitedUser = await usersData.readByEmail(email);
+    } catch(e) {
+        res.json({ noUser: true, message: e.toString() });
+        return;
+    }
+
+    try {
+        for(memberId of boardInfo.members)
+            if(invitedUser._id.toString() === memberId.toString())
+                throw new Error("User already on board.");
+    } catch(e) {
+        res.json({ alreadyMember: true, message: e.toString() });
+        return;
+    }
+
+    try {
         await boardsData.addNewMember(id, email);
-        res.redirect(`/board/${id}`);
+        res.json({ boardId: id });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1131,7 +1148,7 @@ router.get('/settings/:id', async (req, res) => {
     const onlyMember = (boardInfo.members.length === 1);
 
     try {
-        res.render('board-settings', { title: 'Board Settings', board: renderInfo, onlyMember: onlyMember});
+        res.render('board-settings', { title: 'Board Settings', board: renderInfo, onlyMember: onlyMember, user: req.session.user, partial: 'board-settings-script'});
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1210,7 +1227,7 @@ router.patch('/settings/:id', async (req, res) => {
 
     try {
         await boardsData.update(id, updatedBoardInfo);
-        res.redirect(`/board/${id}`);
+        res.json({ boardId: id });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
