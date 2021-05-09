@@ -4,7 +4,7 @@
     let boardId = $('#board-container').data('id');
 
     const displayErrorPage = err => {
-        $('html').html($(err.responseText));
+        $('body').html($(err.responseText.match(/\<body[^>]*\>([^]*)\<\/body/m)[1]));
     };
 
     // CLICK CARD MODAL FUNCTIONALITY
@@ -155,7 +155,7 @@
             }
             $("input:text").val("");
         });
-    }
+    };
 
     // OPEN LABELS MODAL
     const setUpLabels = (cardId) => {
@@ -173,9 +173,85 @@
                 let labelModal = $(responseMessage);
                 placeLabelsHere.empty(); //handle a modal being there before
                 placeLabelsHere.append(labelModal); //insert new modal
-                //setUpLabelErrorChecking();
+                let closeLabelModal = $('#close-edit-labels');
+                closeLabelModal.on("click", (e) => {
+                    e.preventDefault();
+                    placeLabelsHere.empty();
+                    placeLabelsHere.hide();
+                });
+                setUpLabelErrorChecking();
                 placeLabelsHere.show();
             }, err => displayErrorPage(err));
+        });
+    };
+
+    // ERROR CHECKING FOR LABELS MODAL
+    const setUpLabelErrorChecking = () => {
+        let labelsForm = $('#editLabels');
+        let originalLabelLength = labelsForm.serializeArray().filter(ele => ele.name === 'labels[]').length;
+
+        labelsForm.submit(event => {
+            event.preventDefault();
+
+            // grab the data from the form.
+            let formData = labelsForm.serializeArray();
+            let newLabel = formData[formData.findIndex(
+                ele => ele.name === 'add_label_name')].value;  
+            let labels = [];
+            let labelArray = formData.filter(ele => ele.name === 'labels[]');
+            labelArray.forEach(ele => labels.push(ele.value));
+
+            // check if any updating happened
+            if(labels.length === originalLabelLength && newLabel.trim().length === 0)
+                alert('no labels to change!');
+            else {
+                if(labels.length === 0)
+                    labels = '';
+                $.ajax({
+                    method: "PATCH",
+                    url: labelsForm.attr('action'),
+                    data: { labelIds: labels, newLabelName: newLabel }
+                }).then(res => {
+                    const resJson = $(res)[0];
+                    $('#list-of-labels').empty();
+                    const updatedLabels = resJson.labelsInfo;
+
+                    // update the labels displayed in the modal
+                    for(let i = 0; i < updatedLabels.length; i++)
+                        $('#list-of-labels')
+                        .append($('<div>')
+                            .attr('class', 'label-input-container')
+                            .append($('<input>')
+                                .attr('type', 'checkbox')
+                                .attr('id', `card_label_${i}`)
+                                .attr('name', 'labels[]')
+                                .attr('value', updatedLabels[i]._id)
+                                .prop('checked', true))
+                            .append($('<label>')
+                                .attr('for', `card_label_${i}`)
+                                .append($('<p>')
+                                    .attr('class', 'card-label-highlight')
+                                    .attr('style', `background-color: ${updatedLabels[i].color};`))
+                                .append($('<p>')
+                                    .text(updatedLabels[i].text))));
+
+                    let cardId = labelsForm.attr('action').substring(labelsForm.attr('action').lastIndexOf('/') + 1);
+                    
+                    // update the labels displayed on the card
+                    let cardLabelsDiv = $(`div[class=labels-list][data-id=${cardId}]`);
+                    cardLabelsDiv.empty();
+                    for(let i = 0; i < updatedLabels.length; i++)
+                        cardLabelsDiv
+                        .append($('<p>')
+                            .attr('class', 'card-label-highlight')
+                            .attr('style', `background-color: ${updatedLabels[i].color};`));
+
+                    // update the originalLabelLength to maintain knowledge of when changes are made
+                    originalLabelLength = updatedLabels.length;
+                    
+                }, err => displayErrorPage(err));
+            }
+            $("input:text").val("");
         });
     };
 
