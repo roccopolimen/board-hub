@@ -1,19 +1,24 @@
 <div class="card-modal">
     <button class="close-button" id="closeModal">X</button>
     <form id="updateCard" action="/board/card/{{boardId}}/{{card._id}}" method="POST">
-        <h1>{{card.name}}</h1>
+        <div class="card-modal-header">
+            <label for="newCardName">Card Name:</label>
+            <input id="newCardName" name="newCardName" value="{{card.name}}" required/>
+            <label for="cardStoryPoints">Story Points:</label>
+            <input id="cardStoryPoints" name="storyPoints" type="number" value="{{card.storyPoints}}" />
+        </div>
         <div class="members-description">
             <div class="display-members">
                 <h2>Members</h2>
                 {{#each card.members}}
                     {{#if this.assigned}}
                         <label>
-                            <input type="checkbox" class="assigned" value="{{this._id}}" checked>
+                            <input type="checkbox" class="assigned" name="members[]" value="{{this._id}}" checked>
                             <p>{{this.initials}}</p>
                         </label>
                     {{else}}
                         <label>
-                            <input type="checkbox" class="unassigned" value="{{this._id}}">
+                            <input type="checkbox" class="unassigned" name="members[]" value="{{this._id}}">
                             <p>{{this.initials}}</p>
                         </label>
                     {{/if}}
@@ -30,7 +35,7 @@
                 <h2>Move Card</h2>
                 <label>
                     To List
-                    <select id="toList">
+                    <select id="toList" name="toList">
                         {{#each list}}
                             {{#if_eq this._id ../card.list}}
                                 <option value="{{this._id}}" selected>{{this.listName}}</option>
@@ -42,7 +47,7 @@
                 </label>
                 <label>
                     Position
-                    <select id="position">
+                    <select id="position" name="position">
                         {{#each positions}}
                             {{#if_eq this ../card.position}}
                                 <option value="{{this}}" selected>{{this}}</option>
@@ -56,26 +61,26 @@
             <div class="card-due-date">
                 {{#if card.dueDate}}
                     <label for="dueDate">Due Date</label>
-                    <input type="date" id="dueDate">
+                    <input type="date" id="dueDate" name="dueDate">
                     <input type="text" id="formattedDate" hidden>
                     <script>
                         document.getElementById('dueDate').value = new Date("{{card.dueDate.date}}").toISOString().substring(0, 10);
                     </script>
                     <label for="dueTime">Due Time</label>
-                    <input type="time" id="dueTime" value="{{card.dueDate.time}}">
+                    <input type="time" id="dueTime" name="dueTime" value="{{card.dueDate.time}}">
                     {{#if card.dueDate.done}}
-                        <input type="checkbox" id="dueDone" checked>
+                        <input type="checkbox" name="dueDone" id="dueDone" checked>
                     {{else}}
-                        <input type="checkbox" id="dueDone">
+                        <input type="checkbox" name="dueDone" id="dueDone">
                     {{/if}}
                     <label for="dueDone">Done</label>
                 {{else}}
                     <label for="dueDate">Due Date </label>
-                    <input type="date" id="dueDate">
+                    <input type="date" id="dueDate" name="dueDate">
                     <input type="text" id="formattedDate" hidden>
                     <label for="dueTime">Due Time </label>
-                    <input type="time" id="dueTime">
-                    <input type="checkbox" id="dueDone">
+                    <input type="time" id="dueTime" name="dueTime">
+                    <input type="checkbox" id="dueDone" name="dueDone">
                     <label for="dueDone">Done</label>
                 {{/if}}
             </div>

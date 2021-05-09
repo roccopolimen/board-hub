@@ -201,6 +201,8 @@ const exportedModules = {
                 }
                 newDueDate.done = done;
                 somethingToUpdate = true;
+            } else {
+                newDueDate.done = updatedCardData.dueDate.done;
             }
             updatedCardData.dueDate = newDueDate;
         }
