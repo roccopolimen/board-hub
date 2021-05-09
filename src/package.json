@@ -20,6 +20,7 @@
   "homepage": "https://github.com/roccopolimen/board-hub#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "calendar-link": "^2.1.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.0",
     "express-session": "^1.17.1",
