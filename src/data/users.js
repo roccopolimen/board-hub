@@ -4,7 +4,7 @@ const users = mongoCollections.users;
 const {user_colors} = require('../public/constants/index');
 const {ObjectId} = require('mongodb');
 const bcrypt = require('bcryptjs');
-const saltRounds = 16;
+const saltRounds = 12;
 const error_handler = require('../errors/error-handler'); 
 
 
