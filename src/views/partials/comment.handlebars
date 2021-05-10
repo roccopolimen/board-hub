@@ -1,0 +1,16 @@
+<h2>Comments</h2>
+<button id="close-comment-btn">X</button>
+{{#each comments}}
+    <div class="comment-container">
+        <h3 class="comment-initials" style="background-color: {{user.color}}">{{user.initials}}</h3>
+        <p class="comment-content">{{comment}}</p>
+    </div>
+{{/each}}
+<form id="comment-form" action="/board/card/comments/{{boardId}}/{{cardId}}" method="POST">
+    <input type="hidden" name="_method" value="PUT" />
+     <label>
+        Post Comment
+        <input type="text" name="comment" class="comment-box" id="commentInput" required/>
+    </label>
+    <button type="submit">Send</button>
+</form>

@@ -1,6 +1,6 @@
-<a id="backbtn" href="/board/{{board._id}}">Back</a>
+<a id="backbtn" href="/board/{{board._id}}">&laquo; Back</a>
 <div id="boardSettings">
-    <!-- Form for changing the board settings -->
+    <!-- Form for changing the board settings  -->
     <form id="changeBoardForm" action="/board/settings/{{board._id}}" method="POST">
         <input type="hidden" name="_method" value="PATCH"/>
         <div class="boardNameDiv">
@@ -13,6 +13,7 @@
         </div>
         <div class="descriptionDiv">
             <label class="bslabel" for="description">Description: </label>
+            <br>
             <textarea id="description" class="bsinput" name="description" placeholder="Description...">{{board.description}}</textarea>
         </div>
         <button class="bsbutton" type="submit">Save Changes</button>

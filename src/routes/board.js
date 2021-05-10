@@ -641,7 +641,7 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
 
     try {
         const labelsInfo = await labelsData.getAllLabels(boardId, cardId);
-        res.render('partials/label', { title: boardInfo.boardName, labels: labelsInfo, boardId: boardId, cardId: cardId })
+        res.render('partials/labels', { layout: null, labels: labelsInfo, boardId: boardId, cardId: cardId })
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
@@ -649,7 +649,7 @@ router.get('/card/labels/:boardId/:cardId', async (req, res) => {
 
 });
 
-// PATCH /boards/card/labels/{boardId}/{cardId}
+// PATCH /board/card/labels/{boardId}/{cardId}
 // edit labels
 router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
 
@@ -711,11 +711,13 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
 
     let updatedLabelInfo = {};
     if(xss(newData.labelIds) === undefined) {
-        res.status(400).render('error-page', { title: "400 Bad Request", message: 'missing labelIds', erorr: true });
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'missing labelIds', error: true });
         return;
     } else {
+        if(newData.labelIds === '')
+            newData.labelIds = [];
         if(!checkArrayObjectId(newData.labelIds)) {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid labelIds', erorr: true });
+            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid labelIds', error: true });
             return;
         } else {
             for(let labelId of newData.labelIds) {
@@ -733,11 +735,13 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
             }
             updatedLabelInfo.labels = newData.labelIds;
         }
-        if(xss(newData.newLabelName) !== undefined && !checkNonEmptyString(xss(newData.newLabelName))) {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid new label', erorr: true });
-            return;
-        } else {
-            updatedLabelInfo.newLabelName = newData.newLabelName;
+        if(xss(newData.newLabelName) !== undefined && newData.newLabelName.trim().length !== 0) {
+            if(!checkNonEmptyString(xss(newData.newLabelName))) {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid new label', erorr: true });
+                return;
+            } else {
+                updatedLabelInfo.newLabelName = newData.newLabelName;
+            }
         }
     }
 
@@ -749,14 +753,16 @@ router.patch('/card/labels/:boardId/:cardId', async (req, res) => {
     try {
         const { labels, newLabelName } = updatedLabelInfo;
         await labelsData.updateLabels(boardId, cardId, labels);
-        await labelsData.addLabel(boardId, cardId, newLabelName);
-        res.redirect(`/board/${boardId}`);
+        if(newLabelName)
+            await labelsData.addLabel(boardId, cardId, newLabelName);
+        const labelsInfo = await labelsData.getAllLabels(boardId, cardId);
+        res.json({ labelsInfo: labelsInfo, cardId: cardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
 });
 
-// GET /boards/card/comments/{boardId}/{cardId}
+// GET /board/card/comments/{boardId}/{cardId}
 // brings up modal to edit and read comments
 router.get('/card/comments/:boardId/:cardId', async (req, res) => {
 
@@ -785,7 +791,8 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
             const memberData = await usersData.readById(memberId.toString());
             memberMap[memberId.toString()] = {
                 name: makeName(memberData.firstName, memberData.lastName),
-                initials: getInitials(memberData.firstName, memberData.lastName)
+                initials: getInitials(memberData.firstName, memberData.lastName),
+                color: memberData.color
             };
         }
 
@@ -813,14 +820,14 @@ router.get('/card/comments/:boardId/:cardId', async (req, res) => {
             commentInfo[index].time = getTime(commentInfo[index].date);
             commentInfo[index].date = getDate(commentInfo[index].date);
         }
-        res.render('partials/comment', { title: boardInfo.boardName, comments: commentInfo, boardId: boardId, cardId: cardId });
+        res.render('partials/comment', { layout: null, comments: commentInfo, boardId: boardId, cardId: cardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
         return;
     }
 });
 
-// PUT /boards/card/comments/{boardId}/{cardId}
+// PUT /board/card/comments/{boardId}/{cardId}
 // adds a comment to the card
 router.put('/card/comments/:boardId/:cardId', async (req, res) => {
 
@@ -869,8 +876,13 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
     }
 
     const newData = req.body;
+    if(!newData) {
+        res.status(400).render('error-page', { title: "400 Bad Request", message: 'no body provided.', error: true });
+        return;
+    }
+
     let comment;
-    if(xss(newData.comment)) {
+    if(xss(newData.comment) !== undefined) {
         if(checkNonEmptyString(xss(newData.comment))) {
             comment = xss(newData.comment);
         } else {
@@ -886,7 +898,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
         const today = new Date();
         const date = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}*${today.getHours()}:${today.getMinutes()}`;
         await commentsData.create(userId, boardId, cardId, date, comment);
-        res.redirect(`/board/${boardId}`);
+        res.json({ initials: req.session.user.initials, comment: comment, color: req.session.user.color });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -990,10 +1002,27 @@ router.post('/invite/:id', async (req, res) => {
         return;
     }
 
+    const { email } = newInvite;
+    let invitedUser = {};
     try {
-        const { email } = newInvite;
+        invitedUser = await usersData.readByEmail(email);
+    } catch(e) {
+        res.json({ noUser: true, message: e.toString() });
+        return;
+    }
+
+    try {
+        for(memberId of boardInfo.members)
+            if(invitedUser._id.toString() === memberId.toString())
+                throw new Error("User already on board.");
+    } catch(e) {
+        res.json({ alreadyMember: true, message: e.toString() });
+        return;
+    }
+
+    try {
         await boardsData.addNewMember(id, email);
-        res.redirect(`/board/${id}`);
+        res.json({ boardId: id });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1120,7 +1149,7 @@ router.get('/settings/:id', async (req, res) => {
     const onlyMember = (boardInfo.members.length === 1);
 
     try {
-        res.render('board-settings', { title: 'Board Settings', board: renderInfo, onlyMember: onlyMember});
+        res.render('board-settings', { title: 'Board Settings', board: renderInfo, onlyMember: onlyMember, user: req.session.user, partial: 'board-settings-script'});
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1199,7 +1228,7 @@ router.patch('/settings/:id', async (req, res) => {
 
     try {
         await boardsData.update(id, updatedBoardInfo);
-        res.redirect(`/board/${id}`);
+        res.json({ boardId: id });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1269,7 +1298,7 @@ router.get('/list/:boardId/:listId', async (req, res) => {
         }
         renderInfo.position = listPosition;
         positions = [...Array(boardInfo.lists.length+1).keys()].slice(1);
-        res.render('partials/list', { title: boardInfo.boardName, list: renderInfo, boardId: boardId, positions: positions });
+        res.render('partials/list-settings', { layout: null, list: renderInfo, boardId: boardId, positions: positions });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1358,7 +1387,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
             await listsData.changeListName(listId, listName, boardId);
         if(position)
             await boardsData.moveList(boardId, listId, position);
-        res.redirect(`/board/${boardId}`);
+        res.json({ boardId: boardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }

@@ -1,22 +1,27 @@
 <div id="listSettingsModal" class="modal">
-    <!-- Exit button (needs css) -->
-    <input type="checkbox" id="closeList">
-    <label for="closeList" class="close-list-btn">X</label>
-    
+    <button id="close-list-settings-btn">X</button>
     <!-- Form for changing the list -->
     <form id="editListForm" action="/board/list/{{boardId}}/{{list._id}}" method="POST">
         <div class="listNameDiv">
             <label for="listName">Name: </label>
-            <input id="listName" name="listName" type="text" placeholder="list name" value="{{list.listName}}"/>
+            <input id="listName" name="listName" type="text" placeholder="list name" value="{{list.listName}}" required/>
         </div>
         <div class="positionValueDiv">
             <label for="positionValue">Position: </label>
-            <input id="positionValue" name="position" type="number" placeholder="position" value="{{list.position}}" min="1" max="{{positions.length}}"/>
+            <select id="positionValue" name="position">
+                {{#each positions}}
+                    {{#if_eq this ../list.position}}
+                        <option value="{{this}}" selected>{{this}}</option>
+                    {{else}}
+                        <option value="{{this}}">{{this}}</option>
+                    {{/if_eq}} 
+                {{/each}}
+            </select>
         </div>
         <button type="submit">Save</button>
     </form>
     <!--Form for deleting the list -->
     <form id="deleteListForm" action="/board/delete/list/{{boardId}}/{{list._id}}" method="POST">
-        <button type="submit">Delete List</button>
+        <button id="deleteButton" type="submit">Delete List</button>
     </form>
 </div>
