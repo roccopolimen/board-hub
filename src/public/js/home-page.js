@@ -105,7 +105,7 @@
             $.ajax(requestConfig).then(responseMessage => {
                 let error = $(responseMessage)[0];
                 if(error.error)
-                    $('#signup-error').show();
+                    $('#signup-error').html(error.message).show();
                 else {
                     window.location.href = "/boards";
                 }
