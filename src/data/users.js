@@ -18,14 +18,14 @@ module.exports = {
         if(!id || !error_handler.checkObjectId(id))
             throw new Error("id is not valid.");
 
-         const userCollection = await users();
-         const user = await userCollection.findOne({_id: ObjectId(id)});
-         if(user === null)
-             throw new Error("There is no user with that id.");
- 
-         user['_id'] = user['_id'].toString();
- 
-         return user;
+        const userCollection = await users();
+        const user = await userCollection.findOne({_id: ObjectId(id)});
+        if(user === null)
+            throw new Error("There is no user with that id.");
+
+        user['_id'] = user['_id'].toString();
+
+        return user;
     },
 
     /**
@@ -37,14 +37,14 @@ module.exports = {
         if(!email || !error_handler.checkEmail(email))
             throw new Error("email is not valid.");
 
-         const userCollection = await users();
-         const user = await userCollection.findOne({email: email});
-         if(user === null)
-             throw new Error("There is no user with that email.");
- 
-         user['_id'] = user['_id'].toString();
- 
-         return user;
+        const userCollection = await users();
+        const user = await userCollection.findOne({email: email});
+        if(user === null)
+            throw new Error("There is no user with that email.");
+
+        user['_id'] = user['_id'].toString();
+
+        return user;
     },
 
     /**
@@ -156,16 +156,16 @@ module.exports = {
 
             if(curr_board.members.length > 1) { // don't delete board
                 await boardCollection.updateOne({ _id: ObjectId(board) },
-                 { $pull: { members: ObjectId(id) } });
+                    { $pull: { members: ObjectId(id) } });
             }
-         }
+        }
  
-         // Delete the user from the collection
-         const deletionInfo = await userCollection.deleteOne({ _id: ObjectId(id) });
-         if (deletionInfo.deletedCount === 0)
-             throw new Error(`Could not delete user with id of ${id}`);
- 
-         return { userId: id, deleted: true };
+        // Delete the user from the collection
+        const deletionInfo = await userCollection.deleteOne({ _id: ObjectId(id) });
+        if (deletionInfo.deletedCount === 0)
+            throw new Error(`Could not delete user with id of ${id}`);
+
+        return { userId: id, deleted: true };
     },
     /**
      * Remove the user from the board completely.
@@ -209,6 +209,6 @@ module.exports = {
         await boardCollection.updateMany({_id: ObjectId(boardId)},
             { $pull: { "cards.$[].assigned": ObjectId(userId) } });
  
-         return;
+        return;
     }
 };
