@@ -459,6 +459,76 @@ nav {
   color: #FF2F2F;
 }
 
+/*BOARD SETTINGS*/
+
+#backbtn{
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  text-decoration: none;
+  display: inline-block;
+  background-color: #f1f1f1;
+  color: black;
+  padding: 1px 7px;
+}
+#invite{
+  position: absolute;
+  top: 23%;
+  left: 45%;
+  padding: 8px;
+  height: 155px;
+}
+#boardSettings{
+  position: absolute;
+  top: 23%;
+  left: 15%;
+  padding: 8px;
+}
+
+#inviteForm{
+  vertical-align: middle;
+  flex-flow: row wrap;
+}
+
+.bsbutton{
+  height: 27px;
+  
+  cursor: pointer;
+}
+
+#deletebtn{
+  position: absolute;
+  top: 100%;
+  right: 0%;
+  padding: 4px 10px;
+  background-color: #DB4D4D;
+  color: #fffaf0;
+  border-color: #fffaf0;
+  border-width: thin;
+}
+
+.bslabel{
+  line-height: 70px;
+  color: #fffaf0;
+  font-size: 30px;
+}
+
+#backbtn:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+#boardName, #inviteEmail{
+  font-size: 20px;
+}
+
+#description{
+  font-size: 15px;
+  margin-bottom: 40px;
+  height: 150px;
+  width: 450px;
+}
+=======
 /* Comment Modal */
 
 #placeCommentsHere {
