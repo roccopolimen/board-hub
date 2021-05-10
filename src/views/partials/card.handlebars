@@ -1,76 +1,99 @@
-<button class="close-button" id="closeModal">Close Modal</button>
-<form id="updateCard" action="/board/card/{{boardId}}/{{card._id}}" method="POST">
-    <h1>{{card.name}}</h1>
-    <h2>Members</h2>
-    {{#each card.members}}
-        {{#if this.assigned}}
-            <label>
-                <input type="checkbox" class="assigned" value="{{this._id}}" checked>
-                <p>{{this.initials}}</p>
-            </label>
-        {{else}}
-            <label>
-                <input type="checkbox" class="unassigned" value="{{this._id}}">
-                <p>{{this.initials}}</p>
-            </label>
-        {{/if}}
-    {{/each}}
-    <h2>Description</h2>
-    <label for="cardDescription" hidden>description</label>
-    <textarea id="cardDescription" name="description">{{card.description}}</textarea>
-    <h2>Move Card</h2>
-    <label>
-        To List
-        <select id="toList">
-            {{#each list}}
-                {{#if_eq this._id ../card.list}}
-                    <option value="{{this._id}}" selected>{{this.listName}}</option>
+<div class="card-modal">
+    <button class="close-button" id="closeModal">X</button>
+    <form id="updateCard" action="/board/card/{{boardId}}/{{card._id}}" method="POST">
+        <div class="card-modal-header">
+            <label for="newCardName">Card Name:</label>
+            <input id="newCardName" name="newCardName" value="{{card.name}}" required/>
+            <label for="cardStoryPoints">Story Points:</label>
+            <input id="cardStoryPoints" name="storyPoints" type="number" value="{{card.storyPoints}}" />
+        </div>
+        <div class="members-description">
+            <div class="display-members">
+                <h2>Members</h2>
+                {{#each card.members}}
+                    {{#if this.assigned}}
+                        <label>
+                            <input type="checkbox" class="assigned" name="members[]" value="{{this._id}}" checked>
+                            <p>{{this.initials}}</p>
+                        </label>
+                    {{else}}
+                        <label>
+                            <input type="checkbox" class="unassigned" name="members[]" value="{{this._id}}">
+                            <p>{{this.initials}}</p>
+                        </label>
+                    {{/if}}
+                {{/each}}
+            </div>
+            <div class="card-description">
+                <h2>Description</h2>
+                <label for="cardDescription" hidden>description</label>
+                <textarea id="cardDescription" name="description">{{card.description}}</textarea>
+            </div>
+        </div>
+        <div class="move-due-date">
+            <div class="move-card">
+                <h2>Move Card</h2>
+                <label>
+                    To List
+                    <select id="toList" name="toList">
+                        {{#each list}}
+                            {{#if_eq this._id ../card.list}}
+                                <option value="{{this._id}}" selected>{{this.listName}}</option>
+                            {{else}}
+                                <option value="{{this._id}}">{{this.listName}}</option>
+                            {{/if_eq}}
+                        {{/each}}
+                    </select>
+                </label>
+                <label>
+                    Position
+                    <select id="position" name="position">
+                        {{#each positions}}
+                            {{#if_eq this ../card.position}}
+                                <option value="{{this}}" selected>{{this}}</option>
+                            {{else}}
+                                <option value="{{this}}">{{this}}</option>
+                            {{/if_eq}} 
+                        {{/each}}
+                    </select>
+                </label>
+            </div>
+            <div class="card-due-date">
+                {{#if card.dueDate}}
+                    <label for="dueDate">Due Date</label>
+                    <input type="date" id="dueDate" name="dueDate">
+                    <input type="text" id="formattedDate" hidden>
+                    <script>
+                        document.getElementById('dueDate').value = new Date("{{card.dueDate.date}}").toISOString().substring(0, 10);
+                    </script>
+                    <label for="dueTime">Due Time</label>
+                    <input type="time" id="dueTime" name="dueTime" value="{{card.dueDate.time}}">
+                    {{#if card.dueDate.done}}
+                        <input type="checkbox" name="dueDone" id="dueDone" checked>
+                    {{else}}
+                        <input type="checkbox" name="dueDone" id="dueDone">
+                    {{/if}}
+                    <label for="dueDone">Done</label>
                 {{else}}
-                    <option value="{{this._id}}">{{this.listName}}</option>
-                {{/if_eq}}
-            {{/each}}
-        </select>
-    </label>
-    <label>
-        Position
-        <select id="position">
-            {{#each positions}}
-                {{#if_eq this ../card.position}}
-                    <option value="{{this}}" selected>{{this}}</option>
-                {{else}}
-                    <option value="{{this}}">{{this}}</option>
-                {{/if_eq}} 
-            {{/each}}
-        </select>
-    </label>
-    {{#if card.dueDate}}
-        <label for="dueDate">Due Date</label>
-        <input type="date" id="dueDate">
-        <input type="text" id="formattedDate" hidden>
-        <script>
-            document.getElementById('dueDate').value = new Date("{{card.dueDate.date}}").toISOString().substring(0, 10);
-        </script>
-        <label for="dueTime">Due Time</label>
-        <input type="time" id="dueTime" value="{{card.dueDate.time}}">
-        {{#if card.dueDate.done}}
-            <input type="checkbox" id="dueDone" checked>
-        {{else}}
-            <input type="checkbox" id="dueDone">
-        {{/if}}
-        <label for="dueDone">Done</label>
-    {{else}}
-        <label for="dueDate">Due Date</label>
-        <input type="date" id="dueDate">
-        <input type="text" id="formattedDate" hidden>
-        <label for="dueTime">Due Time</label>
-        <input type="time" id="dueTime">
-        <input type="checkbox" id="dueDone">
-        <label for="dueDone">Done</label>
-    {{/if}}
-    <button type="submit">Save Card</button>
-    <button id="deleteCard" data-id="{{card._id}}">Delete Card</button>
-</form>
-<button type="button" id="openLabels">Edit Labels</button>
-<div id="placeLabelsHere" hidden></div>
-<button type="button" id="openComments">Comments</button>
-<div id="placeCommentsHere" hidden></div>
+                    <label for="dueDate">Due Date </label>
+                    <input type="date" id="dueDate" name="dueDate">
+                    <input type="text" id="formattedDate" hidden>
+                    <label for="dueTime">Due Time </label>
+                    <input type="time" id="dueTime" name="dueTime">
+                    <input type="checkbox" id="dueDone" name="dueDone">
+                    <label for="dueDone">Done</label>
+                {{/if}}
+            </div>
+        </div>
+        <div class="card-buttons">
+            <button class="card-modal-button" type="submit" id="saveCard">Save Card</button>
+            <button class="card-modal-button" id="deleteCard" data-id="{{card._id}}">Delete Card</button>
+        </div>
+    </form>
+    <div class="labels-commments">
+        <button class="card-modal-button" type="button" id="openLabels">Edit Labels</button>
+        <button class="card-modal-button" type="button" id="openComments">Comments</button>
+    </div>
+    <div id="placeLabelsHere" hidden></div>
+    <div id="placeCommentsHere" hidden></div>
+</div>

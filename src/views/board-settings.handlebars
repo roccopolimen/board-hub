@@ -1,4 +1,4 @@
-<a href="/board/{{board._id}}">Back</a>
+<a id="back" href="/board/{{board._id}}">Back</a>
 <div id="boardSettings">
     <!-- Form for changing the board settings -->
     <form id="changeBoardForm" action="/board/settings/{{board._id}}" method="POST">
@@ -20,7 +20,7 @@
     <!-- form for deleting a board -->
     <form id="leaveBoardForm" action="/board/remove/{{board._id}}" method="POST">
         {{#if onlyMember}}
-            <button type="submit">Delete Board</button>
+            <button id="deletebtn"type="submit">Delete Board</button>
         {{else}}
             <button type="submit">Leave Board</button>
         {{/if}}

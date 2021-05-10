@@ -525,7 +525,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
     if(newData.storyPoints !== undefined) {
         let sP = 0;
         try {
-            if(newData.storyPoints !== 0)
+            if(newData.storyPoints != '0' && newData.storyPoints !== 'NaN')
                 sP = parseInt(xss(newData.storyPoints));
         } catch(e) {
             res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid storyPoints(NaN)', error: true });
@@ -551,7 +551,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         }
     }
     // labels won't be edited here.
-    if(newData.date && xss(newData.date) !== getDate(oldCard.dueDate.date)) {
+    if(newData.date && oldCard.dueDate !== undefined && xss(newData.date) !== getDate(oldCard.dueDate.date)) {
         if(checkDate(xss(newData.date))) {
             updatedCardData.date = xss(newData.date);
         } else {
@@ -559,7 +559,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             return;
         }
     }
-    if(newData.time && xss(newData.time) !== getTime(oldCard.dueDate.date)) {
+    if(newData.time && oldCard.dueDate !== undefined && xss(newData.time) !== getTime(oldCard.dueDate.date)) {
         if(checkTime(xss(newData.time))) {
             updatedCardData.time = xss(newData.time);
         } else {
@@ -567,16 +567,19 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             return;
         }
     }
-    if(newData.done !== undefined && newData.done !== oldCard.dueDate.done) {
+    newData.done = (xss(newData.done) === 'true');
+    if(newData.done !== undefined && oldCard.dueDate !== undefined && newData.done !== oldCard.dueDate.done) {
         if(checkBoolean(newData.done)) {
-            updatedCardData.done = (xss(newData.done) === 'true');
+            updatedCardData.done = newData.done;
         } else {
             res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
             return;
         }
     }
     // comments won't be edited here.
-    if(newData.assigned) { // not using xss as if it is not array, code will throw.
+    if(newData.assigned !== undefined) { // not using xss as if it is not array, code will throw.
+        if(newData.assigned === '')
+            newData.assigned = [];
         if(checkArrayObjectId(newData.assigned)) {
             if(!equalMembers(newData.assigned, oldCard.assigned)) {
                 for(let assignedId of newData.assigned) {
@@ -592,11 +595,11 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             return;
         }
     }
-    if(newData.list && xss(newData.list) !== oldCard.list.toString()) {
+    if(newData.list !== undefined && xss(newData.list) !== oldCard.list.toString()) {
         if(checkNonEmptyString(xss(newData.list)) && checkObjectId(xss(newData.list))) {
             let foundListInBoard = false;
             for(let listId of boardInfo.lists) {
-                if(newData.list === listId.toString()) {
+                if(newData.list === listId._id.toString()) {
                     foundListInBoard = true;
                     break;
                 }
@@ -633,7 +636,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
             await listsData.moveCardInList(boardId, cardId, oldCard.list.toString(), position);
         } // update the card's data
         await cardsData.updateCard(boardId, cardId, list, cardName, storyPoints, description, date, time, done, assigned);
-        res.redirect(`/board/${boardId}`);
+        res.json({ boardId: boardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
@@ -1434,7 +1437,7 @@ router.post('/list/:boardId/:listId', async (req, res) => {
             await listsData.changeListName(listId, listName, boardId);
         if(position)
             await boardsData.moveList(boardId, listId, position);
-        res.redirect(`/board/${boardId}`);
+        res.json({ boardId: boardId });
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
     }
