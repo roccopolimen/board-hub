@@ -528,3 +528,329 @@ nav {
   height: 150px;
   width: 450px;
 }
+=======
+/* Comment Modal */
+
+#placeCommentsHere {
+  position: fixed;
+  top: 7rem;
+  width: 75%;
+  max-height: 40rem;
+  left: 0;
+  right: 0;
+  margin: 0% auto;
+  background: rgba(255, 255, 255, 0.85);
+  overflow: auto;
+  border-radius: .5rem;
+}
+
+#placeCommentsHere h2 {
+  font-family: 'Barlow', sans-serif;
+  font-size: 30pt;
+  text-align: center;
+  margin: auto;
+}
+
+#close-comment-btn {
+  position: relative;
+  top: -2rem;
+  margin-right: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #FF2F2F;
+  font-size: 30pt;
+  float: right;
+}
+
+.comment-initials {
+  border-radius: 2rem;
+  font-family: 'Barlow', sans-serif;
+  font-size: 25pt;
+  font-weight: bold;
+  padding: 2px;
+  margin-left: 3rem;
+  max-width: 30pt;
+  color: white;
+}
+
+.comment-content {
+  font-family: 'Barlow', sans-serif;
+  margin-left: 5rem;
+  padding-left: .5rem;
+  border: #000000 solid 1px;
+  border-radius: 2rem;
+  background-color: white;
+  max-width: 40rem;
+  font-size: 15pt;
+}
+
+#comment-form {
+  margin-bottom: 1rem;
+}
+
+#comment-form label {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15pt;
+  margin-left: 3rem;
+}
+
+#comment-form input {
+  font-family: 'Barlow', sans-serif;
+  height: 20pt;
+  font-size: 15pt;
+}
+
+#comment-form button {
+  font-family: 'Barlow', sans-serif;
+  height: 25pt;
+  width: 65pt;
+  font-size: 15pt;
+}
+
+/* EDIT LABELS */
+
+.edit-label-container {
+    color: black;
+    background-color: #d38200;
+    width: 20rem;
+    padding: 3rem;
+    box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.label-input-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: .5rem;
+  margin-bottom: .5rem;
+}
+.label-input-container .card-label-highlight {
+    width: 1.5rem;
+    height: .8rem;
+    margin-left: .2rem;
+    border: solid;
+    border-radius: 1rem;
+}
+
+.label-text {
+  font-family: 'Roboto', sans-serif;
+}
+
+.close-edit-labels {
+  font-family: 'Roboto', sans-serif;
+  position: absolute;
+  background-color: black;
+  border: none;
+  color: white;
+  padding: 0.6px 1.3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16pt;
+  margin: 0.5rem 0.5rem;
+  height: 1.5rem;
+  width: 1.5rem;
+  cursor: pointer;
+  top: 0;
+  right: 0;
+}
+
+.list-of-labels {
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    height: 10rem;
+    overflow: auto;
+}
+
+.edit-labels-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 21pt;
+}
+
+.add_label_name {
+    font-family: 'Roboto', sans-serif;
+}
+
+.add_labels {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.submit_label_changes {
+  font-family: 'Roboto', sans-serif;
+  position: absolute;
+  background-color: black;
+  border: none;
+  color: white;
+  padding: .625rem 1.6rem;
+  text-align: center;
+  text-decoration: underline;
+  display: inline-block;
+  font-size: 12pt;
+  margin-left: 18%;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+/* Edit List Modal */
+
+#listModal {
+  position: fixed;
+  top: 15rem;
+  width: 20%;
+  height: 30%;
+  left: 0;
+  right: 0;
+  margin: 0% auto;
+  background: rgba(255, 255, 255, 0.85);
+  overflow: auto;
+  border-radius: .5rem;
+}
+
+#close-list-settings-btn {
+  position: relative;
+  margin-right: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #FF2F2F;
+  font-size: 20pt;
+  float: right;
+}
+
+#editListForm button {
+  float: left;
+  width: 30%;
+  bottom: 20;
+  margin-top: 10rem;
+  margin-left: 1rem;
+}
+#deleteListForm button {
+  background-color: #FF2E2E;
+  float: right;
+  width: 30%;
+  margin-top: 10rem;
+  margin-right: 1rem;
+}
+
+.listNameDiv {
+  margin-top: .5rem;
+  margin-left: 1rem;
+  font-size: 20pt;
+  margin-bottom: 1rem;
+}
+
+.positionValueDiv {
+  margin-left: 1rem;
+  font-size: 20pt;
+}
+
+/* CARD CSS */
+
+.card-modal {
+  overflow: auto;
+  background-color: black;
+  position: fixed;
+  top: 5rem;
+  width: 80%;
+  margin-left: 7.5rem;
+  padding: 0.5rem;
+  color: #d38200;
+  font-family: 'Roboto', sans-serif;
+  height: 30rem;
+}
+
+.close-button {
+    font-family: 'Roboto', sans-serif;
+    position: absolute;
+    background-color: black;
+    border: none;
+    color: white;
+    padding: 0.6px 1.3px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16pt;
+    margin: 0.5rem 0.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+}
+
+.members-description {
+  display: flex;
+}
+
+.card-modal h1{
+  font-family: 'Roboto', sans-serif;
+}
+
+.display-members {
+  overflow: auto;
+  width: 25%;
+  padding: 0.5rem;
+}
+
+.card-description {
+  width: 70%;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.card-description textarea {
+  width: 100%;
+  height: 9rem;
+}
+
+.move-due-date {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.move-card {
+  padding: 0.5rem;
+  width: 25%;
+}
+
+.card-due-date {
+  padding: 0.5rem;
+  width: 70%;
+  margin-left: 3rem;
+}
+
+.card-due-date label {
+  padding-right: 0.6rem;
+  padding-left: 0.2rem;
+}
+.card-buttons{
+  position: absolute;
+  margin-top: 0.5rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
+}
+
+.labels-commments {
+  position: absolute;
+  margin-top: 0.5rem;
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+
+.card-modal-button {
+  font-family: 'Roboto', sans-serif;
+  background-color: #d38200;
+  border: none;
+  color: white;
+  padding: .625rem 1.6rem;
+  text-align: center;
+  display: inline-block;
+  font-size: 12pt;
+  cursor: pointer;
+  padding: 0.5rem;
+}

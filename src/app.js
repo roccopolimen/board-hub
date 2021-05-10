@@ -71,7 +71,7 @@ app.use('*', (req, res, next) => {
     //Checks if you're going to the home page, or submitting the login/signup form, and skips if so
     if(req.originalUrl == "/" || req.originalUrl == "/users/login" || req.originalUrl == "/users/signup" || req.originalUrl == "/about") next();
     else {
-        if(!loggedin && reqroute !== "/favicon.ico" && (reqroute.search("/boards") === 0 || reqroute.search("/board") === 0) || reqroute.search("/users") === 0) {
+        if(!loggedin && reqroute !== "/favicon.ico" && (reqroute.search("/boards") === 0 || reqroute.search("/board") === 0 || reqroute.search("/users") === 0)) {
             res.status(403).render('error-page', { title: "403 Access Forbidden", error: true });
         }
 
