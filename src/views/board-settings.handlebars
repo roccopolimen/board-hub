@@ -1,36 +1,39 @@
-<a id="back" href="/board/{{board._id}}">&#8249; Back</a>
+<a id="backbtn" href="/board/{{board._id}}">Back</a>
 <div id="boardSettings">
     <!-- Form for changing the board settings -->
     <form id="changeBoardForm" action="/board/settings/{{board._id}}" method="POST">
         <input type="hidden" name="_method" value="PATCH"/>
         <div class="boardNameDiv">
-            <label for="boardName">Name: </label>
-            <input id="boardName" name="boardName" type="text" placeholder="Board Name" value="boardName"/>
+            <label class="bslabel" for="boardName">Name: </label>
+            <input id="boardName" class="bsinput" name="boardName" type="text" placeholder="Board Name" value="{{board.boardName}}"/>
         </div>
         <div class="colorDiv">
-            <label for="boardColor">Color: </label>
-            <input id="boardColor" name="boardColor" type="color" placeholder="Color" value="boardColor"/>
+            <label class="bslabel" for="boardColor">Color: </label>
+            <input id="boardColor" class="bsinput" name="boardColor" type="color" placeholder="Color" value="{{board.boardColor}}"/>
         </div>
         <div class="descriptionDiv">
-            <label for="description">Description: </label>
-            <br>
-            <textarea id="description" name="description" placeholder="Description...">description</textarea>
+            <label class="bslabel" for="description">Description: </label>
+            <textarea id="description" class="bsinput" name="description" placeholder="Description...">{{board.description}}</textarea>
         </div>
-        <button type="submit">Save Changes</button>
+        <button class="bsbutton" type="submit">Save Changes</button>
     </form>
-    <!-- form for deleting a board -->
 </div>
-<form id="leaveBoardForm" action="/board/remove/{{board._id}}" method="POST">
-            <button id="deletebtn" type="submit">Delete Board</button>
-    </form>
 <div id="invite">
     <!-- Form for inviting people to the board -->
     <form id="inviteForm" action="/board/invite/{{board._id}}" method="POST">
         <div class="emailDiv">
-            <label for="inviteEmail">Email: </label>
-            <input id="inviteEmail" name="email" type="email" placeholder="User Email"/>
+            <label class="bslabel" for="inviteEmail">Email: </label>
+            <input id="inviteEmail" class="bsinput" name="email" type="email" placeholder="User Email" required/>
+            <button class="bsbutton" type="submit">Invite</button>
         </div>
-        <button type="submit">Invite</button>
+    </form>
+
+    <!-- form for deleting a board -->
+    <form id="leaveBoardForm" action="/board/remove/{{board._id}}" method="POST">
+        {{#if onlyMember}}
+            <button id="deletebtn" class="bsbutton"type="submit">Delete Board</button>
+        {{else}}
+            <button id="deletebtn" class="bsbutton" type="submit">Leave Board</button>
+        {{/if}}
     </form>
 </div>
-
