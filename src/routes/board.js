@@ -126,8 +126,8 @@ router.get('/calendar/:id', async (req, res) => {
     }
 });
 
-// GET /board/calendar/{id}
-// request to download a calendar of the board
+// GET /board/gcal/{boardId}/{cardId}
+// request to generate a google event for a card
 router.get('/gcal/:boardId/:cardId', async (req, res) => {
 
     const boardId = req.params.boardId;

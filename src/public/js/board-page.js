@@ -27,6 +27,7 @@
                     $('#cardModal').hide();
                 });
                 setUpDeleteCard();
+                setUpGCal(cardId);
                 setUpComments(cardId);
                 setUpLabels(cardId);
                 $('#cardModal').show();
@@ -198,6 +199,21 @@
             });
         })
     };
+
+    const setUpGCal = (cardId) => {
+        let gcal_btn = $('#gcal-btn');
+        gcal_btn.on("click", (e) => {
+            e.preventDefault();
+
+            let requestData = {
+                method: "GET",
+                url: `/board/gcal/${boardId}/${cardId}`
+            };
+            $.ajax(requestData).then(function(responseMessage) {
+                window.open(responseMessage.link, "_blank");
+            }, err => displayErrorPage(err));
+        });
+    }
 
     // OPEN COMMENTS MODAL
     const setUpComments = (cardId) => {
