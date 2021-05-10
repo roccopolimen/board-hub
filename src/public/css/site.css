@@ -469,9 +469,10 @@ nav {
   left: 0;
   right: 0;
   margin: 0% auto;
-  background: rgba(255, 255, 255, 0.85);
+  background: #333;
   overflow: auto;
   border-radius: .5rem;
+  min-height: 50%;
 }
 
 #placeCommentsHere h2 {
@@ -686,12 +687,13 @@ nav {
   background-color: black;
   position: fixed;
   top: 5rem;
-  width: 80%;
+  width: 90%;
   margin-left: 7.5rem;
   padding: 0.5rem;
   color: #d38200;
   font-family: 'Roboto', sans-serif;
   height: 30rem;
+  min-height: 60%;
 }
 
 .close-button {
