@@ -64,7 +64,7 @@ router.post('/signup', async (req, res) => {
             throw new Error("Password is not valid.");
         user = await userData.create(email, firstName, lastName, password);
     } catch (e) {
-        res.json({error: true});
+        res.json({error: true, message: e.toString()});
         return;
     }
 
