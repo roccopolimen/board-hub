@@ -38,6 +38,7 @@ module.exports = {
         const board = await boardCollection.findOne({_id: ObjectId(boardId)});
 
         let events = [];
+        let hit = false;
         for(let x=0; x<board.cards.length; x++) {
             let card = board.cards[x];
             if(card.dueDate === undefined)
@@ -53,8 +54,9 @@ module.exports = {
                     parseInt(date.minutes)],
                 duration: { hours: 1 }
             });
+            hit = true;
         }
-
+        if(!hit) throw new Error("No cards with due dates present");
         const { error, value } = ics.createEvents(events);
         
         if (error) {
