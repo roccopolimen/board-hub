@@ -504,31 +504,61 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         }
     }
     // labels won't be edited here.
-    if(newData.date && oldCard.dueDate !== undefined && xss(newData.date) !== getDate(oldCard.dueDate.date)) {
-        if(checkDate(xss(newData.date))) {
-            updatedCardData.date = xss(newData.date);
-        } else {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid date', error: true });
-            return;
+    if(oldCard.dueDate !== undefined) {
+        if(newData.date && xss(newData.date) !== getDate(oldCard.dueDate.date)) {
+            if(checkDate(xss(newData.date))) {
+                updatedCardData.date = xss(newData.date);
+            } else {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid date', error: true });
+                return;
+            }
+        }
+        if(newData.time && xss(newData.time) !== getTime(oldCard.dueDate.date)) {
+            if(checkTime(xss(newData.time))) {
+                updatedCardData.time = xss(newData.time);
+            } else {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid time', error: true });
+                return;
+            }
+        }
+        newData.done = (xss(newData.done) === 'true');
+        if(newData.done !== undefined && newData.done !== oldCard.dueDate.done) {
+            if(checkBoolean(newData.done)) {
+                updatedCardData.done = newData.done;
+            } else {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
+                return;
+            }
         }
     }
-    if(newData.time && oldCard.dueDate !== undefined && xss(newData.time) !== getTime(oldCard.dueDate.date)) {
-        if(checkTime(xss(newData.time))) {
-            updatedCardData.time = xss(newData.time);
-        } else {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid time', error: true });
-            return;
+    else {
+        if(newData.date) {
+            if(checkDate(xss(newData.date))) {
+                updatedCardData.date = xss(newData.date);
+            } else {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid date', error: true });
+                return;
+            }
+        }
+        if(newData.time) {
+            if(checkTime(xss(newData.time))) {
+                updatedCardData.time = xss(newData.time);
+            } else {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid time', error: true });
+                return;
+            }
+        }
+        newData.done = (xss(newData.done) === 'true');
+        if(newData.done !== undefined) {
+            if(checkBoolean(newData.done)) {
+                updatedCardData.done = newData.done;
+            } else {
+                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
+                return;
+            }
         }
     }
-    newData.done = (xss(newData.done) === 'true');
-    if(newData.done !== undefined && oldCard.dueDate !== undefined && newData.done !== oldCard.dueDate.done) {
-        if(checkBoolean(newData.done)) {
-            updatedCardData.done = newData.done;
-        } else {
-            res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
-            return;
-        }
-    }
+    
     // comments won't be edited here.
     if(newData.assigned !== undefined) { // not using xss as if it is not array, code will throw.
         if(newData.assigned === '')
