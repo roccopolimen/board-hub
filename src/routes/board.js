@@ -126,6 +126,53 @@ router.get('/calendar/:id', async (req, res) => {
     }
 });
 
+// GET /board/gcal/{boardId}/{cardId}
+// request to generate a google event for a card
+router.get('/gcal/:boardId/:cardId', async (req, res) => {
+
+    const boardId = req.params.boardId;
+    if(!boardId || !checkNonEmptyString(boardId) || !checkObjectId(boardId)) {
+        res.status(400).render('error-page', { title: "400 ID of Board not proper ID", error: true });
+        return;
+    }
+
+    const cardId = req.params.cardId;
+    if(!cardId || !checkNonEmptyString(cardId) || !checkObjectId(cardId)) {
+        res.status(400).render('error-page', { title: "400 ID of Card not proper ID", error: true });
+        return;
+    }
+
+    let boardInfo = {};
+    try {
+        boardInfo = await boardsData.readById(boardId);
+    } catch(e) {
+        res.status(404).render('error-page', { title: "404 Board not Found.", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        let foundUser = false;
+        for(memberId of boardInfo.members) {
+            if(req.session.user._id === memberId.toString()) {
+                foundUser = true;
+                break;
+            }
+        }
+        if(!foundUser)
+            throw new Error("Not your board, therefore can not see card.")
+    } catch(e) {
+        res.status(403).render('error-page', { title: "403 Forbidden", message: e.toString(), error: true });
+        return;
+    }
+
+    try {
+        const gCalLink = await calData.gCal(boardInfo._id.toString(), cardId);
+        res.json({link: gCalLink});
+    } catch(e) {
+        res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });
+    }
+});
+
 // GET /board/{id}
 // Main board page with all lists and cards shown
 router.get('/:id', async (req, res) => {

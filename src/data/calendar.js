@@ -4,6 +4,7 @@ const error_handler = require('../errors/error-handler');
 const ics = require('ics');
 const {ObjectId} = require('mongodb');
 const { writeFileSync } = require('fs');
+const { google } = require("calendar-link");
 
 
 function genDate(card) {
@@ -68,5 +69,43 @@ module.exports = {
         writeFileSync(`public/calendars/${fileName}.ics`, value);
 
         return `public/calendars/${fileName}.ics`;
+    },
+    
+     gCal: async (boardId, cardId) => {
+        if(!boardId || !error_handler.checkObjectId(boardId)) {
+            throw new Error("Board id is not valid.");
+        }
+        
+        if(!cardId || !error_handler.checkObjectId(cardId)) {
+            throw new Error("Card id is not valid.");
+        }
+        const boardCollection = await boards();
+        const board = await boardCollection.findOne({_id: ObjectId(boardId)});
+        let card;
+        for(let x=0; x<board.cards.length; x++) {
+            let tmp = board.cards[x];
+            if (tmp._id == cardId){
+                card = tmp;
+                break;
+            }
+        }
+        if(!card) {
+            throw new Error("Couldn't find that card.");
+        }
+
+        if(card.dueDate === undefined) {
+            throw new Error("No due date for this card.")
+        }
+
+        const date = genDate(card);
+        const event = {
+            title: card.cardName,
+            description: card.description,
+            start: `${date.year}-${date.month}-${date.day} ${date.hour}:${date.minutes}:00 +0100`,
+            duration: [1, "hour"],
+          };
+          
+        const linky = google(event);
+        return linky;
     }
 }
