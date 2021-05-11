@@ -156,7 +156,19 @@
                 return;
             }
 
+            // trim data being sent to only new stuff
             if(assigned.length === 0) assigned = '';
+            if(oldCardName === cardName) cardName = undefined;
+            if(Object.is(oldStoryPoints, storyPoints)) storyPoints = undefined;
+            if(arrayEquals(oldAssigned, assigned)) assigned = undefined;
+            else if(assigned.length === 0) assigned = '';
+            if(oldDescription === description) description = undefined;
+            if(oldList === toList) toList = undefined;
+            if(+oldPosition === position) position = undefined;
+            if(((dueDate === '' && oldDueDate === '')
+            || (oldDueDate === new Date(dueDate).toISOString().substring(0, 10)))) dueDate = undefined;
+            if(oldDueTime === dueTime) dueTime = undefined;
+            if(oldDueDone === dueDone) dueDone = undefined;
 
             // input is good, ready for ajax
             $.ajax({

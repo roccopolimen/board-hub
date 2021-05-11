@@ -183,7 +183,10 @@ const exportedModules = {
                     somethingToUpdate = true;
                 }
             } else {
-                newDueDate.date = updatedCardData.dueDate.date.split('*')[0];
+                if(updatedCardData.dueDate !== undefined) {
+                    console.log(JSON.stringify(updatedCardData.dueDate, null, 2));
+                    newDueDate.date = updatedCardData.dueDate.date.split('*')[0];
+                }
             }
             if(time) {
                 if(!error_handler.checkTime(time)) {
@@ -193,16 +196,18 @@ const exportedModules = {
                     somethingToUpdate = true;
                 }
             } else {
-                newDueDate.date = `${newDueDate.date}*${updatedCardData.dueDate.date.split('*')[1]}`;
+                if(updatedCardData.dueDate !== undefined)
+                    newDueDate.date = `${newDueDate.date}*${updatedCardData.dueDate.date.split('*')[1]}`;
             }
-            if(done !== undefined) {
+            if(done !== undefined && newDueDate.date !== undefined) {
                 if(!error_handler.checkBoolean(done)) {
                     throw new Error('Done must be a valid boolean.');
                 }
                 newDueDate.done = done;
                 somethingToUpdate = true;
             } else {
-                newDueDate.done = updatedCardData.dueDate.done;
+                if(updatedCardData.dueDate !== undefined)
+                    newDueDate.done = updatedCardData.dueDate.done;
             }
             updatedCardData.dueDate = newDueDate;
         }

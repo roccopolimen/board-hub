@@ -568,13 +568,16 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
                 return;
             }
         }
-        newData.done = (xss(newData.done) === 'true');
-        if(newData.done !== undefined && newData.done !== oldCard.dueDate.done) {
-            if(checkBoolean(newData.done)) {
-                updatedCardData.done = newData.done;
-            } else {
-                res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
-                return;
+
+        if(newData.done !== undefined) {
+            newData.done = (xss(newData.done) === 'true');
+            if(newData.done !== oldCard.dueDate.done) {
+                if(checkBoolean(newData.done)) {
+                    updatedCardData.done = newData.done;
+                } else {
+                    res.status(400).render('error-page', { title: "400 Bad Request", message: 'invalid dueDate status', error: true });
+                    return;
+                }
             }
         }
     }
@@ -595,8 +598,9 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
                 return;
             }
         }
-        newData.done = (xss(newData.done) === 'true');
+
         if(newData.done !== undefined) {
+            newData.done = (xss(newData.done) === 'true');
             if(checkBoolean(newData.done)) {
                 updatedCardData.done = newData.done;
             } else {
@@ -657,6 +661,7 @@ router.patch('/card/:boardId/:cardId', async (req, res) => {
         res.status(400).render('error-page', { title: "400 Bad Request", message: 'No values needed updating.', error: true });
         return;
     }
+
     try {
         const { cardName, storyPoints, description, date, time, done, list, assigned, position } = updatedCardData;
 
@@ -976,7 +981,7 @@ router.put('/card/comments/:boardId/:cardId', async (req, res) => {
 
     try {
         const today = new Date();
-        const date = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}*${today.getHours()}:${today.getMinutes()}`;
+        const date = `${('0'+(today.getMonth()+1)).slice(-2)}/${('0'+today.getDate()).slice(-2)}/${today.getFullYear()}*${('0'+today.getHours()).slice(-2)}:${('0'+today.getMinutes()).slice(-2)}`;
         await commentsData.create(userId, boardId, cardId, date, comment);
         res.json({ initials: req.session.user.initials, comment: comment, color: req.session.user.color });
     } catch(e) {
