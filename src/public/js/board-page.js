@@ -404,7 +404,8 @@
     let downloadCalendarBtn = $('#download-calendar-btn');
     downloadCalendarBtn.on('click', event => {
         event.preventDefault();
-        window.location.href = `/board/calendar/${downloadCalendarBtn.data('id')}`;
+        if($('.card-due-date').length == 0) alert("Must have cards with due dates to make a calendar!");
+        else window.location.href = `/board/calendar/${downloadCalendarBtn.data('id')}`;
     });
 
     // ADD NEW CARD
