@@ -353,10 +353,10 @@
                     data: { labelIds: labels, newLabelName: newLabel }
                 }).then(res => {
                     const resJson = $(res)[0];
-                    $('#list-of-labels').empty();
                     const updatedLabels = resJson.labelsInfo;
 
                     // update the labels displayed in the modal
+                    $('#list-of-labels').empty();
                     for(let i = 0; i < updatedLabels.length; i++)
                         $('#list-of-labels')
                         .append($('<div>')
@@ -371,8 +371,9 @@
                                 .attr('for', `card_label_${i}`)
                                 .append($('<p>')
                                     .attr('class', 'card-label-highlight')
-                                    .attr('style', `background-color: ${updatedLabels[i].color};`))
-                                .text(updatedLabels[i].text)));
+                                    .attr('style', `background-color: ${updatedLabels[i].color};`)
+                                    .text(''))
+                                .append(updatedLabels[i].text)));
 
                     let cardId = labelsForm.attr('action').substring(labelsForm.attr('action').lastIndexOf('/') + 1);
                     
