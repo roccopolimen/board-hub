@@ -55,28 +55,28 @@
             </div>
             <div class="card-due-date">
                 {{#if card.dueDate}}
-                    <label for="dueDate">Due Date</label>
+                    <label class="card-due-date-label" for="dueDate">Due Date</label>
                     <input type="date" id="dueDate">
                     <input type="text" id="formattedDate" hidden>
                     <script>
                         document.getElementById('dueDate').value = new Date("{{card.dueDate.date}}").toISOString().substring(0, 10);
                     </script>
-                    <label for="dueTime">Due Time</label>
+                    <label class="card-due-date-label" for="dueTime">Due Time</label>
                     <input type="time" id="dueTime" value="{{card.dueDate.time}}">
                     {{#if card.dueDate.done}}
                         <input type="checkbox" id="dueDone" checked>
                     {{else}}
                         <input type="checkbox" id="dueDone">
                     {{/if}}
-                    <label for="dueDone">Done</label>
+                    <label class="card-due-date-label" for="dueDone">Done</label>
                 {{else}}
-                    <label for="dueDate">Due Date </label>
+                    <label class="card-due-date-label" for="dueDate">Due Date </label>
                     <input type="date" id="dueDate">
                     <input type="text" id="formattedDate" hidden>
-                    <label for="dueTime">Due Time </label>
+                    <label class="card-due-date-label" for="dueTime">Due Time </label>
                     <input type="time" id="dueTime">
                     <input type="checkbox" id="dueDone">
-                    <label for="dueDone">Done</label>
+                    <label class="card-due-date-label" for="dueDone">Done</label>
                 {{/if}}
             </div>
         </div>
