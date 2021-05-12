@@ -145,7 +145,7 @@
             if(oldCardName === cardName
             && Object.is(oldStoryPoints, storyPoints)
             && arrayEquals(oldAssigned, assigned)
-            && oldDescription === description
+            && oldDescription.replace(/\r/g, "") === description.replace(/\r/g, "")
             && oldList === toList
             && +oldPosition === position
             && ((dueDate === '' && oldDueDate === '')
@@ -162,7 +162,7 @@
             if(Object.is(oldStoryPoints, storyPoints)) storyPoints = undefined;
             if(arrayEquals(oldAssigned, assigned)) assigned = undefined;
             else if(assigned.length === 0) assigned = '';
-            if(oldDescription === description) description = undefined;
+            if(oldDescription.replace(/\r/g, "") === description.replace(/\r/g, "")) description = undefined;
             if(oldList === toList) toList = undefined;
             if(+oldPosition === position) position = undefined;
             if(((dueDate === '' && oldDueDate === '')
@@ -391,7 +391,7 @@
                     
                 }, err => displayErrorPage(err));
             }
-            $("input:text").val("");
+            $("#add_label_name").val("");
         });
     };
 
