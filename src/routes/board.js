@@ -371,7 +371,8 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
             const memberData = await usersData.readById(memberId.toString());
             memberMap[memberId.toString()] = {
                 name: makeName(memberData.firstName, memberData.lastName),
-                initials: getInitials(memberData.firstName, memberData.lastName)
+                initials: getInitials(memberData.firstName, memberData.lastName),
+                color: memberData.color
             };
         }
 
@@ -440,9 +441,9 @@ router.get('/card/:boardId/:cardId', async (req, res) => {
         for(let key in memberMap) {
             let value = memberMap[key];
             if(assigned.includes(key))
-                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: true, _id: key });
+                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: true, _id: key, color: value.color });
             else
-                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: false, _id: key });
+                cardInfo.members.push({ name: value.name, initials: value.initials, assigned: false, _id: key, color: value.color });
         }
     } catch(e) {
         res.status(500).render('error-page', { title: "500 Internal Error", message: e.toString(), error: true });

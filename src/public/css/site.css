@@ -528,21 +528,21 @@ nav {
   height: 150px;
   width: 450px;
 }
-=======
 /* Comment Modal */
 
 #placeCommentsHere {
-  position: fixed;
-  top: 7rem;
+  position: absolute;
+  top: 3rem;
   width: 75%;
-  max-height: 40rem;
+  max-height: 30rem;
   left: 0;
   right: 0;
   margin: 0% auto;
-  background: #333;
+  background: white;
   overflow: auto;
   border-radius: .5rem;
   min-height: 50%;
+  box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
 }
 
 #placeCommentsHere h2 {
@@ -613,7 +613,7 @@ nav {
 
 .edit-label-container {
     color: black;
-    background-color: #d38200;
+    background-color: white;
     width: 20rem;
     padding: 3rem;
     box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
@@ -642,22 +642,20 @@ nav {
 }
 
 .close-edit-labels {
-  font-family: 'Roboto', sans-serif;
   position: absolute;
-  background-color: black;
   border: none;
-  color: white;
-  padding: 0.6px 1.3px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16pt;
   margin: 0.5rem 0.5rem;
-  height: 1.5rem;
-  width: 1.5rem;
   cursor: pointer;
   top: 0;
   right: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #FF2F2F;
+  font-size: 30pt;
 }
 
 .list-of-labels {
@@ -670,6 +668,7 @@ nav {
 .edit-labels-title {
     font-family: 'Roboto', sans-serif;
     font-size: 21pt;
+    color: #a96700;
 }
 
 .add_label_name {
@@ -684,7 +683,7 @@ nav {
 .submit_label_changes {
   font-family: 'Roboto', sans-serif;
   position: absolute;
-  background-color: black;
+  background-color: #a96700;
   border: none;
   color: white;
   padding: .625rem 1.6rem;
@@ -703,13 +702,14 @@ nav {
   position: fixed;
   top: 15rem;
   width: 20%;
-  height: 30%;
+  /* height: 30%; */
   left: 0;
   right: 0;
   margin: 0% auto;
-  background: rgba(255, 255, 255, 0.85);
-  overflow: auto;
+  background: white;
   border-radius: .5rem;
+  padding-bottom: 2rem;
+  box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
 }
 
 #close-list-settings-btn {
@@ -754,35 +754,32 @@ nav {
 
 .card-modal {
   overflow: auto;
-  background-color: black;
+  background-color: white;
   position: fixed;
   top: 5rem;
   width: 90%;
   margin-left: 7.5rem;
   padding: 0.5rem;
-  color: #d38200;
+  color: #a96700;
   font-family: 'Roboto', sans-serif;
   height: 30rem;
-  min-height: 60%;
+  min-height: 70%;
 }
 
 .close-button {
-    font-family: 'Roboto', sans-serif;
     position: absolute;
-    background-color: black;
-    border: none;
-    color: white;
-    padding: 0.6px 1.3px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16pt;
     margin: 0.5rem 0.5rem;
-    height: 1.5rem;
-    width: 1.5rem;
     cursor: pointer;
     top: 0;
     right: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: #FF2F2F;
+    font-size: 30pt;
 }
 
 .members-description {
@@ -797,6 +794,17 @@ nav {
   overflow: auto;
   width: 25%;
   padding: 0.5rem;
+  max-height: 20rem;
+}
+
+.display-members label {
+  display: inline-block;
+}
+
+.card-member {
+  color: white;
+  border-radius: 2rem;
+  font-size: 20pt;
 }
 
 .card-description {
@@ -846,7 +854,7 @@ nav {
 
 .card-modal-button {
   font-family: 'Roboto', sans-serif;
-  background-color: #d38200;
+  background-color: #a96700;
   border: none;
   color: white;
   padding: .625rem 1.6rem;
