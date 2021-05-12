@@ -9,13 +9,13 @@
 <body>
     <nav>
         <ul id="nav-list">
-            <li><a href="/"><img id="nav-logo" src="/public/images/logo/board_hub.PNG"></a></li>
+            <li><a href="/"><img id="nav-logo" src="/public/images/logo/board_hub.PNG" alt="Board Hub Logo"></a></li>
             {{#if error}}
             {{else}}
                 <li id="nav-pfp-li" style="background-color: {{user.color}};">
                     <a href="/users" id="nav-pfp" style="background-color: {{user.color}};">{{user.initials}}</a>
                 </li>
-                <li id="nav-ques"><a href="/about">?</a></li>
+                <li id="nav-ques"><a href="/about" aria-label="About Us">?</a></li>
             {{/if}}            
         </ul>
     </nav>

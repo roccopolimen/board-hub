@@ -8,6 +8,9 @@ body {
   margin:0;
   padding:0;
 }
+textarea {
+  resize: none;
+}
 
 /* NAV BAR */
 
@@ -389,11 +392,15 @@ nav {
   text-align: center;
 }
 
-#user-page h2 {
+#user-page h1 {
   font-family: 'Barlow', sans-serif;
   color: white;
   font-weight: bold;
   font-size: 50pt;
+}
+
+.change-psss-user {
+  color: white;
 }
 
 #pfp-large {
@@ -575,6 +582,10 @@ nav {
   color: white;
 }
 
+/* .comment-container {
+  overflow: auto;
+} */
+
 .comment-content {
   font-family: 'Barlow', sans-serif;
   margin-left: 5rem;
@@ -582,7 +593,8 @@ nav {
   border: #000000 solid 1px;
   border-radius: 2rem;
   background-color: white;
-  max-width: 40rem;
+  width: 40rem;
+  overflow: auto;
   font-size: 15pt;
 }
 
@@ -802,7 +814,6 @@ nav {
 }
 
 .card-member {
-  color: white;
   border-radius: 2rem;
   font-size: 20pt;
 }

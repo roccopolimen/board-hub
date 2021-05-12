@@ -1,5 +1,5 @@
 <div id="user-page">
-  <h2>{{user.name}}</h2>
+  <h1>{{user.name}}</h1>
 
   <div id="pfp-large" style="background-color: {{user.color}}">
     <p>{{user.initials}}</p>
@@ -7,7 +7,7 @@
 
   <form id="change-pass-form" action="/users/password" method="POST">
     <input type="hidden" name="_method" value="put" />
-    <h3 style="color: {{user.color}}">Change Password?</h3>
+    <h2 class="change-psss-user">Change Password?</h2>
       <p id="change-pass-error" hidden>Invalid Credentials</p>
       <label>
       Old Password
