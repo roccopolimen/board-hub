@@ -14,12 +14,12 @@
                     {{#if this.assigned}}
                         <label>
                             <input type="checkbox" class="assigned" name="members[]" value="{{this._id}}" checked>
-                            <p class="card-member">{{this.initials}}</p>
+                            <p class="card-member" style="background-color: {{this.color}};">{{this.initials}}</p>
                         </label>
                     {{else}}
                         <label>
                             <input type="checkbox" class="unassigned" name="members[]" value="{{this._id}}">
-                            <p class="card-member">{{this.initials}}</p>
+                            <p class="card-member" style="background-color: {{this.color}};">{{this.initials}}</p>
                         </label>
                     {{/if}}
                 {{/each}}
