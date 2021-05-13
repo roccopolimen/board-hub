@@ -9,7 +9,7 @@
         </div>
         <div class="members-description">
             <div class="display-members">
-                <h2>Members</h2>
+                <h1>Members</h1>
                 {{#each card.members}}
                     {{#if this.assigned}}
                         <label>
@@ -25,14 +25,14 @@
                 {{/each}}
             </div>
             <div class="card-description">
-                <h2>Description</h2>
+                <h1>Description</h1>
                 <label for="cardDescription" hidden>description</label>
                 <textarea id="cardDescription" name="description">{{card.description}}</textarea>
             </div>
         </div>
         <div class="move-due-date">
             <div class="move-card">
-                <h2>Move Card</h2>
+                <h1>Move Card</h1>
                 <label>
                     To List
                     <select id="toList" name="toList">
