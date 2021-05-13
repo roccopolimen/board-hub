@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
       res.redirect('/boards');
       return;
     }
-    res.sendFile(path.resolve('../src/static/home.html'));
+    res.sendFile(path.resolve('static/home.html'));
   } catch (e) {
     res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
   }
