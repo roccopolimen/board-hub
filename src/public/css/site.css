@@ -825,6 +825,9 @@ nav {
 .card-member {
   border-radius: 2rem;
   font-size: 20pt;
+  color: white;
+  padding: 0.5rem;
+  width: 2rem;
 }
 
 .card-description {
