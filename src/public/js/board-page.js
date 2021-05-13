@@ -361,6 +361,10 @@
                         $('#list-of-labels')
                         .append($('<div>')
                             .attr('class', 'label-input-container')
+                            .append($('<p>')
+                                .attr('class', 'card-label-highlight')
+                                .attr('style', `background-color: ${updatedLabels[i].color};`)
+                                .text(''))
                             .append($('<input>')
                                 .attr('type', 'checkbox')
                                 .attr('id', `card_label_${i}`)
@@ -369,10 +373,6 @@
                                 .prop('checked', true))
                             .append($('<label>')
                                 .attr('for', `card_label_${i}`)
-                                .append($('<p>')
-                                    .attr('class', 'card-label-highlight')
-                                    .attr('style', `background-color: ${updatedLabels[i].color};`)
-                                    .text(''))
                                 .append(updatedLabels[i].text)));
 
                     let cardId = labelsForm.attr('action').substring(labelsForm.attr('action').lastIndexOf('/') + 1);

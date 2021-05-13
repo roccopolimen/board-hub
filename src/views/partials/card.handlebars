@@ -12,15 +12,11 @@
                 <h1>Members</h1>
                 {{#each card.members}}
                     {{#if this.assigned}}
-                        <label>
-                            <input type="checkbox" class="assigned" name="members[]" value="{{this._id}}" checked>
-                            <p class="card-member" style="background-color: {{this.color}};">{{this.initials}}</p>
-                        </label>
+                        <label class="card-member" style="background-color: {{this.color}};">{{this.initials}}</label>
+                        <input type="checkbox" class="assigned" name="members[]" value="{{this._id}}" id="assigned-member-{{@index}}" checked>
                     {{else}}
-                        <label>
-                            <input type="checkbox" class="unassigned" name="members[]" value="{{this._id}}">
-                            <p class="card-member" style="background-color: {{this.color}};">{{this.initials}}</p>
-                        </label>
+                        <label class="card-member" style="background-color: {{this.color}};">{{this.initials}}</label>
+                        <input type="checkbox" class="unassigned" name="members[]" value="{{this._id}}" id="assigned-member-{{@index}}">
                     {{/if}}
                 {{/each}}
             </div>

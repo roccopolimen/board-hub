@@ -7,8 +7,9 @@
         <div class="list-of-labels" id="list-of-labels">
             {{#each labels}}
                 <div class="label-input-container">
+                    <p class="card-label-highlight" style="background-color: {{this.color}};"></p>
                     <input type="checkbox" id="card_label_{{@index}}" name="labels[]" value="{{this._id}}" checked>
-                    <label for="card_label_{{@index}}"><p class="card-label-highlight" style="background-color: {{this.color}};"></p>{{this.text}}</label>
+                    <label for="card_label_{{@index}}">{{this.text}}</label>
                 </div>
             {{/each}}
         </div>
