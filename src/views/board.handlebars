@@ -30,7 +30,7 @@
                 </div>
                 <div class="list-body">
                     {{#each this.cards}}
-                        <button class="card" data-id="{{this._id}}">
+                        <a class="card" data-id="{{this._id}}">
                             <div class="card-header">
                                 <div class="labels-list" data-id="{{this._id}}">
                                     {{#each this.labels}}
@@ -52,13 +52,11 @@
                                     </div>
                                 {{/if}}
                             </div>
-                        </button>
+                        </a>
                     {{/each}}
                     <form class="new-card" method="POST" action="/board/{{../board._id}}/{{this._id}}">
-                        <label>
-                            <p hidden>Card</p>
-                            <input type="text" name="cardName" class="new-card-name-input" required/>
-                        </label>
+                        <label hidden for="add_card_{{@index}}">Card</label>
+                        <input type="text" name="cardName" class="new-card-name-input"  id="add_card_{{@index}}" required/>
                         <button class="add-card-btn" type="submit">add card</button>
                     </form>
                 </div>
