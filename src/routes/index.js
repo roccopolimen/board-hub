@@ -13,7 +13,7 @@ const constructorMethod = (app) => {
 
     app.get('/about', async (req, res) => {
         try {
-            res.sendFile(path.resolve('../src/static/about.html'));
+            res.sendFile(path.resolve('static/about.html'));
           } catch (e) {
             res.status(500).render('error-page', { title: "500 Internal Server Error", error: true });
           }
